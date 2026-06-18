@@ -3,621 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STC Quiz Assistance</title>
+    <title>STC Monthly Quiz Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
-        
         :root {
-            --bg-main: #000000;
-            --bg-chat-container: #090014;
-            --bg-input: #120024;
-            --text-main: #ffffff;
-            --text-muted: #c084fc;
-            --border-color: #4c1d95;
-            --stc-purple: #4F008C;
-            --neon-purple: #a855f7;
-            --bot-bubble: #1e003b;
-            --user-bubble: #1f2937;
-            --pill-bg: #000000;
-            --shadow-neon: 0 0 15px rgba(168, 85, 247, 0.4);
-            --shadow-header: 0 4px 20px rgba(168, 85, 247, 0.3);
+            --bg-main: #000000; --bg-container: #090014; --bg-input: #120024;
+            --text-main: #ffffff; --border-color: #4c1d95; --stc-purple: #4F008C;
+            --neon-purple: #a855f7; --option-bg: #1e003b; --option-hover: #3b0764;
+            --option-selected: #6b21a8; --shadow-neon: 0 0 15px rgba(168, 85, 247, 0.4);
         }
-
-        .light-mode {
-            --bg-main: #f3f4f6;
-            --bg-chat-container: #ffffff;
-            --bg-input: #f9fafb;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-            --stc-purple: #4F008C;
-            --neon-purple: #4F008C;
-            --bot-bubble: #f0e6f7;
-            --user-bubble: #4F008C;
-            --pill-bg: #f3f4f6;
-            --shadow-neon: 0 2px 5px rgba(0,0,0,0.1);
-            --shadow-header: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.4s ease; margin: 0; padding: 0; overflow: hidden; }
-        
-        .header-bg { background-color: var(--bg-chat-container); border-bottom: 2px solid var(--neon-purple); box-shadow: var(--shadow-header); }
-        .chat-wrapper { background-color: var(--bg-chat-container); border: 1px solid var(--border-color); box-shadow: var(--shadow-header); }
-        .input-area { background-color: var(--bg-chat-container); border-top: 1px solid var(--border-color); }
-        .input-box { background-color: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
-        .input-box:focus { box-shadow: var(--shadow-neon); border-color: var(--neon-purple); }
-        
-        .bot-msg { background-color: var(--bot-bubble); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
-        .light-mode .bot-msg { color: #1f2937; border-color: transparent; box-shadow: none; } 
-        
-        .user-msg { background-color: var(--user-bubble); color: #ffffff; border: 1px solid #333; }
-        .light-mode .user-msg { border-color: transparent; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
-
-        .chat-container { height: calc(100vh - 160px); scroll-behavior: smooth; }
-        .message { animation: fadeIn 0.4s ease-out forwards; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        .typing-indicator { display: flex; gap: 6px; padding: 12px 16px; align-items: center; width: fit-content; }
-        .dot { width: 8px; height: 8px; background-color: var(--neon-purple); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-        
-        #admin-modal { background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .admin-panel { background-color: var(--bg-chat-container); border: 2px solid var(--neon-purple); box-shadow: var(--shadow-header); }
-
-        .pill-btn { background-color: var(--pill-bg); color: var(--text-main); border: 1px solid var(--neon-purple); border-radius: 9999px; padding: 8px 20px; font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: var(--shadow-neon); cursor: pointer;}
-        .pill-btn:hover { background-color: var(--stc-purple); color: #ffffff; box-shadow: 0 0 20px rgba(168, 85, 247, 0.8); transform: translateY(-2px); }
-        .light-mode .pill-btn { border-color: #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .light-mode .pill-btn:hover { background-color: var(--stc-purple); border-color: var(--stc-purple); }
-        
-        .action-btn { box-shadow: var(--shadow-neon); border: 1px solid transparent; }
-        .action-btn:hover { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(168, 85, 247, 0.8); }
-        .light-mode .action-btn { box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-color: transparent; }
-        
-        .send-btn-neon { background-color: var(--stc-purple); box-shadow: var(--shadow-neon); transition: all 0.3s; }
-        .send-btn-neon:hover:not(:disabled) { box-shadow: 0 0 20px rgba(168, 85, 247, 0.9); background-color: #6b21a8; }
-        
-        .live-indicator { width: 10px; height: 10px; background-color: #ef4444; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #ef4444; animation: pulseRed 1.5s infinite; }
-        @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-main); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        .quiz-wrapper { background-color: var(--bg-container); border: 1px solid var(--border-color); }
+        .option-btn { background-color: var(--option-bg); border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .option-btn:hover { background-color: var(--option-hover); }
+        .option-btn.selected { background-color: var(--option-selected); border-color: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
+        .btn-neon { background-color: var(--stc-purple); transition: all 0.3s; }
+        .btn-neon:hover:not(:disabled) { background-color: #6b21a8; }
     </style>
 </head>
-<body class="flex flex-col h-screen" onload="initApp()">
+<body>
 
-    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md transition-opacity duration-500">
-        <div class="bg-[#090014] border-2 border-purple-600 rounded-2xl p-8 max-w-md w-full mx-4 shadow-[0_0_30px_rgba(168,85,247,0.4)] flex flex-col gap-6 items-center text-center">
-            <div class="h-20 w-24 bg-white rounded-xl flex items-center justify-center overflow-hidden border border-purple-500/50 mb-2 p-2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC Quiz Logo" class="h-full object-contain filter brightness-0 invert" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg';">
-            </div>
-            
-            <div>
-                <h2 class="text-3xl font-bold mb-2" style="color: var(--neon-purple); text-shadow: 0 0 10px rgba(168,85,247,0.5);">Welcome to STC Quiz Portal</h2>
-                <p class="text-purple-300 text-sm opacity-80">Restricted Access. Please log in.</p>
-            </div>
-            
-            <div class="w-full flex flex-col gap-4">
-                <input type="text" id="login-user" class="input-box w-full rounded-xl px-4 py-3 focus:outline-none transition text-left" placeholder="Username (must contain .c@stc.com.kw)" dir="ltr">
-                <input type="password" id="login-pass" class="input-box w-full rounded-xl px-4 py-3 focus:outline-none transition text-left" placeholder="Password" dir="ltr" onkeypress="if(event.key === 'Enter') attemptLogin()">
-            </div>
-            
-            <p id="login-error" class="text-red-400 text-sm hidden font-bold" style="text-shadow: 0 0 5px rgba(248,113,113,0.5);">
-                <i class="fa-solid fa-triangle-exclamation"></i> بيانات الدخول غير صحيحة / Invalid Credentials
-            </p>
-            
-            <button onclick="attemptLogin()" class="send-btn-neon w-full text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
-                <i class="fa-solid fa-lock-open"></i> تسجيل الدخول
-            </button>
+    <!-- LOGIN -->
+    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95">
+        <div class="bg-[#090014] border-2 border-purple-600 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+            <h2 class="text-3xl font-bold mb-6 text-purple-400">STC Quiz Portal</h2>
+            <input type="text" id="login-user" class="w-full bg-[#120024] border border-purple-900 rounded-xl p-3 mb-4" placeholder="Username (e.g. name.c@stc.com.kw)">
+            <input type="password" id="login-pass" class="w-full bg-[#120024] border border-purple-900 rounded-xl p-3 mb-4" placeholder="Password">
+            <button onclick="attemptLogin()" class="w-full bg-purple-700 py-3 rounded-xl font-bold text-white">Login</button>
         </div>
     </div>
 
-    <div id="main-app" class="flex flex-col h-screen opacity-0 transition-opacity duration-700 pointer-events-none">
-        <header class="header-bg p-4 flex justify-between items-center transition-colors duration-300">
-            <div class="flex items-center gap-4">
-                <div id="logo-container" class="h-12 rounded-xl bg-white flex items-center justify-center shadow-lg overflow-hidden px-3 transition-colors duration-300 border border-purple-500/50">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC Quiz Logo" class="h-10 object-contain filter brightness-0 invert" 
-                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg'; document.getElementById('logo-container').style.backgroundColor='#4F008C';">
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold" style="color: var(--neon-purple); text-shadow: 0 0 10px rgba(168,85,247,0.3);">STC Quiz Assistance</h1>
-                    <p class="text-xs font-bold text-muted" id="mode-subtitle">بوابة اختبارات خدمة العملاء</p>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="showFlowSelection()" class="action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 dark:bg-gray-800 text-blue-400 transition hover:scale-105" title="Home / Change Quiz">
-                    <i class="fa-solid fa-house"></i>
-                </button>
-                <button onclick="toggleAdmin()" class="action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 dark:bg-gray-800 text-purple-400 transition hover:scale-105" title="Admin Dashboard">
-                    <i class="fa-solid fa-satellite-dish"></i>
-                </button>
-                <button onclick="toggleQuizMode()" class="action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 dark:bg-gray-800 text-green-400 transition hover:scale-105" title="Test Me" id="quiz-btn">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </button>
-                <button onclick="toggleTheme()" class="action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 dark:bg-gray-800 text-yellow-400 transition hover:scale-105" id="theme-btn">
-                    <i class="fa-solid fa-sun"></i>
-                </button>
-            </div>
+    <!-- QUIZ PORTAL -->
+    <div id="quiz-portal" class="hidden flex-col h-screen p-4">
+        <header class="flex justify-between items-center p-4 border-b border-purple-800">
+            <div><h1 class="text-xl font-bold text-purple-400">STC Monthly Quiz</h1><p id="date-display" class="text-sm"></p></div>
+            <div class="text-right"><p>Agent: <span id="agent-name" class="font-bold"></span></p><div id="timer-display" class="text-xl text-green-400">15:00</div></div>
         </header>
 
-        <main class="flex-grow flex justify-center p-2 sm:p-4 relative">
-            <div class="chat-wrapper w-full max-w-4xl rounded-2xl flex flex-col overflow-hidden transition-colors duration-300">
-                <div id="chat-box" class="chat-container p-4 sm:p-6 overflow-y-auto flex flex-col gap-5"></div>
-                
-                <div class="input-area p-4 flex gap-3 items-center transition-colors duration-300">
-                    <input type="text" id="user-input" class="input-box flex-grow rounded-xl px-5 py-4 focus:outline-none transition text-lg" placeholder="اكتب سؤالك أو كلمة مفتاحية هنا...">
-                    <button onclick="handleSend()" id="send-btn" class="send-btn-neon text-white px-6 sm:px-8 py-4 rounded-xl font-bold active:scale-95 text-lg flex items-center gap-2">
-                        <span class="hidden sm:inline" id="send-text">إرسال</span>
-                        <i class="fa-solid fa-paper-plane rtl:rotate-180"></i>
-                    </button>
+        <main class="flex-grow flex justify-center p-4">
+            <div id="quiz-container" class="quiz-wrapper w-full max-w-4xl rounded-2xl p-8 flex flex-col">
+                <div id="question-text" class="text-xl font-bold mb-6"></div>
+                <div id="options-container" class="flex flex-col gap-3 flex-grow"></div>
+                <div class="flex justify-between pt-6">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-2 rounded-lg border border-purple-600">السابق</button>
+                    <button id="next-btn" onclick="nextQuestion()" class="btn-neon px-6 py-2 rounded-lg">التالي</button>
+                    <button id="submit-btn" onclick="submitQuiz()" class="bg-green-600 px-6 py-2 rounded-lg hidden">إنهاء</button>
                 </div>
             </div>
-
-            <div id="admin-modal" class="absolute inset-0 z-50 hidden items-center justify-center p-4">
-                <div class="admin-panel rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] flex flex-col">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2 border-purple-800">
-                        <h2 class="text-2xl font-bold text-purple-400" style="text-shadow: 0 0 10px rgba(168,85,247,0.5);">
-                            <i class="fa-solid fa-server mr-2"></i> Live Admin Terminal <span class="live-indicator ml-2"></span>
-                        </h2>
-                        <button onclick="toggleAdmin()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-                    </div>
-                    
-                    <p class="text-xs text-yellow-300 mb-4 bg-yellow-900/30 p-2 rounded border border-yellow-700/50">
-                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Admin Note:</strong> This is a frontend prototype dashboard tracking your open tab session activity.
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="bg-gray-900 border border-purple-800 p-4 rounded-xl text-center shadow-inner">
-                            <p class="text-sm text-gray-400">Total Local Queries</p>
-                            <p class="text-3xl font-bold text-white" id="stat-total">0</p>
-                        </div>
-                        <div class="bg-gray-900 border border-purple-800 p-4 rounded-xl text-center shadow-inner">
-                            <p class="text-sm text-gray-400">Quiz Accuracy</p>
-                            <p class="text-3xl font-bold text-green-400" id="stat-success" style="text-shadow: 0 0 10px rgba(74,222,128,0.5);">0%</p>
-                        </div>
-                        <div class="bg-gray-900 border border-purple-800 p-4 rounded-xl text-center shadow-inner">
-                            <p class="text-sm text-gray-400">Failed Searches / Errors</p>
-                            <p class="text-3xl font-bold text-red-400" id="stat-failed" style="text-shadow: 0 0 10px rgba(248,113,113,0.5);">0</p>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden">
-                        <div class="flex flex-col overflow-hidden">
-                            <h3 class="font-bold text-gray-300 mb-2"><i class="fa-solid fa-magnifying-glass"></i> Live Search Feed:</h3>
-                            <ul id="analytics-log" class="bg-gray-900 border border-purple-900 rounded-xl p-4 text-sm text-gray-300 flex flex-col gap-2 overflow-y-auto flex-grow h-48">
-                                <li class="opacity-50 italic">Waiting for incoming queries...</li>
-                            </ul>
-                        </div>
-                        <div class="flex flex-col overflow-hidden">
-                            <h3 class="font-bold text-red-400 mb-2"><i class="fa-solid fa-bug"></i> Error & Network Log:</h3>
-                            <ul id="error-log" class="bg-gray-900 border border-red-900/50 rounded-xl p-4 text-sm text-gray-300 flex flex-col gap-2 overflow-y-auto flex-grow h-48">
-                                <li class="opacity-50 italic">System stable. No errors.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            
+            <!-- RESULTS -->
+            <div id="results-container" class="quiz-wrapper w-full max-w-4xl rounded-2xl p-8 hidden overflow-y-auto">
+                <h2 class="text-3xl font-bold mb-6 text-center">النتائج</h2>
+                <div id="mistakes-list" class="flex flex-col gap-4"></div>
             </div>
         </main>
     </div>
 
     <script>
-        // --- LOGIN AUTHENTICATION LOGIC ---
+        const quizData = [ /* Paste your 25 objects here from previous response */ ];
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(25).fill(null);
+        let timeRemaining = 900;
+
         function attemptLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            
-            // Username must contain .c@stc.com.kw and password must be Stc123
-            if (user.includes('.c@stc.com.kw') && pass === 'Stc123') {
-                document.getElementById('login-error').classList.add('hidden');
-                const overlay = document.getElementById('login-overlay');
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    const mainApp = document.getElementById('main-app');
-                    mainApp.classList.remove('opacity-0', 'pointer-events-none');
-                    document.body.style.overflow = 'auto';
-                    showFlowSelection();
-                }, 500);
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
+            const user = document.getElementById('login-user').value;
+            if (user.includes('.c@stc.com.kw') && document.getElementById('login-pass').value === 'Stc123') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('quiz-portal').classList.remove('hidden');
+                document.getElementById('quiz-portal').classList.add('flex');
+                startTimer();
+                renderQuestion();
             }
         }
 
-        // --- NEW KNOWLEDGE BASE: EMOTIONAL INTELLIGENCE & CALL CENTER ---
-        const callCenterKnowledge = [
-            {
-                q: "A customer calls and is upset because their internet is slow. What should you do first?",
-                options: ["A) Offer a discount immediately", "B) Transfer the call to a supervisor", "C) Listen carefully, empathize, and troubleshoot step by step", "D) Tell them to call later"],
-                a: "C) Listen carefully, empathize, and troubleshoot step by step"
-            },
-            {
-                q: "During a chat, a client uses abusive language. What is the correct response?",
-                options: ["A) Argue back", "B) Calmly warn the client and follow escalation policy", "C) Close the chat immediately without explanation", "D) Ignore the behavior"],
-                a: "B) Calmly warn the client and follow escalation policy"
-            },
-            {
-                q: "A customer is unsure which internet package fits their needs. How do you approach this?",
-                options: ["Tell them to check the website and hang up", "Ask probing questions about their daily internet usage before recommending a product", "Sell them the most expensive package available", "Assign a random package based on popularity"],
-                a: "Ask probing questions about their daily internet usage before recommending a product"
-            },
-            {
-                q: "The customer threatens to cancel their subscription because a competitor offered a cheaper rate. What is your best move?",
-                options: ["Acknowledge their concern, highlight STC's unique value and benefits, and check for retention offers", "Tell them the competitor's service is terrible", "Transfer to the technical team immediately", "Cancel the subscription right away to save time"],
-                a: "Acknowledge their concern, highlight STC's unique value and benefits, and check for retention offers"
-            },
-            {
-                q: "A customer calls complaining about a high bill but is struggling to explain the specific issue. What shows high emotional intelligence?",
-                options: ["Put them on hold until they calm down", "Tell them the system is never wrong", "Practice active listening, summarize their points, and guide them through the charges", "Interrupt them to explain how the billing cycle works"],
-                a: "Practice active listening, summarize their points, and guide them through the charges"
-            },
-            {
-                q: "What is the primary goal of demonstrating empathy to an angry customer?",
-                options: ["To de-escalate the situation and build trust", "To prove that the company is right", "To make the call end faster", "To manipulate the customer into buying an upgrade"],
-                a: "To de-escalate the situation and build trust"
-            },
-            {
-                q: "If a customer asks a highly technical question about a product that you do not know the answer to, what is the best response?",
-                options: ["Make up an answer so you don't look unprofessional", "Tell them the question is irrelevant", "Transfer the call without saying anything", "Honestly state you are unsure, but assure them you will find the correct information from the technical team"],
-                a: "Honestly state you are unsure, but assure them you will find the correct information from the technical team"
-            },
-            {
-                q: "How should an agent handle back-to-back stressful calls?",
-                options: ["Take the frustration out on the next customer", "Take a few deep breaths, reset emotionally, and treat the next caller with a fresh perspective", "Complain to colleagues loudly", "Disconnect calls randomly to reduce the queue"],
-                a: "Take a few deep breaths, reset emotionally, and treat the next caller with a fresh perspective"
-            }
-        ];
-
-        const allKnowledge = [...callCenterKnowledge];
-
-        let botKnowledge = []; 
-        let currentLang = 'ar';
-        let isDarkMode = true;
-        let isQuizMode = false;
-        let currentQuizItem = null;
-        let quizScore = 0;
-        let quizAttempts = 0;
-        let analytics = { total: 0, hits: 0, misses: 0, logs: [], errors: [] };
-
-        const uiText = {
-            ar: {
-                greeting: "🔥 أهلاً بك في بوابة STC للاختبارات!<br><br>هذا المساعد مخصص لتقييم <strong>الذكاء العاطفي ومعرفة المنتجات</strong> لموظفي خدمة العملاء.<br><br>اضغط على القسم أدناه لنبدأ التدريب:",
-                flowSelected: "🔥 ممتاز! لقد دخلت مسار الذكاء العاطفي ومعرفة المنتجات.<br><br>اكتب <strong>(اختبار)</strong> لنبدأ في طرح أسئلة تحاكي مواقف العملاء المختلفة.<br><br>جاهز لإثبات مهارتك؟",
-                placeholder: "اكتب سؤالك، أو 'اختبار' للتدريب...",
-                send: "إرسال",
-                notFound: "عذراً، لم أجد إجابة مطابقة في قاعدة التقييم. يرجى توضيح السؤال أكثر! 💜",
-                multipleFound: "لقد وجدت أكثر من موقف متعلق ببحثك. الرجاء اختيار الموقف المقصود:",
-                anythingElse: "<br><br><span class='text-sm opacity-80' style='color: var(--neon-purple);'>هل تحتاج إلى تدريب على موقف آخر؟ 😊</span>",
-                quizStart: "🎓 <strong style='color: var(--neon-purple);'>بدأ تقييم خدمة العملاء!</strong><br><br>إليك الموقف الأول:",
-                quizEnd: "تم إنهاء الاختبار. عدنا إلى وضع الاستعلام العادي! 🚀",
-                useOptions: "يرجى اختيار إحدى الإجابات من الخيارات أعلاه لتقييم تصرفك.",
-                yesReply: "ممتاز! 😎✨<br><br>يلا نبدأ، اكتب (اختبار) وأنا جاهز أطرح عليك المواقف 💜",
-                noReply: "خذ وقتك 🌟💜<br><br>إذا كنت مستعد لاحقاً، فقط اكتب (اختبار) وأنا بالخدمة 👌"
-            }
-        };
-
-        const chitChatCategories = [
-            {
-                name: 'mixed_thanks_yes',
-                words: ['thank you yes', 'yes thank you', 'نعم شكرا', 'شكرا نعم', 'اي شكرا', 'ok thanks', 'اوكي شكرا'],
-                reply: 'العفو يا بطل! 💜 يلا دامك جاهز ومتحمس، اكتب (اختبار) ونكسر الدنيا! 🔥'
-            },
-            {
-                name: 'greetings',
-                words: ['السلام عليكم', 'هلا', 'مرحبا', 'hello', 'hi', 'hey', 'صباح الخير', 'مساء الخير'],
-                reply: 'يا هلا وغلا! 🌟 مستعد نختبر مهاراتك في التعامل مع العملاء؟ اكتب (اختبار) للبدء.'
-            },
-            {
-                name: 'agreement',
-                words: ['okay', 'ok', 'تمام', 'اوكي', 'أوكي', 'صح', 'بالضبط', 'exactly', 'agree', 'اتفق'],
-                reply: 'حلوين! 👍 دامنا متفقين، الكيبورد كيبوردك.. اطلب اختبار أو اسأل عن موقف محدد.'
-            }
-        ];
-
-        function initApp() {
-            const btn = document.getElementById('theme-btn');
-            btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        function renderQuestion() {
+            const q = quizData[currentQuestionIndex];
+            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.q}`;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn p-4 rounded-xl text-right ${userAnswers[currentQuestionIndex] === idx ? 'selected' : ''}`;
+                btn.innerText = opt;
+                btn.onclick = () => { userAnswers[currentQuestionIndex] = idx; renderQuestion(); };
+                container.appendChild(btn);
+            });
+            document.getElementById('next-btn').classList.toggle('hidden', currentQuestionIndex === 24);
+            document.getElementById('submit-btn').classList.toggle('hidden', currentQuestionIndex !== 24);
         }
 
-        function showFlowSelection() {
-            isQuizMode = false;
-            botKnowledge = allKnowledge;
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = ''; 
-            
-            document.getElementById('user-input').disabled = false;
-            document.getElementById('send-btn').disabled = false;
-            document.getElementById('quiz-btn').disabled = false;
-            document.getElementById('quiz-btn').style.opacity = "1";
-            document.getElementById('mode-subtitle').innerText = "بوابة تقييم خدمة العملاء";
-            document.getElementById('mode-subtitle').style.color = "";
-            
-            printBotMessage(uiText['ar'].greeting, false);
+        function prevQuestion() { if(currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } }
+        function nextQuestion() { if(currentQuestionIndex < 24) { currentQuestionIndex++; renderQuestion(); } }
 
-            const optionsHtml = `
-                <div class="flex flex-wrap gap-3 mt-3 justify-center sm:justify-start">
-                    <button onclick="selectFlow('Customer Service & EQ')" class="pill-btn">⚡ مسار الذكاء العاطفي والمنتجات</button>
-                </div>
-            `;
-            printBotMessage(optionsHtml, false);
-        }
-
-        function selectFlow(flowName) {
-            addUserMessage("اختيار مسار: " + flowName);
-            const typingDiv = showThinking();
-            
-            botKnowledge = callCenterKnowledge;
-            document.getElementById('mode-subtitle').innerText = "مسار: " + flowName;
-            
-            setTimeout(() => {
-                typingDiv.remove();
-                printBotMessage(uiText['ar'].flowSelected, false);
-            }, 800);
-        }
-
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('light-mode');
-            const btn = document.getElementById('theme-btn');
-            if(isDarkMode) {
-                btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-                btn.className = "action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 text-yellow-400 transition hover:scale-105";
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                btn.className = "action-btn w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-orange-500 transition hover:scale-105";
-            }
-        }
-
-        function scrollToBottom() {
-            const chatBox = document.getElementById('chat-box');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function addUserMessage(text) {
-            const chatBox = document.getElementById('chat-box');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "message user-msg p-4 rounded-2xl rounded-tr-sm self-end max-w-[90%] sm:max-w-[80%] shadow-md leading-relaxed text-lg";
-            msgDiv.innerText = text;
-            chatBox.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function showThinking() {
-            const chatBox = document.getElementById('chat-box');
-            const typingDiv = document.createElement('div');
-            typingDiv.id = "thinking-indicator";
-            typingDiv.className = "message bot-msg p-4 rounded-2xl shadow-md typing-indicator self-start rounded-tr-sm";
-            typingDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`;
-            chatBox.appendChild(typingDiv);
-            scrollToBottom();
-            return typingDiv;
-        }
-
-        function printBotMessage(htmlContent, appendHelp = true) {
-            const chatBox = document.getElementById('chat-box');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "message bot-msg p-5 rounded-2xl self-start max-w-[95%] sm:max-w-[85%] text-lg leading-relaxed w-full rounded-tr-sm";
-            msgDiv.innerHTML = htmlContent + (appendHelp ? uiText['ar'].anythingElse : "");
-            chatBox.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function toggleAdmin() {
-            const modal = document.getElementById('admin-modal');
-            if (modal.classList.contains('hidden')) {
-                document.getElementById('stat-total').innerText = analytics.total;
-                let rate = analytics.total > 0 ? Math.round((analytics.hits / analytics.total) * 100) : 0;
-                document.getElementById('stat-success').innerText = rate + "%";
-                document.getElementById('stat-failed').innerText = analytics.misses;
-                
-                const logUl = document.getElementById('analytics-log');
-                if(analytics.logs.length > 0) {
-                    logUl.innerHTML = analytics.logs.map(log => 
-                        `<li class="border-b border-purple-900 pb-2 mb-2 flex items-center">
-                            <span class="${log.found ? 'text-green-400' : 'text-yellow-400'} mr-3 text-lg" style="text-shadow: 0 0 5px currentColor;">
-                                <i class="fa-solid ${log.found ? 'fa-check' : 'fa-magnifying-glass'}"></i>
-                            </span>
-                            <span class="text-purple-200">Searched: "${log.query}"</span>
-                        </li>`
-                    ).join('');
-                } else {
-                    logUl.innerHTML = '<li class="opacity-50 italic">Waiting for incoming queries...</li>';
+        function submitQuiz() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            const list = document.getElementById('mistakes-list');
+            userAnswers.forEach((ans, i) => {
+                if (ans !== quizData[i].a) {
+                    const div = document.createElement('div');
+                    div.className = "p-4 bg-red-900/20 border border-red-800 rounded-lg";
+                    div.innerHTML = `<strong>س: ${quizData[i].q}</strong><br>إجابتك: ${quizData[i].options[ans] || 'لم تجب'}<br><span class="text-green-400">الإجابة الصحيحة: ${quizData[i].options[quizData[i].a]}</span>`;
+                    list.appendChild(div);
                 }
-
-                const errUl = document.getElementById('error-log');
-                if(analytics.errors.length > 0) {
-                    errUl.innerHTML = analytics.errors.map(err => 
-                        `<li class="border-b border-red-900/50 pb-2 mb-2 flex items-center text-red-300">
-                            <i class="fa-solid fa-triangle-exclamation mr-2"></i> ${err}
-                        </li>`
-                    ).join('');
-                }
-
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
+            });
         }
 
-        function logAnalytics(query, found) {
-            analytics.total++;
-            if(found) analytics.hits++; 
-            analytics.logs.unshift({query: query, found: found}); 
-            if(analytics.logs.length > 50) analytics.logs.pop(); 
+        function startTimer() {
+            setInterval(() => {
+                timeRemaining--;
+                document.getElementById('timer-display').innerText = Math.floor(timeRemaining/60) + ":" + (timeRemaining%60).toString().padStart(2, '0');
+                if(timeRemaining <= 0) submitQuiz();
+            }, 1000);
         }
-
-        function logError(msg) {
-            analytics.misses++;
-            analytics.errors.unshift(msg);
-            if(analytics.errors.length > 50) analytics.errors.pop();
-        }
-
-        function toggleQuizMode() {
-            let activePool = botKnowledge.length > 0 ? botKnowledge : allKnowledge;
-            if(activePool.length === 0) return; 
-            
-            isQuizMode = !isQuizMode;
-            document.getElementById('chat-box').innerHTML = ''; 
-            
-            if(isQuizMode) {
-                document.getElementById('mode-subtitle').innerText = "وضع التقييم 🎓";
-                document.getElementById('mode-subtitle').style.color = "var(--neon-purple)";
-                quizScore = 0; quizAttempts = 0;
-                printBotMessage(uiText['ar'].quizStart, false);
-                askNextMCQ();
-            } else {
-                document.getElementById('mode-subtitle').innerText = botKnowledge.length > 0 ? "مسار: خدمة العملاء" : "بوابة تقييم خدمة العملاء";
-                document.getElementById('mode-subtitle').style.color = "";
-                currentQuizItem = null;
-                printBotMessage(uiText['ar'].quizEnd, false);
-            }
-        }
-
-        function askNextMCQ() {
-            let activePool = botKnowledge.length > 0 ? botKnowledge : allKnowledge;
-            const randomIndex = Math.floor(Math.random() * activePool.length);
-            currentQuizItem = activePool[randomIndex];
-            
-            let choices = [...currentQuizItem.options];
-            choices.sort(() => Math.random() - 0.5);
-            
-            let quizHtml = `<div class="text-xl font-bold opacity-90 mb-5 text-white">${currentQuizItem.q}</div>`;
-            quizHtml += `<div class="flex flex-col gap-3 w-full">`;
-            
-            for(let i=0; i<choices.length; i++) {
-                let safeChoice = choices[i].replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                let isCorrect = (choices[i] === currentQuizItem.a);
-                quizHtml += `<button onclick="handleMCQSelection('${safeChoice}', ${isCorrect})" class="pill-btn w-full text-right p-4 rounded-xl text-md cursor-pointer">${choices[i]}</button>`;
-            }
-            quizHtml += `</div>`;
-
-            setTimeout(() => { printBotMessage(quizHtml, false); }, 800);
-        }
-
-        window.handleMCQSelection = function(selectedText, isCorrect) {
-            addUserMessage(selectedText);
-            const typingDiv = showThinking();
-            
-            setTimeout(() => {
-                typingDiv.remove();
-                quizAttempts++;
-                
-                if(isCorrect) {
-                    quizScore++;
-                    printBotMessage(`✅ <strong>تصرف سليم!</strong> 👏<br><br><span class="text-sm font-bold text-green-400" style="text-shadow: 0 0 10px rgba(74,222,128,0.5);">النتيجة: ${quizScore}/${quizAttempts}</span>`, false);
-                } else {
-                    printBotMessage(`❌ <strong>يوجد تصرف أفضل في هذا الموقف.</strong><br>الإجراء الأنسب هو: <span class="font-bold text-purple-300">${currentQuizItem.a}</span><br><br><span class="text-sm font-bold opacity-80">النتيجة: ${quizScore}/${quizAttempts}</span>`, false);
-                }
-                
-                setTimeout(() => { askNextMCQ(); }, 2500);
-            }, 800);
-        }
-
-        window.forceAnswer = function(index, useAllPool = false) {
-            let activePool = useAllPool ? allKnowledge : botKnowledge;
-            const item = activePool[index];
-            addUserMessage(item.q);
-            logAnalytics(item.q, true);
-            
-            const typingDiv = showThinking();
-            setTimeout(() => {
-                typingDiv.remove();
-                printBotMessage(`<div class="opacity-70 text-sm mb-2 pb-2 border-b border-purple-500/50" style="color: var(--text-muted);">${item.q}</div><strong class="text-white">${item.a}</strong>`, true);
-            }, 600);
-        };
-
-        function processAndRespond(userQuery) {
-            const typingDiv = showThinking();
-            let query = userQuery.toLowerCase().trim();
-            
-            let isShortCommand = query.length < 35; 
-
-            if (isShortCommand) {
-                let qWords = query.split(/\s+/);
-                for(let cat of chitChatCategories) {
-                    if(cat.words.some(w => {
-                        let wWords = w.split(/\s+/);
-                        if (wWords.length === 1) return qWords.includes(w);
-                        return query.includes(w);
-                    })) {
-                        setTimeout(() => { typingDiv.remove(); printBotMessage(cat.reply, false); }, 800);
-                        return;
-                    }
-                }
-
-                const quizWords = ['test', 'quiz', 'اختبار', 'كويز', 'امتحان', 'تست', 'جربني', 'اختبرني'];
-                if (quizWords.some(w => query.split(/\s+/).includes(w))) {
-                    setTimeout(() => {
-                        typingDiv.remove();
-                        if (!isQuizMode) toggleQuizMode();
-                        else printBotMessage(uiText['ar'].useOptions, false);
-                    }, 800);
-                    return;
-                }
-            }
-
-            setTimeout(() => {
-                typingDiv.remove();
-                let queryWords = query.split(" ").filter(w => w.length > 2);
-                if(queryWords.length === 0) queryWords = [query]; 
-
-                let activePool = botKnowledge.length > 0 ? botKnowledge : allKnowledge;
-                
-                let matches = [];
-                for (let i = 0; i < activePool.length; i++) {
-                    let score = 0;
-                    let qText = activePool[i].q.toLowerCase();
-                    for (let word of queryWords) {
-                        if (qText.includes(word)) score += 1;
-                    }
-                    if (score > 0) matches.push({ index: i, score: score, item: activePool[i] });
-                }
-
-                matches.sort((a, b) => b.score - a.score);
-
-                if (matches.length === 0) {
-                    logAnalytics(query, false);
-                    logError(`Zero matches for: '${query}'`);
-                    printBotMessage(uiText['ar'].notFound, false);
-                } 
-                else if (matches.length === 1 || matches[0].score > matches[1]?.score + 1) {
-                    logAnalytics(query, true);
-                    let item = matches[0].item;
-                    printBotMessage(`<div class="opacity-70 text-sm mb-2 pb-2 border-b border-purple-500/50" style="color: var(--text-muted);">${item.q}</div><strong class="text-white">${item.a}</strong>`, true);
-                } 
-                else {
-                    logAnalytics(query, true);
-                    let topMatches = matches.slice(0, 4); 
-                    let optionsHtml = `<p class="mb-3 font-bold text-purple-300">${uiText['ar'].multipleFound}</p><div class="flex flex-col gap-3">`;
-                    for (let match of topMatches) {
-                        optionsHtml += `<button onclick="forceAnswer(${match.index}, ${botKnowledge.length === 0})" class="pill-btn w-full text-right p-3 rounded-xl text-md cursor-pointer">${match.item.q}</button>`;
-                    }
-                    optionsHtml += `</div>`;
-                    printBotMessage(optionsHtml, false);
-                }
-            }, 800); 
-        }
-
-        function handleSend() {
-            const inputField = document.getElementById('user-input');
-            const text = inputField.value.trim();
-            if(!text) return;
-
-            addUserMessage(text);
-            inputField.value = '';
-
-            if(isQuizMode) printBotMessage(uiText['ar'].useOptions, false);
-            else processAndRespond(text);
-        }
-
-        document.getElementById('user-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') handleSend();
-        });
     </script>
 </body>
 </html>
