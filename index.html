@@ -10,6 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
         
         :root {
+            /* Dark Theme - STC Deep Space */
             --bg-main: #000000;
             --bg-panel: rgba(15, 5, 25, 0.65);
             --bg-item: rgba(255, 255, 255, 0.03);
@@ -27,6 +28,7 @@
         }
 
         body.light-theme {
+            /* Light Theme - Clean Apple-like */
             --bg-main: #f5f5f7;
             --bg-panel: rgba(255, 255, 255, 0.85);
             --bg-item: rgba(0, 0, 0, 0.02);
@@ -119,7 +121,6 @@
 </head>
 <body class="p-4 md:p-8 flex items-center justify-center relative">
 
-    <!-- TOP CONTROLS -->
     <div class="top-controls">
         <button onclick="toggleTheme()" class="control-btn px-5 py-2.5 flex items-center justify-center" title="Toggle Theme">
             <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
@@ -129,7 +130,6 @@
         </button>
     </div>
 
-    <!-- ANTI-CHEAT WARNING MODAL -->
     <div id="warning-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-md w-full text-center border-red-500/30">
             <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -141,7 +141,6 @@
         </div>
     </div>
 
-    <!-- UNANSWERED QUESTIONS MODAL -->
     <div id="unanswered-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-md w-full text-center border-yellow-500/30">
             <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -154,7 +153,6 @@
         </div>
     </div>
 
-    <!-- REVIEW DETAILS FULL-PAGE MODAL -->
     <div id="review-modal" class="fixed inset-0 z-[300] flex justify-center bg-black/80 backdrop-blur-xl hidden fade-in p-4 md:p-8">
         <div class="apple-panel w-full max-w-5xl flex flex-col h-full relative overflow-hidden">
             <div class="p-6 border-b border-[var(--border-item)] flex justify-between items-center bg-[var(--bg-panel)] z-10 shrink-0">
@@ -166,12 +164,10 @@
                 </button>
             </div>
             <div id="mistakes-container" class="flex-grow overflow-y-auto p-6 md:p-10 custom-scrollbar flex flex-col gap-6 text-left rtl:text-right">
-                <!-- Mistakes injected here -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- COMING SOON MODAL -->
     <div id="coming-soon-modal" class="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-sm w-full text-center">
             <div class="w-16 h-16 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-6 text-3xl">
@@ -183,7 +179,6 @@
         </div>
     </div>
 
-    <!-- 1. LOGIN SCREEN -->
     <div id="login-screen" class="apple-panel p-10 max-w-sm w-full text-center z-50 fade-in">
         <div class="h-14 w-auto mx-auto flex items-center justify-center mb-8">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC" class="h-full object-contain logo-img">
@@ -201,7 +196,6 @@
         </form>
     </div>
 
-    <!-- 2. DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="apple-panel p-8 md:p-12 max-w-5xl w-full hidden flex-col fade-in">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-[var(--border-item)]">
             <div>
@@ -238,7 +232,6 @@
                 <button class="mt-6 txt-neon font-bold text-sm text-left rtl:text-right group-hover:underline" id="btn-view-history">View <i class="fa-solid fa-arrow-right rtl:rotate-180 text-xs ml-1"></i></button>
             </div>
 
-            <!-- EXCLUSIVE ADMIN PANEL CARD (Only visible to Ahmad Zbibo) -->
             <div id="admin-card" class="apple-item p-8 hidden flex-col justify-between border-purple-500/40 relative overflow-hidden group md:col-span-3 cursor-pointer bg-purple-950/10" onclick="showAdminPanel()">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -278,7 +271,6 @@
         </div>
     </div>
 
-    <!-- 2.5 PAST ATTEMPTS SCREEN -->
     <div id="history-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col h-[80vh] fade-in">
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-6">
             <h2 id="hist-title" class="text-2xl font-bold txt-main"><i class="fa-solid fa-clock-rotate-left mr-3 txt-neon"></i> Your Past Attempts</h2>
@@ -289,7 +281,6 @@
         <div id="history-container" class="flex-grow overflow-y-auto pr-3 custom-scrollbar flex flex-col gap-4"></div>
     </div>
 
-    <!-- 2.6 EXCLUSIVE ADMIN MANAGEMENT PANEL -->
     <div id="admin-screen" class="apple-panel p-8 md:p-12 max-w-6xl w-full hidden flex-col h-[85vh] fade-in">
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-8">
             <div>
@@ -305,8 +296,7 @@
             <div class="apple-item p-6 md:col-span-2">
                 <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-4" id="adm-lbl-active">Live Sessions (Heartbeat)</p>
                 <div id="admin-live-users" class="flex flex-col gap-3">
-                    <!-- Live users injected here -->
-                </div>
+                    </div>
             </div>
             <div class="apple-item p-6 flex flex-col justify-center items-center text-center">
                 <div class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-database"></i></div>
@@ -322,7 +312,6 @@
         <div id="admin-performance-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. QUIZ INTERFACE -->
     <div id="quiz-screen" class="apple-panel p-6 md:p-10 max-w-5xl w-full hidden flex-col h-[90vh] fade-in">
         <div class="flex justify-between items-end border-b border-[var(--border-item)] pb-5 mb-6 shrink-0">
             <div>
@@ -352,7 +341,6 @@
         </div>
     </div>
 
-    <!-- 4. RESULTS SCREEN -->
     <div id="results-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col fade-in relative justify-center items-center h-auto min-h-[60vh]">
         <button onclick="returnToDashboard()" id="btn-res-home" class="absolute top-6 right-6 rtl:left-6 rtl:right-auto bg-[var(--bg-item)] border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item-hover)] px-5 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm z-10">
             <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Dashboard</span>
@@ -367,7 +355,7 @@
             <h3 id="res-grade" class="text-xl font-bold mb-6"></h3>
             
             <div class="inline-block apple-item px-12 py-8 mb-8">
-                <p id="lbl-score" class="text-sm txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
+                <p id="lbl-score" class="text-xs txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
                 <p class="text-7xl font-black txt-main tracking-tighter" dir="ltr"><span id="res-score" class="txt-neon"></span><span id="score-out-of" class="text-3xl txt-muted ml-1">/25</span></p>
             </div>
 
@@ -380,8 +368,132 @@
     </div>
 
     <script>
+        // --- MULTILINGUAL DICTIONARY ---
+        const i18n = {
+            en: {
+                langBtn: "العربية",
+                loginTitle: "Quiz Portal",
+                loginSub: "Agent Authentication",
+                loginHint: "(Requires .c@stc.com.kw)",
+                userPlace: "Email Address",
+                passPlace: "Password",
+                btnLogin: "Continue",
+                loginErr: "Invalid credentials! Only authorized agents allowed.",
+                greetUser: "Welcome back, {name}",
+                dashDesc: "Explore your dashboard. Attempt the mandatory assessment, review past scores, and access training materials to stay ahead.",
+                quizTitle: "June 2026 Quiz",
+                quizInfo: "25 Questions • 15 Min Limit",
+                btnAttempt: "Attempt Quiz",
+                histTitle: "History",
+                histDesc: "Review your scores.",
+                btnViewHist: "View",
+                trainTitle: "Training",
+                trainDesc: "Brush up on skills.",
+                guideTitle: "STC Guidelines",
+                guideDesc: "Company policies and operating rules.",
+                btnBackHome: "Dashboard",
+                lblQuestion: "Questions",
+                lblOf: "of",
+                lblTimer: "Time Remaining",
+                lblPrev: "Previous",
+                lblNext: "Next",
+                lblSubmit: "Submit",
+                resTitle: "Assessment Complete",
+                resTitleFail: "Assessment Failed",
+                lblScore: "Final Score",
+                btnOpenReview: "View Review Details",
+                reviewModalTitle: "Assessment Review",
+                perfectScore: "Perfect Score! You are an STC Star. No mistakes made.",
+                lblYourAns: "Your Answer:",
+                lblCorrectAns: "Correct Answer:",
+                lblNoAns: "Did not answer (Time expired)",
+                qPrefix: "Q",
+                warnModalTitle: "Warning!",
+                warnModalDesc: "Using browser navigation or refreshing is strictly prohibited during the quiz. This is your warning. Repeating this will result in an automatic failure.",
+                warnModalOk: "I Understand",
+                unansTitle: "Unanswered Questions",
+                unansDesc: "You cannot submit the quiz yet. You missed the following questions:",
+                btnUnansOk: "Return to Quiz",
+                failDesc: "You failed the quiz because you used the browser's navigation/refresh, which violates the anti-cheat policy.",
+                gradeExcellent: "Excellent! You passed",
+                gradeGood: "Good! Passed",
+                gradeFail: "Failed",
+                noHistory: "No past attempts found.",
+                csTitle: "Stay Tuned!",
+                csDesc: "We're cooking up something amazing for you. This feature will be available very soon.",
+                csBtn: "Got it",
+                adminTitle: "Management Console",
+                adminDesc: "Exclusive access: View live sessions and statistics.",
+                adminLive: "Live Sessions (Heartbeat)",
+                adminLogs: "Recorded System Logs",
+                adminPerf: "Historical Agent Performance:",
+                statusOnline: "Online",
+                statusOffline: "Offline"
+            },
+            ar: {
+                langBtn: "English",
+                loginTitle: "بوابة الاختبارات",
+                loginSub: "تسجيل دخول الموظفين",
+                loginHint: "(يجب استخدام .c@stc.com.kw)",
+                userPlace: "البريد الإلكتروني",
+                passPlace: "كلمة المرور",
+                btnLogin: "متابعة",
+                loginErr: "بيانات غير صحيحة! الدخول مسموح للموظفين المصرح لهم فقط.",
+                greetUser: "يا هلا والله بـ {name}",
+                dashDesc: "هذه لوحة التحكم الخاصة فيك. تقدر تبدأ التقييم الإلزامي، تراجع نتائجك السابقة، وتستفيد من المواد التدريبية عشان تطور مهاراتك.",
+                quizTitle: "اختبار يونيو 2026",
+                quizInfo: "25 سؤال • 15 دقيقة",
+                btnAttempt: "بدء الاختبار",
+                histTitle: "السجل",
+                histDesc: "راجع نتائجك.",
+                btnViewHist: "عرض",
+                trainTitle: "التدريب",
+                trainDesc: "طور مهاراتك.",
+                guideTitle: "سياسات STC",
+                guideDesc: "الأنظمة والقوانين.",
+                btnBackHome: "الرئيسية",
+                lblQuestion: "الأسئلة",
+                lblOf: "من",
+                lblTimer: "الوقت المتبقي",
+                lblPrev: "السابق",
+                lblNext: "التالي",
+                lblSubmit: "إنهاء",
+                resTitle: "اكتمل التقييم",
+                resTitleFail: "فشل التقييم",
+                lblScore: "النتيجة النهائية",
+                btnOpenReview: "عرض تفاصيل المراجعة",
+                reviewModalTitle: "مراجعة التقييم",
+                perfectScore: "كفو! نتيجتك كاملة وإنت نجم بـ STC. ما عندك ولا غلطة.",
+                lblYourAns: "إجابتك:",
+                lblCorrectAns: "الإجابة الصح:",
+                lblNoAns: "ما جاوبت (خلص الوقت)",
+                qPrefix: "س",
+                warnModalTitle: "تنبيه هام!",
+                warnModalDesc: "ممنوع تستخدم أسهم المتصفح أو تسوي ريفرش وإنت تمتحن. هذا تحذيرك، إذا سويتها مرة ثانية راح تسقط تلقائياً.",
+                warnModalOk: "فهمت",
+                unansTitle: "أسئلة غير مجابة",
+                unansDesc: "لا يمكنك تسليم الاختبار الآن. نسيت الإجابة على الأسئلة التالية:",
+                btnUnansOk: "العودة للاختبار",
+                failDesc: "إنت رسبت لأنك استخدمت أسهم المتصفح أو سويت ريفرش، وهالشي يخالف سياسة منع الغش.",
+                gradeExcellent: "ممتاز، لقد نجحت!",
+                gradeGood: "جيد، لقد نجحت",
+                gradeFail: "راسب",
+                noHistory: "لا توجد محاولات سابقة.",
+                csTitle: "خلك قريب!",
+                csDesc: "قاعدين نجهز لك شيء مميز. هالخاصية راح تتوفر قريباً جداً.",
+                csBtn: "تم",
+                adminTitle: "وحدة الإدارة والتحكم",
+                adminDesc: "دخول حصري: عرض الجلسات النشطة والإحصائيات.",
+                adminLive: "الجلسات النشطة (مباشر)",
+                adminLogs: "سجلات النظام المحفوظة",
+                adminPerf: "أداء الموظفين التاريخي:",
+                statusOnline: "متصل",
+                statusOffline: "غير متصل"
+            }
+        };
+
         // --- 102 SCENARIO-BASED QUESTIONS DATABASE ---
-        // Stored in a highly optimized format to guarantee full rendering
+        // Stored in a highly optimized format to guarantee full rendering without unescaped quote errors
         const allQuizData = [
             {q_en:"How many days the Prepaid line will stay on Grace?", q_ar:"كم يوم يبقى الخط في Grace؟", opt_en:["60 days","30 days","20 days","45 days"], opt_ar:["60 يوم","30 يوم","20 يوم","45 يوم"], a:1},
             {q_en:"What is internet capacity in 25 KD voice package?", q_ar:"ما هي سعة الانترنت في باقة ال 25 الصوتية؟", opt_en:["10 GB","25 GB","50 GB","100 GB"], opt_ar:["10 GB","25 GB","50 GB","100 GB"], a:3},
@@ -492,13 +604,14 @@
         let agentName = "";
         let agentEmail = "";
         
-        let activeQuizSet = []; // Will hold the 25 random questions
+        let activeQuizSet = []; 
         let currentPage = 0;
         const questionsPerPage = 5;
         let totalPages = 5;
         
         let userAnswers = new Array(25).fill(null);
         let timerInterval;
+        let adminInterval;
         let isQuizActive = false;
         let navWarnings = 0;
 
@@ -679,6 +792,7 @@
 
         function returnToDashboard() {
             isQuizActive = false;
+            if(adminInterval) clearInterval(adminInterval);
             sessionStorage.removeItem('quiz_in_progress');
             showDashboard();
         }
@@ -730,14 +844,15 @@
             document.getElementById('dashboard-screen').classList.remove('flex');
             document.getElementById('admin-screen').classList.remove('hidden');
             document.getElementById('admin-screen').classList.add('flex');
+            
             renderAdminPanel();
+            if(adminInterval) clearInterval(adminInterval);
+            adminInterval = setInterval(renderAdminPanel, 2000); // Live tracking
         }
 
         function renderAdminPanel() {
             const perfContainer = document.getElementById('admin-performance-container');
-            perfContainer.innerHTML = '';
             const failContainer = document.getElementById('admin-failed-container');
-            failContainer.innerHTML = '';
             const t = i18n[lang];
 
             // Render Live Users
@@ -767,10 +882,11 @@
             let qStats = JSON.parse(localStorage.getItem('stc_q_stats')) || {};
             let sortedFailures = Object.keys(qStats).map(k => ({id: parseInt(k), fails: qStats[k]})).sort((a,b) => b.fails - a.fails);
             
+            failContainer.innerHTML = '';
             if (sortedFailures.length === 0) {
                 failContainer.innerHTML = `<p class="txt-muted italic text-center p-4">No failed question data recorded yet.</p>`;
             } else {
-                sortedFailures.slice(0, 10).forEach(stat => { // Show top 10
+                sortedFailures.slice(0, 10).forEach(stat => {
                     let qText = lang === 'en' ? allQuizData[stat.id].q_en : allQuizData[stat.id].q_ar;
                     failContainer.innerHTML += `
                         <div class="apple-item p-4 flex justify-between items-center gap-4">
@@ -788,6 +904,7 @@
             let globalLogs = JSON.parse(localStorage.getItem('stc_global_admin_logs')) || [];
             document.getElementById('adm-counter-logs').innerText = globalLogs.length;
 
+            perfContainer.innerHTML = '';
             if (globalLogs.length === 0) {
                 perfContainer.innerHTML = `<div class="apple-item p-8 text-center"><p class="txt-muted italic">No user attempt data recorded yet.</p></div>`;
                 return;
@@ -800,8 +917,6 @@
                 } else if(log.status.includes('Good') || log.status.includes('جيد')) {
                     statusBadgeColor = "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
                 }
-
-                let pct = Math.round((log.score / 25) * 100);
 
                 let logHtml = `
                     <div class="apple-item p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -907,7 +1022,6 @@
 
         // --- QUIZ START ---
         function startQuiz() {
-            // Select 25 Random Questions from the 102 Database
             let shuffledPool = allQuizData.map((val, index) => { return {val: val, originalIndex: index} }).sort(() => 0.5 - Math.random());
             activeQuizSet = shuffledPool.slice(0, 25);
 
@@ -964,19 +1078,25 @@
             
             for (let i = startIdx; i < endIdx; i++) {
                 const qObj = activeQuizSet[i].val;
-                const qText = lang === 'en' ? qObj.q_en : qObj.q_ar;
-                const qOpts = lang === 'en' ? qObj.opt_en : qObj.opt_ar;
                 
                 const qDiv = document.createElement('div');
                 qDiv.className = "apple-item p-6 md:p-8";
                 
-                let html = `<h3 class="text-xl md:text-2xl font-bold txt-main mb-6 leading-relaxed">${t.qPrefix}${i+1}. ${qText}</h3>`;
+                let html = `<h3 class="text-xl md:text-2xl font-bold txt-main mb-6 leading-relaxed" style="line-height: 1.6;">
+                                <span class="text-[var(--neon-purple)] text-sm block mb-2 uppercase tracking-widest font-bold opacity-80">${t.qPrefix} ${i + 1}</span>
+                                ${qObj.q_en} <br> <span class="text-[var(--text-muted)] text-lg mt-1 block">${qObj.q_ar}</span>
+                            </h3>`;
                 html += `<div class="flex flex-col gap-3">`;
                 
-                qOpts.forEach((opt, optIdx) => {
+                qObj.opt_en.forEach((optEn, optIdx) => {
+                    const optAr = qObj.opt_ar[optIdx];
                     const isSelected = userAnswers[i] === optIdx;
                     const selClass = isSelected ? 'selected' : '';
-                    html += `<button onclick="selectOption(${i}, ${optIdx})" id="btn-q${i}-opt${optIdx}" class="option-btn w-full text-left rtl:text-right p-5 text-md md:text-lg ${selClass}">${opt}</button>`;
+                    
+                    html += `<button onclick="selectOption(${i}, ${optIdx})" id="btn-q${i}-opt${optIdx}" class="option-btn w-full text-left rtl:text-right p-4 rounded-2xl text-md md:text-lg font-medium flex flex-col md:flex-row justify-between items-start md:items-center gap-2 ${selClass}">
+                                <span>${optEn}</span>
+                                <span class="text-sm opacity-70 txt-neon text-right rtl:text-left">${optAr}</span>
+                             </button>`;
                 });
                 
                 html += `</div>`;
@@ -1000,7 +1120,7 @@
 
         function selectOption(qIndex, optIndex) {
             userAnswers[qIndex] = optIndex;
-            const qOpts = lang === 'en' ? activeQuizSet[qIndex].val.opt_en : activeQuizSet[qIndex].val.opt_ar;
+            const qOpts = activeQuizSet[qIndex].val.opt_en;
             for(let j=0; j<qOpts.length; j++) {
                 const btn = document.getElementById(`btn-q${qIndex}-opt${j}`);
                 if (j === optIndex) btn.classList.add('selected');
@@ -1039,7 +1159,6 @@
             const mistakesBox = document.getElementById('mistakes-container');
             mistakesBox.innerHTML = '';
             
-            // Stats logic for Admin Tracking
             let globalStats = JSON.parse(localStorage.getItem('stc_q_stats')) || {};
             
             activeQuizSet.forEach((qItem, i) => {
@@ -1050,7 +1169,6 @@
                 if (userAns === qObj.a) {
                     score++;
                 } else {
-                    // Log failure stat
                     if (!isLangToggle) {
                         globalStats[originalId] = (globalStats[originalId] || 0) + 1;
                     }
@@ -1122,27 +1240,6 @@
                 document.getElementById('res-score').innerText = score;
             }
         }
-
-        // Initialize dictionary variables on load
-        i18n.en.adminTitle = "Management Console";
-        i18n.en.adminDesc = "Exclusive access: View active users and performance.";
-        i18n.en.adminDesc2 = "Real-time team completion logs and live sessions.";
-        i18n.en.adminLive = "Live Sessions (Heartbeat)";
-        i18n.en.adminLogs = "Recorded System Logs";
-        i18n.en.adminFail = "Top Failed Questions (Analytics):";
-        i18n.en.adminPerf = "Historical Agent Performance:";
-        i18n.en.statusOnline = "Online";
-        i18n.en.statusOffline = "Offline";
-
-        i18n.ar.adminTitle = "وحدة الإدارة والتحكم";
-        i18n.ar.adminDesc = "دخول حصري: عرض الجلسات والإحصائيات.";
-        i18n.ar.adminDesc2 = "سجلات النظام والجلسات النشطة المباشرة.";
-        i18n.ar.adminLive = "الجلسات النشطة (مباشر)";
-        i18n.ar.adminLogs = "سجلات النظام المحفوظة";
-        i18n.ar.adminFail = "أكثر الأسئلة فشلاً (تحليلات):";
-        i18n.ar.adminPerf = "أداء الموظفين التاريخي:";
-        i18n.ar.statusOnline = "متصل";
-        i18n.ar.statusOffline = "غير متصل";
     </script>
 </body>
 </html>
