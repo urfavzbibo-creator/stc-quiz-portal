@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,115 +8,321 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+        
         :root {
-            --bg-main: #000000; --bg-container: #090014; --bg-input: #120024;
-            --text-main: #ffffff; --border-color: #4c1d95; --stc-purple: #4F008C;
-            --neon-purple: #a855f7; --option-bg: #1e003b; --option-hover: #3b0764;
-            --option-selected: #6b21a8; --shadow-neon: 0 0 15px rgba(168, 85, 247, 0.4);
+            --bg-main: #000000;
+            --bg-container: #090014;
+            --bg-input: #120024;
+            --text-main: #ffffff;
+            --border-color: #4c1d95;
+            --stc-purple: #4F008C;
+            --neon-purple: #a855f7;
+            --option-bg: #1e003b;
+            --option-hover: #3b0764;
+            --option-selected: #6b21a8;
+            --shadow-neon: 0 0 15px rgba(168, 85, 247, 0.4);
         }
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-main); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
-        .quiz-wrapper { background-color: var(--bg-container); border: 1px solid var(--border-color); }
-        .option-btn { background-color: var(--option-bg); border: 1px solid var(--border-color); transition: all 0.2s ease; }
-        .option-btn:hover { background-color: var(--option-hover); }
-        .option-btn.selected { background-color: var(--option-selected); border-color: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
-        .btn-neon { background-color: var(--stc-purple); transition: all 0.3s; }
-        .btn-neon:hover:not(:disabled) { background-color: #6b21a8; }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-main); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel { background-color: var(--bg-container); border: 1px solid var(--border-color); box-shadow: var(--shadow-neon); }
+        .input-box { background-color: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
+        .input-box:focus { box-shadow: var(--shadow-neon); border-color: var(--neon-purple); outline: none; }
+        
+        .option-btn { background-color: var(--option-bg); border: 1px solid var(--border-color); transition: all 0.2s ease; cursor: pointer; }
+        .option-btn:hover:not(.selected) { background-color: var(--option-hover); transform: translateY(-2px); }
+        .option-btn.selected { background-color: var(--option-selected); border-color: var(--neon-purple); box-shadow: inset 0 0 10px rgba(168,85,247,0.8); }
+
+        .btn-stc { background-color: var(--stc-purple); transition: all 0.3s; }
+        .btn-stc:hover:not(:disabled) { background-color: #6b21a8; box-shadow: var(--shadow-neon); }
+        .btn-stc:disabled { opacity: 0.4; cursor: not-allowed; }
+        
+        .timer-warning { color: #ef4444; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8 flex items-center justify-center">
 
-    <!-- LOGIN -->
-    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95">
-        <div class="bg-[#090014] border-2 border-purple-600 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
-            <h2 class="text-3xl font-bold mb-6 text-purple-400">STC Quiz Portal</h2>
-            <input type="text" id="login-user" class="w-full bg-[#120024] border border-purple-900 rounded-xl p-3 mb-4" placeholder="Username (e.g. name.c@stc.com.kw)">
-            <input type="password" id="login-pass" class="w-full bg-[#120024] border border-purple-900 rounded-xl p-3 mb-4" placeholder="Password">
-            <button onclick="attemptLogin()" class="w-full bg-purple-700 py-3 rounded-xl font-bold text-white">Login</button>
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-screen" class="panel rounded-2xl p-8 max-w-md w-full text-center z-50">
+        <div class="h-16 w-20 bg-white rounded-xl mx-auto flex items-center justify-center mb-6 p-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC" class="h-full object-contain filter brightness-0 invert">
+        </div>
+        <h2 class="text-3xl font-bold mb-2 text-purple-400">STC Quiz Portal</h2>
+        <p class="text-gray-400 text-sm mb-6">Agent Authentication Required</p>
+        
+        <input type="text" id="login-user" class="input-box w-full rounded-xl px-4 py-3 mb-4" placeholder="Username (e.g. name.c@stc.com.kw)">
+        <input type="password" id="login-pass" class="input-box w-full rounded-xl px-4 py-3 mb-6" placeholder="Password" onkeypress="if(event.key === 'Enter') login()">
+        
+        <p id="login-err" class="text-red-500 text-sm mb-4 hidden font-bold">Invalid credentials!</p>
+        <button onclick="login()" class="btn-stc w-full text-white py-3 rounded-xl font-bold text-lg">Login</button>
+    </div>
+
+    <!-- 2. DASHBOARD SCREEN -->
+    <div id="dashboard-screen" class="panel rounded-2xl p-10 max-w-2xl w-full hidden flex-col">
+        <h1 id="greeting-msg" class="text-4xl font-bold mb-4 text-purple-400"></h1>
+        <p class="text-lg text-gray-300 mb-10">Whenever you are free, click the button below to access the quiz.</p>
+        
+        <div class="bg-black/50 border border-purple-800 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:border-purple-500 transition duration-300">
+            <div>
+                <h3 class="text-2xl font-bold text-white"><i class="fa-regular fa-calendar-check text-purple-500 mr-2"></i> June 2026 Quiz</h3>
+                <p class="text-sm text-gray-400 mt-1">25 Questions • 15 Minutes limit</p>
+            </div>
+            <button onclick="startQuiz()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)] transition transform hover:scale-105">
+                Attempt <i class="fa-solid fa-play ml-2"></i>
+            </button>
         </div>
     </div>
 
-    <!-- QUIZ PORTAL -->
-    <div id="quiz-portal" class="hidden flex-col h-screen p-4">
-        <header class="flex justify-between items-center p-4 border-b border-purple-800">
-            <div><h1 class="text-xl font-bold text-purple-400">STC Monthly Quiz</h1><p id="date-display" class="text-sm"></p></div>
-            <div class="text-right"><p>Agent: <span id="agent-name" class="font-bold"></span></p><div id="timer-display" class="text-xl text-green-400">15:00</div></div>
-        </header>
+    <!-- 3. QUIZ INTERFACE -->
+    <div id="quiz-screen" class="panel rounded-2xl p-6 md:p-10 max-w-4xl w-full hidden flex-col h-[85vh]">
+        <!-- Header -->
+        <div class="flex justify-between items-end border-b border-purple-800 pb-4 mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-purple-400">June 2026 Quiz</h2>
+                <p class="text-gray-400 mt-1">Question <span id="q-current" class="text-white font-bold">1</span> of 25</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-400 mb-1">Time Remaining</p>
+                <div id="timer" class="text-3xl font-mono font-bold text-green-400">15:00</div>
+            </div>
+        </div>
 
-        <main class="flex-grow flex justify-center p-4">
-            <div id="quiz-container" class="quiz-wrapper w-full max-w-4xl rounded-2xl p-8 flex flex-col">
-                <div id="question-text" class="text-xl font-bold mb-6"></div>
-                <div id="options-container" class="flex flex-col gap-3 flex-grow"></div>
-                <div class="flex justify-between pt-6">
-                    <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-2 rounded-lg border border-purple-600">السابق</button>
-                    <button id="next-btn" onclick="nextQuestion()" class="btn-neon px-6 py-2 rounded-lg">التالي</button>
-                    <button id="submit-btn" onclick="submitQuiz()" class="bg-green-600 px-6 py-2 rounded-lg hidden">إنهاء</button>
-                </div>
-            </div>
+        <!-- Question Area -->
+        <div class="flex-grow overflow-y-auto pr-2 custom-scrollbar">
+            <h3 id="question-text" class="text-xl md:text-2xl font-bold text-white mb-6 leading-relaxed"></h3>
+            <div id="options-container" class="flex flex-col gap-3 mb-6"></div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="border-t border-purple-800 pt-6 mt-4 flex justify-between items-center">
+            <button onclick="prevQ()" id="btn-prev" class="px-6 py-3 rounded-xl font-bold border border-purple-600 hover:bg-purple-900/50 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Previous
+            </button>
             
-            <!-- RESULTS -->
-            <div id="results-container" class="quiz-wrapper w-full max-w-4xl rounded-2xl p-8 hidden overflow-y-auto">
-                <h2 class="text-3xl font-bold mb-6 text-center">النتائج</h2>
-                <div id="mistakes-list" class="flex flex-col gap-4"></div>
+            <button onclick="nextQ()" id="btn-next" class="btn-stc px-8 py-3 rounded-xl font-bold text-white">
+                Next <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+
+            <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-xl font-bold text-white hidden disabled:opacity-50 disabled:cursor-not-allowed">
+                Submit Quiz <i class="fa-solid fa-check ml-2"></i>
+            </button>
+        </div>
+        <p id="submit-warning" class="text-red-400 text-sm text-right mt-2 hidden">You must answer all 25 questions to submit.</p>
+    </div>
+
+    <!-- 4. RESULTS SCREEN -->
+    <div id="results-screen" class="panel rounded-2xl p-6 md:p-10 max-w-4xl w-full hidden flex-col h-[85vh]">
+        <div class="text-center mb-8 border-b border-purple-800 pb-8">
+            <i class="fa-solid fa-ranking-star text-5xl text-yellow-400 mb-4"></i>
+            <h2 class="text-3xl font-bold text-white mb-2">Quiz Completed</h2>
+            <p class="text-gray-400">Agent: <span id="res-agent" class="text-white font-bold"></span></p>
+            <div class="mt-6 inline-block bg-black border border-purple-500 rounded-2xl p-6 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                <p class="text-sm text-purple-300 uppercase tracking-wider mb-1">Final Score</p>
+                <p class="text-6xl font-black text-white"><span id="res-score" class="text-neon-purple"></span> <span class="text-2xl text-gray-500">/ 25</span></p>
             </div>
-        </main>
+        </div>
+
+        <h3 class="text-xl font-bold text-red-400 mb-4" id="mistakes-title">Review Your Mistakes:</h3>
+        <div id="mistakes-container" class="flex-grow overflow-y-auto pr-2 flex flex-col gap-4"></div>
     </div>
 
     <script>
-        const quizData = [ /* Paste your 25 objects here from previous response */ ];
-        let currentQuestionIndex = 0;
-        let userAnswers = new Array(25).fill(null);
-        let timeRemaining = 900;
+        // --- 25 Scenario-Based Call Center Questions ---
+        const quizData = [
+            { q: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", options: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], a: 1 },
+            { q: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", options: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], a: 2 },
+            { q: "A new customer is unsure which internet package fits their household needs. How do you approach this?", options: ["Ask probing questions about their daily usage.", "Tell them to check the website.", "Sell the most expensive package.", "Assign a random package."], a: 0 },
+            { q: "A customer threatens to cancel because a competitor offered a cheaper rate. What is your best move?", options: ["Tell them the competitor is terrible.", "Acknowledge, highlight STC value, check retention offers.", "Cancel immediately.", "Transfer to tech support."], a: 1 },
+            { q: "A customer is struggling to understand their high bill. What is your approach?", options: ["Put them on hold until they calm down.", "Say the system is never wrong.", "Practice active listening and guide them through charges.", "Interrupt to explain general billing."], a: 2 },
+            { q: "A customer asks a highly technical question you do not know the answer to. What should you do?", options: ["Guess the answer.", "Honestly state you are unsure, hold, and consult tech team.", "Say it's out of scope.", "Blind transfer them."], a: 1 },
+            { q: "You just finished a very stressful call and your status switches to Available. What should you do?", options: ["Take frustration out on next caller.", "Mute and vent to a colleague.", "Take a deep breath and reset for the new caller.", "Disconnect the next call."], a: 2 },
+            { q: "A customer demands a full refund for a 2-hour downtime. What is the proper procedure?", options: ["Grant refund immediately.", "Apologize, review SLA policy, explain eligibility.", "Tell them they are unreasonable.", "Advise them to visit a branch."], a: 1 },
+            { q: "A customer reports an outage. Your system shows a known area outage is being worked on. Response?", options: ["Walk through router reboots anyway.", "Acknowledge known outage, assure tech is on-site, provide ETA.", "Say there's nothing you can do.", "Send a technician."], a: 1 },
+            { q: "A customer threatens a negative social media review if they don't get a free router upgrade. Handle this by:", options: ["Giving the upgrade to protect image.", "Panicking and escalating.", "Remaining professional and following standard policies.", "Telling them to go ahead."], a: 2 },
+            { q: "An elderly customer cannot understand your technical instructions. Best approach?", options: ["Speak louder.", "Show patience and use simple analogies.", "Tell them to find a younger family member.", "Dispatch a technician immediately."], a: 1 },
+            { q: "While troubleshooting a critical issue, the customer's call drops. Required protocol?", options: ["Wait for them to call back.", "Close the ticket.", "Attempt to call the customer back immediately.", "Send an email."], a: 2 },
+            { q: "Customer immediately demands: 'Get me a supervisor now!' What do you do?", options: ["Blind transfer.", "Refuse to transfer.", "Politely ask for brief details to prepare supervisor, then transfer.", "Hang up."], a: 2 },
+            { q: "You realize halfway through a call you gave incorrect pricing info. What should you do?", options: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], a: 2 },
+            { q: "Customer asks for your personal opinion on buying iPhone vs Samsung. Response?", options: ["State personal favorite.", "Refuse to answer.", "Remain objective, highlight features, ask preferences.", "Transfer to sales."], a: 2 },
+            { q: "Your CRM system freezes while verifying an account. Best action?", options: ["Sit in silence.", "Inform customer of delay, make polite small talk/hold.", "Hold without saying anything.", "Ask them to call back."], a: 1 },
+            { q: "Customer is rambling about personal issues unrelated to service. Handle it by:", options: ["Interrupting aggressively.", "Letting them talk indefinitely.", "Listening briefly, then gently steering back to troubleshooting.", "Disconnecting."], a: 2 },
+            { q: "Customer insists they made no international calls, but logs show they did. Proceed by:", options: ["Calling them a liar.", "Explaining logs calmly, suggesting others used it, offer block.", "Waiving the bill.", "Refusing to explain."], a: 1 },
+            { q: "Customer begs you to waive a strict non-waivable fee. What do you do?", options: ["Remove it anyway.", "Empathize, explain policy firmly, offer installments if available.", "Say management is greedy.", "Hang up."], a: 1 },
+            { q: "You are having extreme difficulty understanding a heavy accent. What should you do?", options: ["Guess what they are saying.", "Say you can't understand and hang up.", "Politely ask to repeat and confirm understanding.", "Transfer immediately."], a: 2 },
+            { q: "The caller is a young child reporting broken WiFi. Proper procedure?", options: ["Troubleshoot with the child.", "Ask the child to put an adult/account holder on the phone.", "Reset router blindly.", "Hang up."], a: 1 },
+            { q: "Customer extensively praises your service. Most professional response?", options: ["Ask for a tip.", "Brag about being the best.", "Thank them sincerely and ask if they need further help.", "Keep them on phone to boost metrics."], a: 2 },
+            { q: "B2B customer calls you (a B2C agent) by mistake. Best action?", options: ["Troubleshoot using B2C tools.", "Warm transfer to B2B team.", "Tell them to look up the number themselves.", "Close ticket."], a: 1 },
+            { q: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", options: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], a: 0 },
+            { q: "2 minutes before your shift ends, a complex fiber issue comes in. Action?", options: ["Transfer to random queue.", "Pretend you can't hear.", "Handle it fully with standard professionalism (overtime).", "Tell them to call back."], a: 2 }
+        ];
 
-        function attemptLogin() {
-            const user = document.getElementById('login-user').value;
-            if (user.includes('.c@stc.com.kw') && document.getElementById('login-pass').value === 'Stc123') {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('quiz-portal').classList.remove('hidden');
-                document.getElementById('quiz-portal').classList.add('flex');
-                startTimer();
-                renderQuestion();
+        let agentName = "";
+        let currentQ = 0;
+        let userAnswers = new Array(25).fill(null);
+        let timeRemaining = 900; // 15 mins
+        let timerInterval;
+
+        // --- AUTH ---
+        function login() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            if (user.includes('.c@stc.com.kw') && pass === 'Stc123') {
+                agentName = user.split('.c@')[0].replace('.', ' ');
+                // Capitalize First letters
+                agentName = agentName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
+                document.getElementById('dashboard-screen').classList.add('flex');
+                
+                // Personalized Greeting
+                document.getElementById('greeting-msg').innerText = `Welcome, ${agentName}!`;
+            } else {
+                document.getElementById('login-err').classList.remove('hidden');
             }
         }
 
+        // --- QUIZ START ---
+        function startQuiz() {
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('flex');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('flex');
+            
+            renderQuestion();
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                let m = Math.floor(timeRemaining / 60);
+                let s = timeRemaining % 60;
+                let display = document.getElementById('timer');
+                display.innerText = `${m}:${s.toString().padStart(2, '0')}`;
+                
+                if (timeRemaining <= 180) display.classList.add('timer-warning');
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    forceSubmit();
+                }
+            }, 1000);
+        }
+
+        // --- RENDER ---
         function renderQuestion() {
-            const q = quizData[currentQuestionIndex];
-            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.q}`;
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
+            const q = quizData[currentQ];
+            document.getElementById('q-current').innerText = currentQ + 1;
+            document.getElementById('question-text').innerText = `${currentQ + 1}. ${q.q}`;
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
             q.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = `option-btn p-4 rounded-xl text-right ${userAnswers[currentQuestionIndex] === idx ? 'selected' : ''}`;
+                btn.className = `option-btn w-full text-left p-5 rounded-xl text-lg font-medium text-white mb-3 ${userAnswers[currentQ] === idx ? 'selected' : ''}`;
                 btn.innerText = opt;
-                btn.onclick = () => { userAnswers[currentQuestionIndex] = idx; renderQuestion(); };
-                container.appendChild(btn);
+                btn.onclick = () => {
+                    userAnswers[currentQ] = idx; 
+                    renderQuestion(); // Re-render to show selection
+                    checkSubmissionStatus();
+                };
+                optsContainer.appendChild(btn);
             });
-            document.getElementById('next-btn').classList.toggle('hidden', currentQuestionIndex === 24);
-            document.getElementById('submit-btn').classList.toggle('hidden', currentQuestionIndex !== 24);
+
+            document.getElementById('btn-prev').disabled = (currentQ === 0);
+            
+            const btnNext = document.getElementById('btn-next');
+            const btnSub = document.getElementById('btn-submit');
+            
+            if (currentQ === 24) {
+                btnNext.classList.add('hidden');
+                btnSub.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSub.classList.add('hidden');
+            }
+            
+            checkSubmissionStatus();
         }
 
-        function prevQuestion() { if(currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } }
-        function nextQuestion() { if(currentQuestionIndex < 24) { currentQuestionIndex++; renderQuestion(); } }
+        // --- NAVIGATION ---
+        function prevQ() { if(currentQ > 0) { currentQ--; renderQuestion(); } }
+        function nextQ() { if(currentQ < 24) { currentQ++; renderQuestion(); } }
+
+        // --- SUBMIT LOGIC ---
+        function checkSubmissionStatus() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const btnSub = document.getElementById('btn-submit');
+            const warning = document.getElementById('submit-warning');
+            
+            if (currentQ === 24) {
+                if (answeredCount === 25) {
+                    btnSub.disabled = false;
+                    warning.classList.add('hidden');
+                } else {
+                    btnSub.disabled = true;
+                    warning.classList.remove('hidden');
+                    warning.innerText = `You have only answered ${answeredCount}/25 questions. Please go back and complete them.`;
+                }
+            }
+        }
 
         function submitQuiz() {
-            document.getElementById('quiz-container').classList.add('hidden');
-            document.getElementById('results-container').classList.remove('hidden');
-            const list = document.getElementById('mistakes-list');
-            userAnswers.forEach((ans, i) => {
-                if (ans !== quizData[i].a) {
-                    const div = document.createElement('div');
-                    div.className = "p-4 bg-red-900/20 border border-red-800 rounded-lg";
-                    div.innerHTML = `<strong>س: ${quizData[i].q}</strong><br>إجابتك: ${quizData[i].options[ans] || 'لم تجب'}<br><span class="text-green-400">الإجابة الصحيحة: ${quizData[i].options[quizData[i].a]}</span>`;
-                    list.appendChild(div);
-                }
-            });
+            if (userAnswers.includes(null)) return; // Double check
+            processResults();
         }
 
-        function startTimer() {
-            setInterval(() => {
-                timeRemaining--;
-                document.getElementById('timer-display').innerText = Math.floor(timeRemaining/60) + ":" + (timeRemaining%60).toString().padStart(2, '0');
-                if(timeRemaining <= 0) submitQuiz();
-            }, 1000);
+        function forceSubmit() {
+            // Triggered by timer running out
+            processResults();
+        }
+
+        function processResults() {
+            clearInterval(timerInterval);
+            
+            let score = 0;
+            const mistakesBox = document.getElementById('mistakes-container');
+            mistakesBox.innerHTML = '';
+            
+            quizData.forEach((q, i) => {
+                const userAns = userAnswers[i];
+                if (userAns === q.a) {
+                    score++;
+                } else {
+                    const div = document.createElement('div');
+                    div.className = "bg-red-900/10 border border-red-900/50 p-5 rounded-xl";
+                    
+                    const uText = userAns !== null ? q.options[userAns] : "Did not answer (Time expired)";
+                    
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-200 mb-3">Q${i+1}: ${q.q}</p>
+                        <p class="text-red-400 mb-1"><i class="fa-solid fa-xmark mr-2"></i> Your Answer: ${uText}</p>
+                        <p class="text-green-400 font-bold"><i class="fa-solid fa-check mr-2"></i> Correct Answer: ${q.options[q.a]}</p>
+                    `;
+                    mistakesBox.appendChild(div);
+                }
+            });
+
+            if (score === 25) {
+                mistakesBox.innerHTML = '<p class="text-green-400 font-bold text-xl text-center py-10">Perfect Score! No mistakes made.</p>';
+                document.getElementById('mistakes-title').classList.add('hidden');
+            }
+
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('flex');
+            
+            document.getElementById('results-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('flex');
+            
+            document.getElementById('res-agent').innerText = agentName;
+            document.getElementById('res-score').innerText = score;
         }
     </script>
 </body>
