@@ -46,37 +46,47 @@
         
         .timer-warning { color: #ef4444; animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        /* Language toggle positioning */
+        .lang-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; }
+        html[dir="rtl"] .lang-toggle { right: auto; left: 20px; }
     </style>
 </head>
-<body class="p-4 md:p-8 flex items-center justify-center">
+<body class="p-4 md:p-8 flex items-center justify-center relative">
+
+    <!-- LANGUAGE TOGGLE -->
+    <button onclick="toggleLang()" class="lang-toggle bg-gray-800 border border-purple-500 text-white px-4 py-2 rounded-full font-bold hover:bg-gray-700 transition shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+        <i class="fa-solid fa-globe mr-1"></i> <span id="lang-btn-text">العربية</span>
+    </button>
 
     <!-- 1. LOGIN SCREEN -->
     <div id="login-screen" class="panel rounded-2xl p-8 max-w-md w-full text-center z-50">
         <div class="h-16 w-20 bg-white rounded-xl mx-auto flex items-center justify-center mb-6 p-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC" class="h-full object-contain filter brightness-0 invert">
         </div>
-        <h2 class="text-3xl font-bold mb-2 text-purple-400">STC Quiz Portal</h2>
-        <p class="text-gray-400 text-sm mb-6">Agent Authentication Required</p>
+        <h2 id="login-title" class="text-3xl font-bold mb-2 text-purple-400">STC Quiz Portal</h2>
+        <p id="login-sub" class="text-gray-400 text-sm mb-2">Agent Authentication Required</p>
+        <p id="login-hint" class="text-neon-purple text-xs font-bold mb-6">(Must contain .c@stc.com.kw)</p>
         
-        <input type="text" id="login-user" class="input-box w-full rounded-xl px-4 py-3 mb-4" placeholder="Username (e.g. name.c@stc.com.kw)">
-        <input type="password" id="login-pass" class="input-box w-full rounded-xl px-4 py-3 mb-6" placeholder="Password" onkeypress="if(event.key === 'Enter') login()">
+        <input type="text" id="login-user" class="input-box w-full rounded-xl px-4 py-3 mb-4 text-left" dir="ltr" placeholder="Username (e.g. name.c@stc.com.kw)">
+        <input type="password" id="login-pass" class="input-box w-full rounded-xl px-4 py-3 mb-6 text-left" dir="ltr" placeholder="Password" onkeypress="if(event.key === 'Enter') login()">
         
         <p id="login-err" class="text-red-500 text-sm mb-4 hidden font-bold">Invalid credentials!</p>
-        <button onclick="login()" class="btn-stc w-full text-white py-3 rounded-xl font-bold text-lg">Login</button>
+        <button onclick="login()" id="btn-login" class="btn-stc w-full text-white py-3 rounded-xl font-bold text-lg">Login</button>
     </div>
 
     <!-- 2. DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="panel rounded-2xl p-10 max-w-2xl w-full hidden flex-col">
-        <h1 id="greeting-msg" class="text-4xl font-bold mb-4 text-purple-400"></h1>
-        <p class="text-lg text-gray-300 mb-10">Whenever you are free, click the button below to access the quiz.</p>
+        <h1 id="greeting-msg" class="text-3xl md:text-4xl font-bold mb-4 text-purple-400 leading-tight"></h1>
+        <p id="dash-desc" class="text-lg text-gray-300 mb-10 leading-relaxed"></p>
         
         <div class="bg-black/50 border border-purple-800 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:border-purple-500 transition duration-300">
-            <div>
-                <h3 class="text-2xl font-bold text-white"><i class="fa-regular fa-calendar-check text-purple-500 mr-2"></i> June 2026 Quiz</h3>
-                <p class="text-sm text-gray-400 mt-1">25 Questions • 15 Minutes limit</p>
+            <div class="text-center md:text-left rtl:md:text-right">
+                <h3 id="dash-quiz-title" class="text-2xl font-bold text-white"><i class="fa-regular fa-calendar-check text-purple-500 mx-2"></i> June 2026 Quiz</h3>
+                <p id="dash-quiz-info" class="text-sm text-gray-400 mt-1">25 Questions • 15 Minutes limit</p>
             </div>
-            <button onclick="startQuiz()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)] transition transform hover:scale-105">
-                Attempt <i class="fa-solid fa-play ml-2"></i>
+            <button onclick="startQuiz()" id="btn-attempt" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)] transition transform hover:scale-105 flex items-center gap-2">
+                Attempt <i class="fa-solid fa-play"></i>
             </button>
         </div>
     </div>
@@ -86,105 +96,379 @@
         <!-- Header -->
         <div class="flex justify-between items-end border-b border-purple-800 pb-4 mb-6">
             <div>
-                <h2 class="text-2xl font-bold text-purple-400">June 2026 Quiz</h2>
-                <p class="text-gray-400 mt-1">Question <span id="q-current" class="text-white font-bold">1</span> of 25</p>
+                <h2 id="quiz-header-title" class="text-2xl font-bold text-purple-400">June 2026 Quiz</h2>
+                <p class="text-gray-400 mt-1"><span id="lbl-question">Question</span> <span id="q-current" class="text-white font-bold">1</span> <span id="lbl-of">of</span> 25</p>
             </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-400 mb-1">Time Remaining</p>
-                <div id="timer" class="text-3xl font-mono font-bold text-green-400">15:00</div>
+            <div class="text-right rtl:text-left">
+                <p id="lbl-timer" class="text-sm text-gray-400 mb-1">Time Remaining</p>
+                <div id="timer" class="text-3xl font-mono font-bold text-green-400" dir="ltr">15:00</div>
             </div>
         </div>
 
         <!-- Question Area -->
-        <div class="flex-grow overflow-y-auto pr-2 custom-scrollbar">
+        <div class="flex-grow overflow-y-auto px-2 custom-scrollbar">
             <h3 id="question-text" class="text-xl md:text-2xl font-bold text-white mb-6 leading-relaxed"></h3>
             <div id="options-container" class="flex flex-col gap-3 mb-6"></div>
         </div>
 
         <!-- Navigation Footer -->
         <div class="border-t border-purple-800 pt-6 mt-4 flex justify-between items-center">
-            <button onclick="prevQ()" id="btn-prev" class="px-6 py-3 rounded-xl font-bold border border-purple-600 hover:bg-purple-900/50 transition disabled:opacity-30 disabled:cursor-not-allowed">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Previous
+            <button onclick="prevQ()" id="btn-prev" class="px-6 py-3 rounded-xl font-bold border border-purple-600 hover:bg-purple-900/50 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left rtl:rotate-180"></i> <span id="lbl-prev">Previous</span>
             </button>
             
-            <button onclick="nextQ()" id="btn-next" class="btn-stc px-8 py-3 rounded-xl font-bold text-white">
-                Next <i class="fa-solid fa-arrow-right ml-2"></i>
+            <button onclick="nextQ()" id="btn-next" class="btn-stc px-8 py-3 rounded-xl font-bold text-white flex items-center gap-2">
+                <span id="lbl-next">Next</span> <i class="fa-solid fa-arrow-right rtl:rotate-180"></i>
             </button>
 
-            <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-xl font-bold text-white hidden disabled:opacity-50 disabled:cursor-not-allowed">
-                Submit Quiz <i class="fa-solid fa-check ml-2"></i>
+            <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-xl font-bold text-white hidden disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                <span id="lbl-submit">Submit Quiz</span> <i class="fa-solid fa-check"></i>
             </button>
         </div>
-        <p id="submit-warning" class="text-red-400 text-sm text-right mt-2 hidden">You must answer all 25 questions to submit.</p>
+        <p id="submit-warning" class="text-red-400 text-sm text-center mt-3 hidden font-bold"></p>
     </div>
 
     <!-- 4. RESULTS SCREEN -->
     <div id="results-screen" class="panel rounded-2xl p-6 md:p-10 max-w-4xl w-full hidden flex-col h-[85vh]">
         <div class="text-center mb-8 border-b border-purple-800 pb-8">
             <i class="fa-solid fa-ranking-star text-5xl text-yellow-400 mb-4"></i>
-            <h2 class="text-3xl font-bold text-white mb-2">Quiz Completed</h2>
-            <p class="text-gray-400">Agent: <span id="res-agent" class="text-white font-bold"></span></p>
+            <h2 id="res-title" class="text-3xl font-bold text-white mb-2">Quiz Completed</h2>
+            <p class="text-gray-400"><span id="lbl-agent">Agent:</span> <span id="res-agent" class="text-white font-bold"></span></p>
             <div class="mt-6 inline-block bg-black border border-purple-500 rounded-2xl p-6 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                <p class="text-sm text-purple-300 uppercase tracking-wider mb-1">Final Score</p>
-                <p class="text-6xl font-black text-white"><span id="res-score" class="text-neon-purple"></span> <span class="text-2xl text-gray-500">/ 25</span></p>
+                <p id="lbl-score" class="text-sm text-purple-300 uppercase tracking-wider mb-1">Final Score</p>
+                <p class="text-6xl font-black text-white" dir="ltr"><span id="res-score" class="text-neon-purple"></span> <span class="text-2xl text-gray-500">/ 25</span></p>
             </div>
         </div>
 
-        <h3 class="text-xl font-bold text-red-400 mb-4" id="mistakes-title">Review Your Mistakes:</h3>
-        <div id="mistakes-container" class="flex-grow overflow-y-auto pr-2 flex flex-col gap-4"></div>
+        <h3 id="mistakes-title" class="text-xl font-bold text-red-400 mb-4">Review Your Mistakes:</h3>
+        <div id="mistakes-container" class="flex-grow overflow-y-auto px-2 flex flex-col gap-4 text-left rtl:text-right"></div>
     </div>
 
     <script>
-        // --- 25 Scenario-Based Call Center Questions ---
+        // --- MULTILINGUAL DICTIONARY ---
+        const i18n = {
+            en: {
+                langBtn: "العربية",
+                loginTitle: "STC Quiz Portal",
+                loginSub: "Agent Authentication Required",
+                loginHint: "(Username must contain .c@stc.com.kw)",
+                userPlace: "Username (e.g. name.c@stc.com.kw)",
+                passPlace: "Password",
+                btnLogin: "Login",
+                loginErr: "Invalid credentials! Only authorized agents allowed.",
+                greetUser: "Welcome, {name}!",
+                dashDesc: "At STC, we are committed to moving forward and delivering the best. Whenever you are free, please click the <strong>Attempt</strong> button below to start your monthly assessment and prove your excellence.",
+                quizTitle: "June 2026 Quiz",
+                quizInfo: "25 Questions • 15 Minutes limit",
+                btnAttempt: "Attempt",
+                lblQuestion: "Question",
+                lblOf: "of",
+                lblTimer: "Time Remaining",
+                lblPrev: "Previous",
+                lblNext: "Next",
+                lblSubmit: "Submit Quiz",
+                warnSubmit: "You must answer all 25 questions to submit. ({ans}/25 completed)",
+                resTitle: "Quiz Completed",
+                lblAgent: "Agent:",
+                lblScore: "Final Score",
+                mistakesTitle: "Review Your Mistakes:",
+                perfectScore: "Perfect Score! You are an STC Star. No mistakes made.",
+                lblYourAns: "Your Answer:",
+                lblCorrectAns: "Correct Answer:",
+                lblNoAns: "Did not answer (Time expired)",
+                qPrefix: "Q"
+            },
+            ar: {
+                langBtn: "English",
+                loginTitle: "بوابة اختبارات STC",
+                loginSub: "مطلوب مصادقة الموظف",
+                loginHint: "(يجب أن يحتوي اسم المستخدم على .c@stc.com.kw)",
+                userPlace: "اسم المستخدم",
+                passPlace: "كلمة المرور",
+                btnLogin: "تسجيل الدخول",
+                loginErr: "بيانات غير صحيحة! الدخول مسموح للموظفين المصرح لهم فقط.",
+                greetUser: "مرحباً، {name}!",
+                dashDesc: "في STC، التزامنا هو المضي قدماً وتقديم الأفضل دائماً. في أي وقت تكون فيه متاحاً، يُرجى النقر على زر <strong>بدء الاختبار</strong> أدناه لتقييم أدائك الشهري وإثبات تميزك.",
+                quizTitle: "اختبار يونيو 2026",
+                quizInfo: "25 سؤال • الحد الزمني 15 دقيقة",
+                btnAttempt: "بدء الاختبار",
+                lblQuestion: "السؤال",
+                lblOf: "من",
+                lblTimer: "الوقت المتبقي",
+                lblPrev: "السابق",
+                lblNext: "التالي",
+                lblSubmit: "إنهاء الاختبار",
+                warnSubmit: "يجب الإجابة على جميع الأسئلة الـ 25 قبل الإنهاء. (تم إنجاز {ans}/25)",
+                resTitle: "اكتمل الاختبار",
+                lblAgent: "الموظف:",
+                lblScore: "النتيجة النهائية",
+                mistakesTitle: "مراجعة الأخطاء:",
+                perfectScore: "أداء مثالي! أنت نجم في STC. لم ترتكب أي أخطاء.",
+                lblYourAns: "إجابتك:",
+                lblCorrectAns: "الإجابة الصحيحة:",
+                lblNoAns: "لم تتم الإجابة (انتهى الوقت)",
+                qPrefix: "س"
+            }
+        };
+
+        // --- 25 Scenario-Based Questions (Dual Language) ---
         const quizData = [
-            { q: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", options: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], a: 1 },
-            { q: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", options: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], a: 2 },
-            { q: "A new customer is unsure which internet package fits their household needs. How do you approach this?", options: ["Ask probing questions about their daily usage.", "Tell them to check the website.", "Sell the most expensive package.", "Assign a random package."], a: 0 },
-            { q: "A customer threatens to cancel because a competitor offered a cheaper rate. What is your best move?", options: ["Tell them the competitor is terrible.", "Acknowledge, highlight STC value, check retention offers.", "Cancel immediately.", "Transfer to tech support."], a: 1 },
-            { q: "A customer is struggling to understand their high bill. What is your approach?", options: ["Put them on hold until they calm down.", "Say the system is never wrong.", "Practice active listening and guide them through charges.", "Interrupt to explain general billing."], a: 2 },
-            { q: "A customer asks a highly technical question you do not know the answer to. What should you do?", options: ["Guess the answer.", "Honestly state you are unsure, hold, and consult tech team.", "Say it's out of scope.", "Blind transfer them."], a: 1 },
-            { q: "You just finished a very stressful call and your status switches to Available. What should you do?", options: ["Take frustration out on next caller.", "Mute and vent to a colleague.", "Take a deep breath and reset for the new caller.", "Disconnect the next call."], a: 2 },
-            { q: "A customer demands a full refund for a 2-hour downtime. What is the proper procedure?", options: ["Grant refund immediately.", "Apologize, review SLA policy, explain eligibility.", "Tell them they are unreasonable.", "Advise them to visit a branch."], a: 1 },
-            { q: "A customer reports an outage. Your system shows a known area outage is being worked on. Response?", options: ["Walk through router reboots anyway.", "Acknowledge known outage, assure tech is on-site, provide ETA.", "Say there's nothing you can do.", "Send a technician."], a: 1 },
-            { q: "A customer threatens a negative social media review if they don't get a free router upgrade. Handle this by:", options: ["Giving the upgrade to protect image.", "Panicking and escalating.", "Remaining professional and following standard policies.", "Telling them to go ahead."], a: 2 },
-            { q: "An elderly customer cannot understand your technical instructions. Best approach?", options: ["Speak louder.", "Show patience and use simple analogies.", "Tell them to find a younger family member.", "Dispatch a technician immediately."], a: 1 },
-            { q: "While troubleshooting a critical issue, the customer's call drops. Required protocol?", options: ["Wait for them to call back.", "Close the ticket.", "Attempt to call the customer back immediately.", "Send an email."], a: 2 },
-            { q: "Customer immediately demands: 'Get me a supervisor now!' What do you do?", options: ["Blind transfer.", "Refuse to transfer.", "Politely ask for brief details to prepare supervisor, then transfer.", "Hang up."], a: 2 },
-            { q: "You realize halfway through a call you gave incorrect pricing info. What should you do?", options: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], a: 2 },
-            { q: "Customer asks for your personal opinion on buying iPhone vs Samsung. Response?", options: ["State personal favorite.", "Refuse to answer.", "Remain objective, highlight features, ask preferences.", "Transfer to sales."], a: 2 },
-            { q: "Your CRM system freezes while verifying an account. Best action?", options: ["Sit in silence.", "Inform customer of delay, make polite small talk/hold.", "Hold without saying anything.", "Ask them to call back."], a: 1 },
-            { q: "Customer is rambling about personal issues unrelated to service. Handle it by:", options: ["Interrupting aggressively.", "Letting them talk indefinitely.", "Listening briefly, then gently steering back to troubleshooting.", "Disconnecting."], a: 2 },
-            { q: "Customer insists they made no international calls, but logs show they did. Proceed by:", options: ["Calling them a liar.", "Explaining logs calmly, suggesting others used it, offer block.", "Waiving the bill.", "Refusing to explain."], a: 1 },
-            { q: "Customer begs you to waive a strict non-waivable fee. What do you do?", options: ["Remove it anyway.", "Empathize, explain policy firmly, offer installments if available.", "Say management is greedy.", "Hang up."], a: 1 },
-            { q: "You are having extreme difficulty understanding a heavy accent. What should you do?", options: ["Guess what they are saying.", "Say you can't understand and hang up.", "Politely ask to repeat and confirm understanding.", "Transfer immediately."], a: 2 },
-            { q: "The caller is a young child reporting broken WiFi. Proper procedure?", options: ["Troubleshoot with the child.", "Ask the child to put an adult/account holder on the phone.", "Reset router blindly.", "Hang up."], a: 1 },
-            { q: "Customer extensively praises your service. Most professional response?", options: ["Ask for a tip.", "Brag about being the best.", "Thank them sincerely and ask if they need further help.", "Keep them on phone to boost metrics."], a: 2 },
-            { q: "B2B customer calls you (a B2C agent) by mistake. Best action?", options: ["Troubleshoot using B2C tools.", "Warm transfer to B2B team.", "Tell them to look up the number themselves.", "Close ticket."], a: 1 },
-            { q: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", options: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], a: 0 },
-            { q: "2 minutes before your shift ends, a complex fiber issue comes in. Action?", options: ["Transfer to random queue.", "Pretend you can't hear.", "Handle it fully with standard professionalism (overtime).", "Tell them to call back."], a: 2 }
+            { 
+                q_en: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", 
+                q_ar: "عميل غاضب جداً لأن الإنترنت بطيء أثناء اجتماع مهم. ماذا يجب أن تفعل أولاً؟",
+                opt_en: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], 
+                opt_ar: ["تقديم خصم فوري.", "الاستماع بعناية، الاعتذار، والبدء في حل المشكلة.", "إخبارهم بالاتصال لاحقاً.", "تحويل المكالمة للمشرف."], 
+                a: 1 
+            },
+            { 
+                q_en: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", 
+                q_ar: "أثناء المكالمة، بدأ العميل باستخدام ألفاظ مسيئة تجاهك. ما هو الرد الصحيح؟",
+                opt_en: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], 
+                opt_ar: ["الرد والجدال.", "إغلاق الخط فوراً.", "تحذير العميل بهدوء واتباع سياسة الشركة.", "تجاهل الأمر ومواصلة الحديث."], 
+                a: 2 
+            },
+            { 
+                q_en: "A new customer is unsure which internet package fits their household needs. How do you approach this?", 
+                q_ar: "عميل جديد غير متأكد من باقة الإنترنت التي تناسب احتياجات منزله. كيف تتعامل مع ذلك؟",
+                opt_en: ["Ask probing questions about their daily usage.", "Tell them to check the website.", "Sell the most expensive package.", "Assign a random package."], 
+                opt_ar: ["طرح أسئلة استكشافية حول استخدامهم اليومي.", "إخبارهم بالتحقق من الموقع الإلكتروني.", "بيع الباقة الأغلى.", "اختيار باقة عشوائية."], 
+                a: 0 
+            },
+            { 
+                q_en: "A customer threatens to cancel because a competitor offered a cheaper rate. What is your best move?", 
+                q_ar: "عميل يهدد بإلغاء الخدمة لأن منافساً قدم سعراً أرخص. ما هو أفضل تصرف؟",
+                opt_en: ["Tell them the competitor is terrible.", "Acknowledge, highlight STC value, check retention offers.", "Cancel immediately.", "Transfer to tech support."], 
+                opt_ar: ["إخبارهم أن المنافس سيء.", "التفهم، وإبراز قيمة STC، والتحقق من عروض الاحتفاظ.", "إلغاء الخدمة فوراً.", "التحويل للدعم الفني."], 
+                a: 1 
+            },
+            { 
+                q_en: "A customer is struggling to understand their high bill. What is your approach?", 
+                q_ar: "عميل يواجه صعوبة في فهم فاتورته المرتفعة. ما هو أسلوبك؟",
+                opt_en: ["Put them on hold until they calm down.", "Say the system is never wrong.", "Practice active listening and guide them through charges.", "Interrupt to explain general billing."], 
+                opt_ar: ["وضعهم على الانتظار حتى يهدؤوا.", "القول بأن النظام لا يخطئ أبداً.", "الاستماع الفعال وتوجيههم عبر تفاصيل الفاتورة.", "المقاطعة لشرح الفوترة العامة."], 
+                a: 2 
+            },
+            { 
+                q_en: "A customer asks a highly technical question you do not know the answer to. What should you do?", 
+                q_ar: "سأل العميل سؤالاً تقنياً معقداً لا تعرف إجابته. ماذا يجب أن تفعل؟",
+                opt_en: ["Guess the answer.", "Honestly state you are unsure, hold, and consult tech team.", "Say it's out of scope.", "Blind transfer them."], 
+                opt_ar: ["تخمين الإجابة.", "التوضيح بصدق أنك غير متأكد، ووضعهم على الانتظار لاستشارة الفريق التقني.", "القول بأنه خارج نطاق الدعم.", "تحويل المكالمة بشكل أعمى."], 
+                a: 1 
+            },
+            { 
+                q_en: "You just finished a very stressful call and your status switches to Available. What should you do?", 
+                q_ar: "لقد أنهيت للتو مكالمة مرهقة جداً وتغيرت حالتك إلى (متاح). ماذا تفعل؟",
+                opt_en: ["Take frustration out on next caller.", "Mute and vent to a colleague.", "Take a deep breath and reset for the new caller.", "Disconnect the next call."], 
+                opt_ar: ["تفريغ الإحباط في المتصل التالي.", "كتم الصوت والتنفيس لزميل.", "أخذ نفس عميق والاستعداد للمتصل الجديد.", "فصل المكالمة التالية."], 
+                a: 2 
+            },
+            { 
+                q_en: "A customer demands a full refund for a 2-hour downtime. What is the proper procedure?", 
+                q_ar: "عميل يطالب باسترداد كامل المبلغ بسبب توقف الخدمة لساعتين. ما هو الإجراء الصحيح؟",
+                opt_en: ["Grant refund immediately.", "Apologize, review SLA policy, explain eligibility.", "Tell them they are unreasonable.", "Advise them to visit a branch."], 
+                opt_ar: ["منح الاسترداد فوراً.", "الاعتذار، مراجعة سياسة التعويض، وشرح أهليتهم.", "إخبارهم بأن طلبهم غير منطقي.", "نصحهم بزيارة الفرع."], 
+                a: 1 
+            },
+            { 
+                q_en: "A customer reports an outage. Your system shows a known area outage is being worked on. Response?", 
+                q_ar: "عميل يبلغ عن انقطاع. يظهر نظامك انقطاعاً معروفاً في المنطقة جاري العمل عليه. كيف ترد؟",
+                opt_en: ["Walk through router reboots anyway.", "Acknowledge known outage, assure tech is on-site, provide ETA.", "Say there's nothing you can do.", "Send a technician."], 
+                opt_ar: ["توجيههم لإعادة تشغيل الراوتر على أي حال.", "الاعتراف بالانقطاع، وطمأنتهم بوجود الفنيين، وتوفير وقت تقديري للإصلاح.", "القول بأنه لا يمكنك فعل شيء.", "إرسال فني."], 
+                a: 1 
+            },
+            { 
+                q_en: "A customer threatens a negative social media review if they don't get a free router upgrade. Handle this by:", 
+                q_ar: "عميل يهدد بنشر تقييم سلبي على وسائل التواصل إذا لم يحصل على ترقية مجانية للراوتر. كيف تتعامل مع هذا؟",
+                opt_en: ["Giving the upgrade to protect image.", "Panicking and escalating.", "Remaining professional and following standard policies.", "Telling them to go ahead."], 
+                opt_ar: ["منح الترقية لحماية صورة الشركة.", "الذعر والتصعيد.", "البقاء محترفاً واتباع السياسات القياسية.", "إخبارهم بأن يفعلوا ما يشاؤون."], 
+                a: 2 
+            },
+            { 
+                q_en: "An elderly customer cannot understand your technical instructions. Best approach?", 
+                q_ar: "عميل مسن لا يستطيع فهم تعليماتك التقنية. ما هو أفضل أسلوب؟",
+                opt_en: ["Speak louder.", "Show patience and use simple analogies.", "Tell them to find a younger family member.", "Dispatch a technician immediately."], 
+                opt_ar: ["التحدث بصوت أعلى.", "إظهار الصبر واستخدام أمثلة مبسطة.", "إخبارهم بالبحث عن فرد أصغر في العائلة.", "إرسال فني فوراً."], 
+                a: 1 
+            },
+            { 
+                q_en: "While troubleshooting a critical issue, the customer's call drops. Required protocol?", 
+                q_ar: "أثناء استكشاف أخطاء مشكلة حرجة، انقطعت مكالمة العميل. ما هو البروتوكول المطلوب؟",
+                opt_en: ["Wait for them to call back.", "Close the ticket.", "Attempt to call the customer back immediately.", "Send an email."], 
+                opt_ar: ["انتظارهم للاتصال مجدداً.", "إغلاق التذكرة.", "محاولة الاتصال بالعميل فوراً.", "إرسال بريد إلكتروني."], 
+                a: 2 
+            },
+            { 
+                q_en: "Customer immediately demands: 'Get me a supervisor now!' What do you do?", 
+                q_ar: "العميل يطالب فوراً: (أعطني المشرف الآن!). ماذا تفعل؟",
+                opt_en: ["Blind transfer.", "Refuse to transfer.", "Politely ask for brief details to prepare supervisor, then transfer.", "Hang up."], 
+                opt_ar: ["التحويل الأعمى.", "رفض التحويل.", "طلب تفاصيل موجزة بأدب لتجهيز المشرف، ثم التحويل.", "إغلاق الخط."], 
+                a: 2 
+            },
+            { 
+                q_en: "You realize halfway through a call you gave incorrect pricing info. What should you do?", 
+                q_ar: "أدركت في منتصف المكالمة أنك أعطيت معلومات تسعير غير صحيحة. ماذا يجب أن تفعل؟",
+                opt_en: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], 
+                opt_ar: ["التظاهر بأن الأمر لم يحدث.", "التحويل لموظف آخر.", "الاعتذار، الاعتراف بالخطأ، وتقديم السعر الصحيح.", "إلقاء اللوم على النظام."], 
+                a: 2 
+            },
+            { 
+                q_en: "Customer asks for your personal opinion on buying iPhone vs Samsung. Response?", 
+                q_ar: "سأل العميل عن رأيك الشخصي في شراء آيفون مقابل سامسونج. ما هو ردك؟",
+                opt_en: ["State personal favorite.", "Refuse to answer.", "Remain objective, highlight features, ask preferences.", "Transfer to sales."], 
+                opt_ar: ["ذكر جهازك المفضل.", "رفض الإجابة.", "البقاء موضوعياً، إبراز الميزات، وسؤالهم عن تفضيلاتهم.", "التحويل لقسم المبيعات."], 
+                a: 2 
+            },
+            { 
+                q_en: "Your CRM system freezes while verifying an account. Best action?", 
+                q_ar: "توقف نظام CRM أثناء التحقق من حساب. ما هو أفضل إجراء؟",
+                opt_en: ["Sit in silence.", "Inform customer of delay, make polite small talk/hold.", "Hold without saying anything.", "Ask them to call back."], 
+                opt_ar: ["الجلوس في صمت.", "إبلاغ العميل بالتأخير، والتحدث بلباقة أو وضعهم على الانتظار.", "الانتظار دون قول شيء.", "الطلب منهم الاتصال لاحقاً."], 
+                a: 1 
+            },
+            { 
+                q_en: "Customer is rambling about personal issues unrelated to service. Handle it by:", 
+                q_ar: "العميل يتحدث بإسهاب عن أمور شخصية لا علاقة لها بالخدمة. تعامل مع هذا عن طريق:",
+                opt_en: ["Interrupting aggressively.", "Letting them talk indefinitely.", "Listening briefly, then gently steering back to troubleshooting.", "Disconnecting."], 
+                opt_ar: ["المقاطعة بعدوانية.", "تركهم يتحدثون إلى ما لا نهاية.", "الاستماع لفترة وجيزة، ثم توجيه الحديث بلطف نحو حل المشكلة.", "فصل المكالمة."], 
+                a: 2 
+            },
+            { 
+                q_en: "Customer insists they made no international calls, but logs show they did. Proceed by:", 
+                q_ar: "يصر العميل أنه لم يقم بمكالمات دولية، لكن السجلات تظهر عكس ذلك. تابع عن طريق:",
+                opt_en: ["Calling them a liar.", "Explaining logs calmly, suggesting others used it, offer block.", "Waiving the bill.", "Refusing to explain."], 
+                opt_ar: ["نعتهم بالكذب.", "شرح السجلات بهدوء، اقتراح أن شخصاً آخر استخدمها، عرض حظر الخدمة.", "إسقاط الفاتورة.", "رفض التفسير."], 
+                a: 1 
+            },
+            { 
+                q_en: "Customer begs you to waive a strict non-waivable fee. What do you do?", 
+                q_ar: "يتوسل إليك العميل لإلغاء رسوم غير قابلة للإلغاء. ماذا تفعل؟",
+                opt_en: ["Remove it anyway.", "Empathize, explain policy firmly, offer installments if available.", "Say management is greedy.", "Hang up."], 
+                opt_ar: ["إزالتها على أي حال.", "التعاطف، شرح السياسة بحزم، وتقديم خيارات تقسيط إن وجدت.", "القول بأن الإدارة جشعة.", "إغلاق الخط."], 
+                a: 1 
+            },
+            { 
+                q_en: "You are having extreme difficulty understanding a heavy accent. What should you do?", 
+                q_ar: "تواجه صعوبة شديدة في فهم لهجة ثقيلة. ماذا يجب أن تفعل؟",
+                opt_en: ["Guess what they are saying.", "Say you can't understand and hang up.", "Politely ask to repeat and confirm understanding.", "Transfer immediately."], 
+                opt_ar: ["تخمين ما يقولونه.", "القول بأنك لا تفهم وإغلاق الخط.", "الطلب بلباقة بالتكرار وتأكيد الفهم.", "التحويل فوراً."], 
+                a: 2 
+            },
+            { 
+                q_en: "The caller is a young child reporting broken WiFi. Proper procedure?", 
+                q_ar: "المتصل طفل صغير يبلغ عن تعطل الواي فاي. ما هو الإجراء الصحيح؟",
+                opt_en: ["Troubleshoot with the child.", "Ask the child to put an adult/account holder on the phone.", "Reset router blindly.", "Hang up."], 
+                opt_ar: ["حل المشكلة مع الطفل.", "الطلب من الطفل إعطاء الهاتف لشخص بالغ/صاحب الحساب.", "إعادة ضبط الراوتر بشكل أعمى.", "إغلاق الخط."], 
+                a: 1 
+            },
+            { 
+                q_en: "Customer extensively praises your service. Most professional response?", 
+                q_ar: "عميل يمدح خدمتك بشكل كبير. ما هو الرد الأكثر احترافية؟",
+                opt_en: ["Ask for a tip.", "Brag about being the best.", "Thank them sincerely and ask if they need further help.", "Keep them on phone to boost metrics."], 
+                opt_ar: ["طلب بقشيش.", "التباهي بأنك الأفضل.", "شكرهم بصدق وسؤالهم عما إذا كانوا بحاجة لمساعدة أخرى.", "إبقائهم على الهاتف لتحسين مقاييسك."], 
+                a: 2 
+            },
+            { 
+                q_en: "B2B customer calls you (a B2C agent) by mistake. Best action?", 
+                q_ar: "عميل شركات (B2B) اتصل بك (موظف أفراد B2C) بالخطأ. ما هو أفضل إجراء؟",
+                opt_en: ["Troubleshoot using B2C tools.", "Warm transfer to B2B team.", "Tell them to look up the number themselves.", "Close ticket."], 
+                opt_ar: ["حل المشكلة باستخدام أدوات الأفراد.", "التحويل الدافئ لفريق قطاع الأعمال.", "إخبارهم بالبحث عن الرقم بأنفسهم.", "إغلاق التذكرة."], 
+                a: 1 
+            },
+            { 
+                q_en: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", 
+                q_ar: "يصرخ العميل: (لقد اتصلت 3 مرات اليوم ولم يحل أحد المشكلة!). كيف ترد؟",
+                opt_en: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], 
+                opt_ar: ["الاعتذار، تولي المسؤولية الشخصية، ومراجعة الملاحظات السابقة.", "القول بأنهم تحدثوا لموظفين سيئين.", "إخبارهم بالتوقف عن الصراخ.", "وضعهم على الانتظار كعقاب."], 
+                a: 0 
+            },
+            { 
+                q_en: "2 minutes before your shift ends, a complex fiber issue comes in. Action?", 
+                q_ar: "قبل دقيقتين من انتهاء ورديتك، وردت مشكلة فايبر معقدة. ماذا تفعل؟",
+                opt_en: ["Transfer to random queue.", "Pretend you can't hear.", "Handle it fully with standard professionalism (overtime).", "Tell them to call back."], 
+                opt_ar: ["التحويل لطابور عشوائي.", "التظاهر بعدم السماع.", "معالجتها بالكامل باحترافية (وقت إضافي).", "إخبارهم بالاتصال لاحقاً."], 
+                a: 2 
+            }
         ];
 
+        let lang = 'en'; // Default language
         let agentName = "";
         let currentQ = 0;
         let userAnswers = new Array(25).fill(null);
         let timeRemaining = 900; // 15 mins
         let timerInterval;
 
+        // ALLOWED USERS ONLY
+        const allowedUsers = ['ahmad.zbibo.c@stc.com.kw', 'essan.balla.c@stc.com.kw'];
+
+        // --- LANGUAGE LOGIC ---
+        function toggleLang() {
+            lang = lang === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            updateTexts();
+            if(!document.getElementById('quiz-screen').classList.contains('hidden')) {
+                renderQuestion();
+            }
+            if(!document.getElementById('results-screen').classList.contains('hidden')) {
+                processResults(true); // Re-render results in new language without resetting
+            }
+        }
+
+        function updateTexts() {
+            const t = i18n[lang];
+            document.getElementById('lang-btn-text').innerText = t.langBtn;
+            
+            // Login
+            document.getElementById('login-title').innerText = t.loginTitle;
+            document.getElementById('login-sub').innerText = t.loginSub;
+            document.getElementById('login-hint').innerText = t.loginHint;
+            document.getElementById('login-user').placeholder = t.userPlace;
+            document.getElementById('login-pass').placeholder = t.passPlace;
+            document.getElementById('btn-login').innerText = t.btnLogin;
+            document.getElementById('login-err').innerText = t.loginErr;
+            
+            // Dashboard
+            if(agentName) {
+                document.getElementById('greeting-msg').innerHTML = t.greetUser.replace('{name}', agentName);
+            }
+            document.getElementById('dash-desc').innerHTML = t.dashDesc;
+            document.getElementById('dash-quiz-title').innerHTML = `<i class="fa-regular fa-calendar-check text-purple-500 mx-2"></i> ${t.quizTitle}`;
+            document.getElementById('dash-quiz-info').innerText = t.quizInfo;
+            document.getElementById('btn-attempt').innerHTML = `${t.btnAttempt} <i class="fa-solid fa-play mx-2"></i>`;
+            
+            // Quiz
+            document.getElementById('quiz-header-title').innerText = t.quizTitle;
+            document.getElementById('lbl-question').innerText = t.lblQuestion;
+            document.getElementById('lbl-of').innerText = t.lblOf;
+            document.getElementById('lbl-timer').innerText = t.lblTimer;
+            document.getElementById('lbl-prev').innerText = t.lblPrev;
+            document.getElementById('lbl-next').innerText = t.lblNext;
+            document.getElementById('lbl-submit').innerText = t.lblSubmit;
+            
+            // Results static labels
+            document.getElementById('res-title').innerText = t.resTitle;
+            document.getElementById('lbl-agent').innerText = t.lblAgent;
+            document.getElementById('lbl-score').innerText = t.lblScore;
+            document.getElementById('mistakes-title').innerText = t.mistakesTitle;
+            
+            checkSubmissionStatus(); // To update warning string
+        }
+
         // --- AUTH ---
         function login() {
-            const user = document.getElementById('login-user').value.trim();
+            const user = document.getElementById('login-user').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value.trim();
-            if (user.includes('.c@stc.com.kw') && pass === 'Stc123') {
-                agentName = user.split('.c@')[0].replace('.', ' ');
-                // Capitalize First letters
-                agentName = agentName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            
+            if (allowedUsers.includes(user) && pass === 'Stc123') {
+                // Extract Name from email
+                let rawName = user.split('.c@')[0].replace('.', ' ');
+                agentName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('dashboard-screen').classList.remove('hidden');
                 document.getElementById('dashboard-screen').classList.add('flex');
                 
-                // Personalized Greeting
-                document.getElementById('greeting-msg').innerText = `Welcome, ${agentName}!`;
+                updateTexts(); // Update greeting
             } else {
                 document.getElementById('login-err').classList.remove('hidden');
             }
@@ -218,15 +502,18 @@
         // --- RENDER ---
         function renderQuestion() {
             const q = quizData[currentQ];
+            const qText = lang === 'en' ? q.q_en : q.q_ar;
+            const qOpts = lang === 'en' ? q.opt_en : q.opt_ar;
+            
             document.getElementById('q-current').innerText = currentQ + 1;
-            document.getElementById('question-text').innerText = `${currentQ + 1}. ${q.q}`;
+            document.getElementById('question-text').innerText = `${currentQ + 1}. ${qText}`;
             
             const optsContainer = document.getElementById('options-container');
             optsContainer.innerHTML = '';
             
-            q.options.forEach((opt, idx) => {
+            qOpts.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = `option-btn w-full text-left p-5 rounded-xl text-lg font-medium text-white mb-3 ${userAnswers[currentQ] === idx ? 'selected' : ''}`;
+                btn.className = `option-btn w-full text-left rtl:text-right p-5 rounded-xl text-lg font-medium text-white mb-3 ${userAnswers[currentQ] === idx ? 'selected' : ''}`;
                 btn.innerText = opt;
                 btn.onclick = () => {
                     userAnswers[currentQ] = idx; 
@@ -261,6 +548,7 @@
             const answeredCount = userAnswers.filter(a => a !== null).length;
             const btnSub = document.getElementById('btn-submit');
             const warning = document.getElementById('submit-warning');
+            const t = i18n[lang];
             
             if (currentQ === 24) {
                 if (answeredCount === 25) {
@@ -269,27 +557,27 @@
                 } else {
                     btnSub.disabled = true;
                     warning.classList.remove('hidden');
-                    warning.innerText = `You have only answered ${answeredCount}/25 questions. Please go back and complete them.`;
+                    warning.innerText = t.warnSubmit.replace('{ans}', answeredCount);
                 }
             }
         }
 
         function submitQuiz() {
             if (userAnswers.includes(null)) return; // Double check
-            processResults();
+            processResults(false);
         }
 
         function forceSubmit() {
-            // Triggered by timer running out
-            processResults();
+            processResults(false);
         }
 
-        function processResults() {
-            clearInterval(timerInterval);
+        function processResults(isLangToggle = false) {
+            if(!isLangToggle) clearInterval(timerInterval);
             
             let score = 0;
             const mistakesBox = document.getElementById('mistakes-container');
             mistakesBox.innerHTML = '';
+            const t = i18n[lang];
             
             quizData.forEach((q, i) => {
                 const userAns = userAnswers[i];
@@ -299,31 +587,41 @@
                     const div = document.createElement('div');
                     div.className = "bg-red-900/10 border border-red-900/50 p-5 rounded-xl";
                     
-                    const uText = userAns !== null ? q.options[userAns] : "Did not answer (Time expired)";
+                    const qText = lang === 'en' ? q.q_en : q.q_ar;
+                    const qOpts = lang === 'en' ? q.opt_en : q.opt_ar;
+                    
+                    const uText = userAns !== null ? qOpts[userAns] : t.lblNoAns;
                     
                     div.innerHTML = `
-                        <p class="font-bold text-gray-200 mb-3">Q${i+1}: ${q.q}</p>
-                        <p class="text-red-400 mb-1"><i class="fa-solid fa-xmark mr-2"></i> Your Answer: ${uText}</p>
-                        <p class="text-green-400 font-bold"><i class="fa-solid fa-check mr-2"></i> Correct Answer: ${q.options[q.a]}</p>
+                        <p class="font-bold text-gray-200 mb-3">${t.qPrefix}${i+1}: ${qText}</p>
+                        <p class="text-red-400 mb-1"><i class="fa-solid fa-xmark mx-2"></i> ${t.lblYourAns} ${uText}</p>
+                        <p class="text-green-400 font-bold"><i class="fa-solid fa-check mx-2"></i> ${t.lblCorrectAns} ${qOpts[q.a]}</p>
                     `;
                     mistakesBox.appendChild(div);
                 }
             });
 
             if (score === 25) {
-                mistakesBox.innerHTML = '<p class="text-green-400 font-bold text-xl text-center py-10">Perfect Score! No mistakes made.</p>';
+                mistakesBox.innerHTML = `<p class="text-green-400 font-bold text-xl text-center py-10">${t.perfectScore}</p>`;
                 document.getElementById('mistakes-title').classList.add('hidden');
+            } else {
+                document.getElementById('mistakes-title').classList.remove('hidden');
             }
 
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('flex');
-            
-            document.getElementById('results-screen').classList.remove('hidden');
-            document.getElementById('results-screen').classList.add('flex');
-            
-            document.getElementById('res-agent').innerText = agentName;
-            document.getElementById('res-score').innerText = score;
+            if(!isLangToggle) {
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('flex');
+                
+                document.getElementById('results-screen').classList.remove('hidden');
+                document.getElementById('results-screen').classList.add('flex');
+                
+                document.getElementById('res-agent').innerText = agentName;
+                document.getElementById('res-score').innerText = score;
+            }
         }
+
+        // Init language texts on load
+        updateTexts();
     </script>
 </body>
 </html>
