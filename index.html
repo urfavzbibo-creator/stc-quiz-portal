@@ -10,7 +10,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
         
         :root {
-            /* Dark Theme - STC Deep Space */
             --bg-main: #000000;
             --bg-panel: rgba(15, 5, 25, 0.65);
             --bg-item: rgba(255, 255, 255, 0.03);
@@ -28,7 +27,6 @@
         }
 
         body.light-theme {
-            /* Light Theme - Clean Apple-like */
             --bg-main: #f5f5f7;
             --bg-panel: rgba(255, 255, 255, 0.85);
             --bg-item: rgba(0, 0, 0, 0.02);
@@ -221,8 +219,8 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150"></div>
                 <div class="relative z-10">
                     <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold mb-4 tracking-wider uppercase">Mandatory</span>
-                    <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2">June 2026 Quiz</h3>
-                    <p id="dash-quiz-info" class="text-sm txt-muted mb-8">25 Questions • 15 Min Limit</p>
+                    <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2">June 2026 Assessment</h3>
+                    <p id="dash-quiz-info" class="text-sm txt-muted mb-8">25 Randomized Questions • 15 Min Limit</p>
                 </div>
                 <button onclick="startQuiz()" id="btn-attempt" class="btn-stc px-8 py-4 font-bold text-md flex items-center justify-center gap-3 w-full md:w-1/2 relative z-10">
                     Attempt Quiz <i class="fa-solid fa-play"></i>
@@ -292,11 +290,11 @@
     </div>
 
     <!-- 2.6 EXCLUSIVE ADMIN MANAGEMENT PANEL -->
-    <div id="admin-screen" class="apple-panel p-8 md:p-12 max-w-5xl w-full hidden flex-col h-[85vh] fade-in">
+    <div id="admin-screen" class="apple-panel p-8 md:p-12 max-w-6xl w-full hidden flex-col h-[85vh] fade-in">
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-8">
             <div>
                 <h2 class="text-3xl font-extrabold txt-main flex items-center gap-3"><i class="fa-solid fa-user-gear text-purple-500"></i> <span id="adm-panel-title">Admin Management Terminal</span></h2>
-                <p class="text-sm txt-muted mt-1">Real-time team completion logs and live sessions.</p>
+                <p class="text-sm txt-muted mt-1" id="adm-panel-desc">Real-time team completion logs and live sessions.</p>
             </div>
             <button onclick="returnToDashboard()" class="bg-transparent border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item)] px-6 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm shrink-0">
                 <i class="fa-solid fa-house"></i> Dashboard
@@ -316,6 +314,9 @@
                 <p class="text-xs txt-muted font-bold uppercase tracking-wider" id="adm-lbl-total-logs">Recorded System Logs</p>
             </div>
         </div>
+
+        <h3 class="text-xl font-bold text-red-400 mb-4 shrink-0 border-t border-[var(--border-item)] pt-6" id="adm-lbl-fail">Top Failed Questions (Analytics):</h3>
+        <div id="admin-failed-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4 mb-8 shrink-0 min-h-[200px]"></div>
 
         <h3 class="text-lg font-bold text-purple-400 mb-4 shrink-0" id="adm-lbl-performance">Historical Agent Performance:</h3>
         <div id="admin-performance-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4"></div>
@@ -345,7 +346,6 @@
                 <span id="lbl-next">Next</span> <i class="fa-solid fa-arrow-right rtl:rotate-180"></i>
             </button>
 
-            <!-- Submit button is always active on last page now -->
             <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3.5 rounded-full font-bold text-white hidden flex items-center gap-2 text-sm shadow-lg shadow-green-500/20">
                 <span id="lbl-submit">Submit</span> <i class="fa-solid fa-check"></i>
             </button>
@@ -353,12 +353,12 @@
     </div>
 
     <!-- 4. RESULTS SCREEN -->
-    <div id="results-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col h-[90vh] fade-in relative">
+    <div id="results-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col fade-in relative justify-center items-center h-auto min-h-[60vh]">
         <button onclick="returnToDashboard()" id="btn-res-home" class="absolute top-6 right-6 rtl:left-6 rtl:right-auto bg-[var(--bg-item)] border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item-hover)] px-5 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm z-10">
             <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Dashboard</span>
         </button>
 
-        <div class="text-center mb-8 border-b border-[var(--border-item)] pb-10 shrink-0 mt-8">
+        <div class="text-center w-full mt-8">
             <div id="res-icon-container" class="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6">
                 <i id="res-icon" class="fa-solid fa-ranking-star text-5xl"></i>
             </div>
@@ -366,174 +366,125 @@
             <h2 id="res-title" class="text-3xl font-extrabold txt-main mb-2 tracking-tight">Quiz Completed</h2>
             <h3 id="res-grade" class="text-xl font-bold mb-6"></h3>
             
-            <div class="inline-block apple-item px-10 py-6 mb-8">
-                <p id="lbl-score" class="text-xs txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
-                <p class="text-6xl font-black txt-main tracking-tighter" dir="ltr"><span id="res-score" class="txt-neon"></span><span id="score-out-of" class="text-3xl txt-muted ml-1">/25</span></p>
+            <div class="inline-block apple-item px-12 py-8 mb-8">
+                <p id="lbl-score" class="text-sm txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
+                <p class="text-7xl font-black txt-main tracking-tighter" dir="ltr"><span id="res-score" class="txt-neon"></span><span id="score-out-of" class="text-3xl txt-muted ml-1">/25</span></p>
             </div>
 
-            <!-- NEW: Review Button replaces inline scrolling mistakes -->
-            <div>
-                <button onclick="document.getElementById('review-modal').classList.remove('hidden')" id="btn-open-review" class="btn-stc px-8 py-3.5 font-bold text-md flex items-center justify-center gap-3 mx-auto">
+            <div class="w-full">
+                <button onclick="document.getElementById('review-modal').classList.remove('hidden')" id="btn-open-review" class="btn-stc px-8 py-4 font-bold text-md flex items-center justify-center gap-3 mx-auto shadow-lg shadow-purple-500/20">
                     <i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-view-review">View Review Details</span>
                 </button>
             </div>
         </div>
-        
-        <p class="text-center txt-muted text-sm" id="res-footer-msg">Your results have been securely logged.</p>
     </div>
 
     <script>
-        // --- MULTILINGUAL DICTIONARY ---
-        const i18n = {
-            en: {
-                langBtn: "العربية",
-                loginTitle: "Quiz Portal",
-                loginSub: "Agent Authentication",
-                loginHint: "(Requires .c@stc.com.kw)",
-                userPlace: "Email Address",
-                passPlace: "Password",
-                btnLogin: "Continue",
-                loginErr: "Invalid credentials! Only authorized agents allowed.",
-                greetUser: "Welcome back, {name}",
-                dashDesc: "Explore your dashboard. Attempt the mandatory assessment, review past scores, and access training materials to stay ahead.",
-                quizTitle: "June 2026 Quiz",
-                quizInfo: "25 Questions • 15 Min Limit",
-                btnAttempt: "Attempt Quiz",
-                histTitle: "History",
-                histDesc: "Review your scores.",
-                btnViewHist: "View",
-                trainTitle: "Training",
-                trainDesc: "Brush up on skills.",
-                guideTitle: "STC Guidelines",
-                guideDesc: "Company policies and operating rules.",
-                btnBackHome: "Dashboard",
-                lblQuestion: "Questions",
-                lblOf: "of",
-                lblTimer: "Time Remaining",
-                lblPrev: "Previous",
-                lblNext: "Next",
-                lblSubmit: "Submit",
-                resTitle: "Assessment Complete",
-                resTitleFail: "Assessment Failed",
-                lblScore: "Final Score",
-                btnOpenReview: "View Review Details",
-                reviewModalTitle: "Assessment Review",
-                perfectScore: "Perfect Score! You are an STC Star. No mistakes made.",
-                lblYourAns: "Your Answer:",
-                lblCorrectAns: "Correct Answer:",
-                lblNoAns: "Did not answer (Time expired)",
-                qPrefix: "Q",
-                warnModalTitle: "Warning!",
-                warnModalDesc: "Using browser navigation or refreshing is strictly prohibited during the quiz. This is your warning. Repeating this will result in an automatic failure.",
-                warnModalOk: "I Understand",
-                unansTitle: "Unanswered Questions",
-                unansDesc: "You cannot submit the quiz yet. You missed the following questions:",
-                btnUnansOk: "Return to Quiz",
-                failDesc: "You failed the quiz because you used the browser's navigation/refresh, which violates the anti-cheat policy.",
-                gradeExcellent: "Excellent! You passed",
-                gradeGood: "Good! Passed",
-                gradeFail: "Failed",
-                noHistory: "No past attempts found.",
-                csTitle: "Stay Tuned!",
-                csDesc: "We're cooking up something amazing for you. This feature will be available very soon.",
-                csBtn: "Got it",
-                adminTitle: "Management Console",
-                adminDesc: "Exclusive access: View live sessions and statistics.",
-                adminLive: "Live Sessions (Heartbeat)",
-                adminLogs: "Recorded System Logs",
-                adminPerf: "Historical Agent Performance:",
-                statusOnline: "Online",
-                statusOffline: "Offline"
-            },
-            ar: {
-                langBtn: "English",
-                loginTitle: "بوابة الاختبارات",
-                loginSub: "تسجيل دخول الموظفين",
-                loginHint: "(يجب استخدام .c@stc.com.kw)",
-                userPlace: "البريد الإلكتروني",
-                passPlace: "كلمة المرور",
-                btnLogin: "متابعة",
-                loginErr: "بيانات غير صحيحة! الدخول مسموح للموظفين المصرح لهم فقط.",
-                greetUser: "يا هلا والله بـ {name}",
-                dashDesc: "هذه لوحة التحكم الخاصة فيك. تقدر تبدأ التقييم الإلزامي، تراجع نتائجك السابقة، وتستفيد من المواد التدريبية عشان تطور مهاراتك.",
-                quizTitle: "اختبار يونيو 2026",
-                quizInfo: "25 سؤال • 15 دقيقة",
-                btnAttempt: "بدء الاختبار",
-                histTitle: "السجل",
-                histDesc: "راجع نتائجك.",
-                btnViewHist: "عرض",
-                trainTitle: "التدريب",
-                trainDesc: "طور مهاراتك.",
-                guideTitle: "سياسات STC",
-                guideDesc: "الأنظمة والقوانين.",
-                btnBackHome: "الرئيسية",
-                lblQuestion: "الأسئلة",
-                lblOf: "من",
-                lblTimer: "الوقت المتبقي",
-                lblPrev: "السابق",
-                lblNext: "التالي",
-                lblSubmit: "إنهاء",
-                resTitle: "اكتمل التقييم",
-                resTitleFail: "فشل التقييم",
-                lblScore: "النتيجة النهائية",
-                btnOpenReview: "عرض تفاصيل المراجعة",
-                reviewModalTitle: "مراجعة التقييم",
-                perfectScore: "كفو! نتيجتك كاملة وإنت نجم بـ STC. ما عندك ولا غلطة.",
-                lblYourAns: "إجابتك:",
-                lblCorrectAns: "الإجابة الصح:",
-                lblNoAns: "ما جاوبت (خلص الوقت)",
-                qPrefix: "س",
-                warnModalTitle: "تنبيه هام!",
-                warnModalDesc: "ممنوع تستخدم أسهم المتصفح أو تسوي ريفرش وإنت تمتحن. هذا تحذيرك، إذا سويتها مرة ثانية راح تسقط تلقائياً.",
-                warnModalOk: "فهمت",
-                unansTitle: "أسئلة غير مجابة",
-                unansDesc: "لا يمكنك تسليم الاختبار الآن. نسيت الإجابة على الأسئلة التالية:",
-                btnUnansOk: "العودة للاختبار",
-                failDesc: "إنت رسبت لأنك استخدمت أسهم المتصفح أو سويت ريفرش، وهالشي يخالف سياسة منع الغش.",
-                gradeExcellent: "ممتاز، لقد نجحت!",
-                gradeGood: "جيد، لقد نجحت",
-                gradeFail: "راسب",
-                noHistory: "لا توجد محاولات سابقة.",
-                csTitle: "خلك قريب!",
-                csDesc: "قاعدين نجهز لك شيء مميز. هالخاصية راح تتوفر قريباً جداً.",
-                csBtn: "تم",
-                adminTitle: "وحدة الإدارة والتحكم",
-                adminDesc: "دخول حصري: عرض الجلسات النشطة والإحصائيات.",
-                adminLive: "الجلسات النشطة (مباشر)",
-                adminLogs: "سجلات النظام المحفوظة",
-                adminPerf: "أداء الموظفين التاريخي:",
-                statusOnline: "متصل",
-                statusOffline: "غير متصل"
-            }
-        };
-
-        // --- 25 Scenario-Based Questions (KUWAITI ARABIC & ENGLISH) ---
-        const quizData = [
-            { q_en: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", q_ar: "عميل دق وهو معصب حيل لأن الإنترنت بطيء وعنده اجتماع مهم. شتسوّي أول شيء؟", opt_en: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], opt_ar: ["أقدم له خصم على طول.", "أسمعه عدل، أعتذر منه، وأبدأ أحل المشكلة معاه خطوة بخطوة.", "أقول له يدق علينا بعدين.", "أحوله حق المسؤول."], a: 1 },
-            { q_en: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", q_ar: "وإنت تكلم العميل، قام يغلط ويستخدم ألفاظ مسيئة. شالرد الصح؟", opt_en: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], opt_ar: ["أرد عليه وأجادله.", "أسكر الخط بوجهه فوراً.", "أنبهه بهدوء وأمشي على سياسة الشركة.", "أطنش وأكمل كلامي."], a: 2 },
-            { q_en: "A new customer is unsure which internet package fits their household needs. How do you approach this?", q_ar: "عميل جديد مو عارف أي باقة إنترنت تناسب بيته. شلون تتعامل معاه؟", opt_en: ["Ask probing questions about their daily usage.", "Tell them to check the website.", "Sell the most expensive package.", "Assign a random package."], opt_ar: ["أسأله عن استخدامهم اليومي عشان أفهم احتياجه.", "أقول له جيك على موقعنا.", "أبيعه أغلى باقة عندنا.", "أختار له باقة عشوائية."], a: 0 },
-            { q_en: "A customer threatens to cancel because a competitor offered a cheaper rate. What is your best move?", q_ar: "عميل يهدد بيلغي اشتراكه لأن في شركة ثانية عطته سعر أرخص. شتسوّي؟", opt_en: ["Tell them the competitor is terrible.", "Acknowledge, highlight STC value, check retention offers.", "Cancel immediately.", "Transfer to tech support."], opt_ar: ["أقول له إن الشركة الثانية تعبانة.", "أتفهم موقفه، أبيّن له ميزات STC، وأشيّك إذا في عروض نقدر نعطيه إياها.", "ألغي اشتراكه على طول.", "أحوله حق الدعم الفني."], a: 1 },
-            { q_en: "A customer is struggling to understand their high bill. What is your approach?", q_ar: "عميل مو فاهم ليش فاتورته غالية. شتسوّي معاه؟", opt_en: ["Put them on hold until they calm down.", "Say the system is never wrong.", "Practice active listening and guide them through charges.", "Interrupt to explain general billing."], opt_ar: ["أحطه عالهولد لين يهدى.", "أقول له السستم مستحيل يغلط.", "أسمعه عدل وأشرح له تفاصيل الفاتورة حبة حبة.", "أقاطعه وأشرح له نظام الفواتير بشكل عام."], a: 2 },
-            { q_en: "A customer asks a highly technical question you do not know the answer to. What should you do?", q_ar: "العميل سألك سؤال وايد تقني وما تعرف إجابته. شتسوّي؟", opt_en: ["Guess the answer.", "Honestly state you are unsure, hold, and consult tech team.", "Say it's out of scope.", "Blind transfer them."], opt_ar: ["أألف إجابة من عندي.", "أقول له بصدق إني مو متأكد، وأخليه عالهولد ثواني عشان أسأل الدعم الفني.", "أقول له هالسؤال مو من اختصاصنا.", "أحوله بدون ما أستأذن."], a: 1 },
-            { q_en: "You just finished a very stressful call and your status switches to Available. What should you do?", q_ar: "توك مخلص من مكالمة وايد متعبة وصارت حالتك (متاح). شتسوّي؟", opt_en: ["Take frustration out on next caller.", "Mute and vent to a colleague.", "Take a deep breath and reset for the new caller.", "Disconnect the next call."], opt_ar: ["أطلع حرتي بالعميل اللي وراه.", "أحط ميوت وأتحلطم عند زميلي.", "آخذ نفس عميق وأصفي ذهني حق المتصل اليديد.", "أفصل المكالمة الياية."], a: 2 },
-            { q_en: "A customer demands a full refund for a 2-hour downtime. What is the proper procedure?", q_ar: "عميل يطالب نرجع له فلوسه كاملة لأن الخدمة فصلت ساعتين. شالإجراء الصح؟", opt_en: ["Grant refund immediately.", "Apologize, review SLA policy, explain eligibility.", "Tell them they are unreasonable.", "Advise them to visit a branch."], opt_ar: ["أرجع له الفلوس فوراً.", "أعتذر منه، أراجع سياسة التعويض، وأشرح له شاللي يحق له.", "أقول له طلبك مو منطقي.", "أقول له يراجع أقرب فرع."], a: 1 },
-            { q_en: "A customer reports an outage. Your system shows a known area outage is being worked on. Response?", q_ar: "عميل يبلغ إن النت فاصل. السستم عندك يبين إن في عطل عام بالمنطقة وقاعدين نصلحه. شترد؟", opt_en: ["Walk through router reboots anyway.", "Acknowledge known outage, assure tech is on-site, provide ETA.", "Say there's nothing you can do.", "Send a technician."], opt_ar: ["أخليه يسوي ريستارت حق الراوتر عالفاضي.", "أطمنه إن الفنيين شغالين عليه، وأعطيه وقت تقريبي متى يخلصون.", "أقول له ما بيدي شي أسويه.", "أدز له فني للبيت."], a: 1 },
-            { q_en: "A customer threatens a negative social media review if they don't get a free router upgrade. Handle this by:", q_ar: "عميل يهدد بيكتب عنا بالسوشيال ميديا إذا ما عطيناه راوتر يديد ببلاش. شلون تتعامل؟", opt_en: ["Giving the upgrade to protect image.", "Panicking and escalating.", "Remaining professional and following standard policies.", "Telling them to go ahead."], opt_ar: ["أعطيه الراوتر عشان أحمي صورة الشركة.", "أخاف وأصعّد الموضوع للمدير.", "أظل احترافي وأمشي على سياسات الشركة بدون ما أخضع للتهديد.", "أقول له سو اللي تبي تسويه."], a: 2 },
-            { q_en: "An elderly customer cannot understand your technical instructions. Best approach?", q_ar: "عميل كبير بالسن مو قادر يفهم خطواتك الفنية. شأحسن طريقة معاه؟", opt_en: ["Speak louder.", "Show patience and use simple analogies.", "Tell them to find a younger family member.", "Dispatch a technician immediately."], opt_ar: ["أرفع صوتي وأنا أكلمه.", "أطوّل بالي معاه وأشرح له بأمثلة بسيطة.", "أقول له يعطي التلفون حق أي أحد شاب بالبيت.", "أدز له فني على طول."], a: 1 },
-            { q_en: "While troubleshooting a critical issue, the customer's call drops. Required protocol?", q_ar: "وإنت قاعد تحل مشكلة للعميل، الخط فصل. شالمفروض تسوي؟", opt_en: ["Wait for them to call back.", "Close the ticket.", "Attempt to call the customer back immediately.", "Send an email."], opt_ar: ["أنطره هو يدق مرة ثانية.", "أسكر التذكرة.", "أحاول أدق عليه فوراً عشان نكمل.", "أدز له إيميل."], a: 2 },
-            { q_en: "Customer immediately demands: 'Get me a supervisor now!' What do you do?", q_ar: "العميل أول ما شبك قال: 'عطني مسؤولك الحين!'. شتسوّي؟", opt_en: ["Blind transfer.", "Refuse to transfer.", "Politely ask for brief details to prepare supervisor, then transfer.", "Hang up."], opt_ar: ["أحوله على طول.", "أرفض أحوله.", "أطلب منه باحترام يعطيني نبذة عن المشكلة عشان أجهز المسؤول، بعدين أحوله.", "أسكر الخط."], a: 2 },
-            { q_en: "You realize halfway through a call you gave incorrect pricing info. What should you do?", q_ar: "استوعبت بنص المكالمة إنك عطيته سعر غلط. شتسوّي؟", opt_en: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], opt_ar: ["أسوي نفسي ما أدري.", "أحوله حق موظف ثاني.", "أعتذر منه، أعترف بغلطتي، وأعطيه السعر الصح.", "أقط اللوم على السستم."], a: 2 },
-            { q_en: "Customer asks for your personal opinion on buying iPhone vs Samsung. Response?", q_ar: "العميل يسألك عن رأيك الشخصي، يشتري آيفون ولا سامسونج؟ شترد عليه؟", opt_en: ["State personal favorite.", "Refuse to answer.", "Remain objective, highlight features, ask preferences.", "Transfer to sales."], opt_ar: ["أقول له جهازي المفضل وأذم الثاني.", "أرفض أجاوبه.", "أكون حيادي، أوضح له ميزات كل جهاز، وأسأله عن اللي يفضله.", "أحوله قسم المبيعات."], a: 2 },
-            { q_en: "Your CRM system freezes while verifying an account. Best action?", q_ar: "سستم הـ CRM علّق وإنت قاعد تشيّك على بياناته. شأفضل تصرف؟", opt_en: ["Sit in silence.", "Inform customer of delay, make polite small talk/hold.", "Hold without saying anything.", "Ask them to call back."], opt_ar: ["أسكت وما أتكلم.", "أبلغه إن السستم بطيء شوي، وأسولف معاه بلباقة أو أحطه عالهولد.", "أحطه عالهولد بدون ما أستأذن.", "أقول له سكر ودق بعدين."], a: 1 },
-            { q_en: "Customer is rambling about personal issues unrelated to service. Handle it by:", q_ar: "العميل قاعد يسولف ويشكي من أمور شخصية مالها شغل بالخدمة. شلون تتصرف؟", opt_en: ["Interrupting aggressively.", "Letting them talk indefinitely.", "Listening briefly, then gently steering back to troubleshooting.", "Disconnecting."], opt_ar: ["أقاطعه بقوة.", "أخليه يسولف على راحته لو شكثر يطول.", "أسمعه شوي، بعدين أرد أوجّه المكالمة بلباقة حق المشكلة.", "أفصل المكالمة."], a: 2 },
-            { q_en: "Customer insists they made no international calls, but logs show they did. Proceed by:", q_ar: "العميل مصر إنه ما دق دولي، بس السجلات تبين إنه داق. شتسوّي معاه؟", opt_en: ["Calling them a liar.", "Explaining logs calmly, suggesting others used it, offer block.", "Waiving the bill.", "Refusing to explain."], opt_ar: ["أقول له إنت جذاب.", "أشرح له السجلات بهدوء، وأقترح إن يمكن أحد ثاني بالبيت استخدمه، وأعرض خدمة الحظر.", "أطيح الفاتورة عنه.", "أرفض أشرح له وأسكره بوجهه."], a: 1 },
-            { q_en: "Customer begs you to waive a strict non-waivable fee. What do you do?", q_ar: "العميل يترجاك تطيح عنه رسوم مستحيل تنلغي حسب السياسة. شتسوّي؟", opt_en: ["Remove it anyway.", "Empathize, explain policy firmly, offer installments if available.", "Say management is greedy.", "Hang up."], opt_ar: ["ألغيها له على أي حال.", "أتعاطف معاه، وأشرح له السياسة بحزم، وأعرض عليه خيارات أقساط.", "أقول له الإدارة ما يرحمون.", "أسكر الخط."], a: 1 },
-            { q_en: "You are having extreme difficulty understanding a heavy accent. What should you do?", q_ar: "مو قادر تفهم كلام العميل لأن لهجته حيل ثقيلة أو مو واضحة. شتسوّي؟", opt_en: ["Guess what they are saying.", "Say you can't understand and hang up.", "Politely ask to repeat and confirm understanding.", "Transfer immediately."], opt_ar: ["أخمن من عندي إهوا شقاعد يقول.", "أقول له ماني فاهمك وأسكر الخط.", "أطلب منه بلباقة يعيد كلامه وأأكد عليه عشان أتأكد إني فهمت صح.", "أحوله على طول."], a: 2 },
-            { q_en: "The caller is a young child reporting broken WiFi. Proper procedure?", q_ar: "اللي داق طفل صغير ويقول الواي فاي خربان. شالإجراء الصح؟", opt_en: ["Troubleshoot with the child.", "Ask the child to put an adult/account holder on the phone.", "Reset router blindly.", "Hang up."], opt_ar: ["أمشي معاه بالخطوات وأحل المشكلة.", "أطلب منه يعطي التلفون حق أحد كبير أو صاحب الحساب.", "أسوي ريستارت حق الراوتر من عندي وأمشي.", "أسكر الخط."], a: 1 },
-            { q_en: "Customer extensively praises your service. Most professional response?", q_ar: "عميل يمدح خدمتك وشغلك حيل. شالرد الأكثر احترافية؟", opt_en: ["Ask for a tip.", "Brag about being the best.", "Thank them sincerely and ask if they need further help.", "Keep them on phone to boost metrics."], opt_ar: ["أطلب منه بقشيش.", "أهايط وأقول له أنا أحسن واحد بالشركة.", "أشكره من قلبي وأسأله إذا يبي خدمة ثانية.", "أخليه عالخط عشان أحسن أرقامي."], a: 2 },
-            { q_en: "B2B customer calls you (a B2C agent) by mistake. Best action?", q_ar: "عميل قطاع أعمال (B2B) دق عليك وإنت موظف أفراد بالغلط. شأحسن تصرف؟", opt_en: ["Troubleshoot using B2C tools.", "Warm transfer to B2B team.", "Tell them to look up the number themselves.", "Close ticket."], opt_ar: ["أحاول أحل مشكلته من السستم مالي.", "أحوله بأسلوب حلو (Warm transfer) حق فريق الشركات.", "أقول له دوّر رقمهم بالنت ودق عليهم.", "أصك التذكرة."], a: 1 },
-            { q_en: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", q_ar: "العميل يصارخ: 'دقيت عليكم 3 مرات اليوم ومحد حل مشكلتي!'. شترد عليه؟", opt_en: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], opt_ar: ["أعتذر منه، آخذ الموضوع على عاتقي، وأراجع ملاحظات المكالمات اللي طافت.", "أقول له أكيد اللي كلموك قبل كانوا موظفين تعبانين.", "أقول له لا تصارخ.", "أحطه عالهولد كنوع من العقاب."], a: 0 },
-            { q_en: "2 minutes before your shift ends, a complex fiber issue comes in. Action?", q_ar: "باجي دقيقتين ويخلص دوامك (شفتك)، ودشت مكالمة فيها مشكلة فايبر معقدة. شتسوّي؟", opt_en: ["Transfer to random queue.", "Pretend you can't hear.", "Handle it fully with standard professionalism (overtime).", "Tell them to call back."], opt_ar: ["أحولها حق طابور عشوائي.", "أسوي نفسي مو سامع شي.", "أستلمها وأحلها باحترافية كاملة (حتى لو قعدت وقت إضافي).", "أقول له دوامي خلص دق بعدين."], a: 2 }
+        // --- 102 SCENARIO-BASED QUESTIONS DATABASE ---
+        // Stored in a highly optimized format to guarantee full rendering
+        const allQuizData = [
+            {q_en:"How many days the Prepaid line will stay on Grace?", q_ar:"كم يوم يبقى الخط في Grace؟", opt_en:["60 days","30 days","20 days","45 days"], opt_ar:["60 يوم","30 يوم","20 يوم","45 يوم"], a:1},
+            {q_en:"What is internet capacity in 25 KD voice package?", q_ar:"ما هي سعة الانترنت في باقة ال 25 الصوتية؟", opt_en:["10 GB","25 GB","50 GB","100 GB"], opt_ar:["10 GB","25 GB","50 GB","100 GB"], a:3},
+            {q_en:"How much does a temporary suspension service cost for a month (summer suspension)?", q_ar:"كم هي تكلفة خدمة الايقاف المؤقت لمدة شهر؟", opt_en:["15 KD","20 KD","25 KD","None of the mentioned"], opt_ar:["15 KD","20 KD","25 KD","ليس أي مما سبق"], a:3},
+            {q_en:"The validity of points in qitaf program is?", q_ar:"صلاحية النقاط في برنامج قطاف هي؟", opt_en:["3 months","12 months","18 months","24 months"], opt_ar:["3 أشهر","12 شهر","18 شهر","24 شهر"], a:1},
+            {q_en:"The cost for transfer ownership for postpaid line:", q_ar:"كم تكلفة نقل الملكية لخطوط الدفع الآجل؟", opt_en:["5 KD","10 KD","15 KD","20 KD"], opt_ar:["5 KD","10 KD","15 KD","20 KD"], a:0},
+            {q_en:"To cancel Budget control service:", q_ar:"لإلغاء خدمة ال Budget Control:", opt_en:["#550#","#505#","*550#","*505#"], opt_ar:["#550#","#505#","*550#","*505#"], a:0},
+            {q_en:"Postpaid data customer will get .....GBs with 5KD booster:", q_ar:"خدمة الانترنت الاضافي لباقات الدفع الآجل الانترنت تمنح 5 KD (...) GBs:", opt_en:["100 GB","500 GB","250 GB","200 GB"], opt_ar:["100 GB","500 GB","250 GB","200 GB"], a:2},
+            {q_en:"To get Prepaid line, the age limit for Kuwaiti/Non Kuwaiti should not be less than:", q_ar:"العمر المسموح للحصول على خط التعبئة للعميل الكويتي/غيرالكويتي يجب ان لا يكون اقل من:", opt_en:["21 years","18 years","20 years","19 years"], opt_ar:["21 سنة","18 سنة","20 سنة","19 سنة"], a:1},
+            {q_en:"The charges to call to Kuwait from any Europian country on roaming are:", q_ar:"رسوم الاتصال الى الكويت بالتجوال من اي دولة اوربية:", opt_en:["1.250 KD","1.000 KD","0.900 KD","0.600 KD"], opt_ar:["1.250 KD","1.000 KD","0.900 KD","0.600 KD"], a:0},
+            {q_en:"Old prepaid plans can migrate to go plan by sending sms go to .....", q_ar:"عميل خط التعبئة للباقات( go ) القديمة يستطيع الانتقال الى go باقات ارسال الرساله محتوها :", opt_en:["567","585","999","510"], opt_ar:["567","585","999","510"], a:3},
+            {q_en:"Postpaid voice 45 KD customers get ....GB of data on Roaming:", q_ar:"سيحصل عملاء باقة 45 د.ك انترنت أثناء التجوال على (...) GB:", opt_en:["10 GB","5 GB","3 GB","1 GB"], opt_ar:["10 GB","5 GB","3 GB","1 GB"], a:0},
+            {q_en:"12 kd premimum roaming bundle is activated by:", q_ar:"يتم تفعيل باقة 12 د.ك المميزة للتجوال من خلال:", opt_en:["p1 to 102","i2 to 102","i3 to 102","i4 to 102"], opt_ar:["p1 to 102","i2 to 102","i3 to 102","i4 to 102"], a:0},
+            {q_en:"The hotline number for Fiber services is:", q_ar:"رقم الخط المباشر لخدمة الفايبر:", opt_en:["1827278","1827287","1827827","1804444"], opt_ar:["1827278","1827287","1827827","1804444"], a:2},
+            {q_en:"The customer will be on High-risk profile for any new activation after ......... , becoming medium if the line is not disconnected during this period?", q_ar:"ماهي المدة من انتقال High-risk profile الى MEDIUM-risk profile في حال عدم انقطاع الخط خلال هذه الفترة؟", opt_en:["One month","Two months","Three months","Six months"], opt_ar:["شهر واحد","شهرين","3 أشهر","6 أشهر"], a:2},
+            {q_en:"MEDIUM-risk profile becomes low after.....?", q_ar:"ماهي المدة من انتقال MEDIUM-risk profile الى Low-risk profile في حال عدم انقطاع الخط خلال هذه الفترة؟", opt_en:["One month","Two month","Three month","Six month"], opt_ar:["شهر واحد","شهرين","3 أشهر","6 أشهر"], a:0},
+            {q_en:"Is auto renewal available for 12 KD premium roaming bundle for postpaid voice?", q_ar:"هل يمكن التجديد التلقائي في باقة التجوال المميزة بقيمة 12 د.ك للدفع الأجل الصوتي؟", opt_en:["Yes","No","Maybe","Only for VIP"], opt_ar:["صح","خطأ","ربما","فقط لـ VIP"], a:0},
+            {q_en:"Deactivation Code for 12 KD premium Roaming bundle is:", q_ar:"لإلغاء باقة التجوال المميزة بقيمة 12 د.ك ارسال رساله نصيه هي:", opt_en:["0p1 to 102","0p1 to 567","D to 102","012 to 102"], opt_ar:["إلى 102 0p1","إلى 567 0p1","إلى 102 D","إلى 102 012"], a:2},
+            {q_en:"In 12 KD premium roaming bundle, customer can have roaming SMS's:", q_ar:"في باقة التجوال المميزة بقيمة 12 د.ك يمكن للعميل الحصول على رسائل التجوال القصيرة:", opt_en:["100 SMS","50 SMS","30 SMS","25 SMS"], opt_ar:["100 SMS","50 SMS","30 SMS","25 SMS"], a:2},
+            {q_en:"What are the requirements for making Device Care claim?", q_ar:"ما هي متطلبات تقديم مطالبة Device Care؟", opt_en:["Civil Id/Excess Fee","Device Care contract Form","All of the mentioned","None of the mentioned"], opt_ar:["البطاقة المدنية / الرسوم الزائدة","نموذج عقد رعاية الجهاز","كل ما سبق","ليس اين مما سبق"], a:2},
+            {q_en:"Device Care Essential service provide customer:", q_ar:"توفر خدمة Device Care Essential للعميل:", opt_en:["Extended Manufacturer Warranty","Screen Damage only","Full Smartphone change","Data Recovery"], opt_ar:["تمديد لمصنعية الجهاز","تلف الشاشة فقط","التغيير الكامل للهاتف الذكي","استعادة البيانات"], a:0},
+            {q_en:"The premium category of stc TV customers get Video Quality of:", q_ar:"يحصل العميل جودة الفيديومن خدمة stc TV: premium باقة", opt_en:["HD","Full HD","4 K","8 K"], opt_ar:["HD","Full HD","4 K","8 K"], a:2},
+            {q_en:"Can stc Postpaid customers use payment service in the Chatbot?", q_ar:"هل يستطيعون عملاء stc للدفع الآجل استخدام خاصية الدفع من خلال نظام المساعد الآلي؟", opt_en:["Yes","No","Only Prepaid","Only B2B"], opt_ar:["نعم","لا","فقط الدفع المسبق","فقط قطاع الأعمال"], a:0},
+            {q_en:"9 kd go prepaid plan provides:", q_ar:"توفر خط الدفع المسبق 9 د.ك:", opt_en:["Unlimited On-net minutes","Unlimited Social Media","All of the mentioned","None of the mentioned"], opt_ar:["دقائق غير محدودة داخل الشبكة","وسائل التواصل الاجتماعي غير المحدودة","كل ما ذكر","لا شيء من المذكور"], a:2},
+            {q_en:"How long does it take to get ready for a call?", q_ar:"كم مدة الاستعداد للمكالمة:", opt_en:["less than 3 seconds","less than 5 seconds","less than 7 seconds","None of the above"], opt_ar:["أقل من 3 ثوان","أقل من 5 ثوان","أقل من 7 ثوان","ليس أيا مما سبق"], a:0},
+            {q_en:"In a call the number of times the customer's name is used:", q_ar:"عدد مرات استخدام اسم العميل:", opt_en:["Once","Twicw","Thrice or more","Not important"], opt_ar:["مرة","مرتين","ثلاث مرات و اكثر","غير مهم"], a:2},
+            {q_en:"Allowed waiting time is:", q_ar:"مدة الانتظار المسموحه:", opt_en:["Waiting is not allowed","It does not exceed 30 seconds, renewable","It does not exceed 40 seconds, renewable","It does not exceed 45 seconds, renewable"], opt_ar:["الانتظار غير مسموح","لا يتعدى 30 ثانيه قابلة للتجديد","لا يتعدى 40 ثانيه قابلة للتجديد","لا يتعدى 45 ثانيه قابلة للتجديد"], a:1},
+            {q_en:"What is the right way of ending call:", q_ar:"كيف تكون نهاية المكالمة الصحيحة:", opt_en:["Offer to provide another service, Marketing, Greeting","Greeting, Offer to provide another service, Marketing","Greeting, Marketing, Offer to provide another service","Marketing, Offer to provide another service, Greeting"], opt_ar:["العرض لتقديم خدمة أخرى, التسويق, تحية ختام المكالمة","تحية ختام المكالمة , العرض لتقديم خدمة أخرى, -التسويق","تحية ختام المكالمة , التسويق, العرض لتقديم خدمة أخرى","التسويق, العرض لتقديم خدمة أخرى, تحية ختام المكالمة"], a:3},
+            {q_en:"Postpaid 75KD Tamayouz package provides:", q_ar:"توفر باقة التميز 75 دينار للدفع الأجل :", opt_en:["1000 Local SMS","2000 Local SMS","Unlimited Local SMS","None of the mentioned"], opt_ar:["رسالة محلية 1000","رسالة محلية 2000","رسائل محلية غير محدودة","ليس اين مما سبق"], a:1},
+            {q_en:"Internet allowance for 12 KD Postpaid Data line is:", q_ar:"سياسة الاستخدام العادل الموجودة في باقة 12 KD للدفع الآجل للإنترنت هي:", opt_en:["10 TB","2TB","1TB","Unlimited"], opt_ar:["10 TB","2TB","1TB","غير محدود"], a:1},
+            {q_en:"Customers with the new Postpaid Data line will be able to add devices based on:", q_ar:"سيتمكن العملاء الذين لديهم خط دفع الآجل للإنترنت الجديد من إضافة أجهزة بناءً على مدة التزام:", opt_en:["24 months commitment","12 months commitment","18 months commitment","36 months"], opt_ar:["شهر 24","شهر 12","شهر 18","36 شهر"], a:0},
+            {q_en:"Credit obtained by Trade In service can be used for:", q_ar:"يمكن استخدام المبلغ المحصل الذي تم الحصول عليه عن طريق Trade in من أجل:", opt_en:["Overdue bills","Advance rental payment","Prepaid recharge","Buying accessories only"], opt_ar:["الفواتير المتأخرة","الدفع مقدما","إعادة تعبئة خط دفع مسبق","شراء إكسسوارات فقط"], a:0},
+            {q_en:"What type of devices are eligible for Trade In?", q_ar:"ما هو نوع الاجهزة المسموح بها عمل Trade in؟", opt_en:["Mobile/Smart Watch","Mobile/Charger","Mobile/Tablet","Laptops only"], opt_ar:["الهاتف المحمول/الساعة الذكية","الهاتف المحمول /شاحن","الهاتف المحمول/الجهاز اللوحي","لابتوب فقط"], a:2},
+            {q_en:"Customers can Trade in multiple devices:", q_ar:"يستطيع العميل ان يستخدم اكثر من جهاز واحد في عملية Trade In:", opt_en:["Yes","No","Only for VIP","Up to 5"], opt_ar:["صح","خطأ","فقط لكبار العملاء","حتى 5 أجهزة"], a:0},
+            {q_en:"Before making any Trade In deal, agent should ask the customer to:", q_ar:"يجب على الموظف أن يطلب من العميل ما يلي قبل إجراء Tarde in:", opt_en:["Back up old device and delete personal data","Pay all previous bills","Fix the device damage","All of the mentioned"], opt_ar:["عمل نسخة احتياطية من الجهاز القديم وحذف البيانات الشخصية","سداد جميع الفواتير السابقة","إصلاح الجهاز التالف","جميع ما سبق"], a:0},
+            {q_en:"In order to get Postpaid line, the customer’s age should not be less than:", q_ar:"من أجل الحصول على خط دفع آجل، يجب أن لا يكون عُمر العميل أقل من:", opt_en:["22 years","21 years","18 years","16 years"], opt_ar:["سنه 22","سنه 21","سنه 18","سنه 16"], a:1},
+            {q_en:"In qitaf program, Postpaid voice and data line customer will get ...... points as welcome gift:", q_ar:"عند التسجيل في برنامج قطاف بإستخدام خط دفع آجل صوتي و انترنت , يحصل العميل على ......... نقطة ترحيبية مجانيه", opt_en:["30","50","100","200"], opt_ar:["30","50","100","200"], a:0},
+            {q_en:"The search bar helps us to find customer’s profile by (BSS System):", q_ar:"يساعدنا شريط البحث في العثور على الملف الشخصي للعميل (BSS System):من خلال", opt_en:["Civil ID number","Line number","Contract Number","All of the mentioned"], opt_ar:["رقم البطاقة المدنية","رقم الاشتراك","رقم العقد","جميع ما سبق"], a:3},
+            {q_en:"Age On Network is the line (BSS System):", q_ar:"ترمز مقولة Age On Network إلى؟ (BSS System)", opt_en:["Connection Date","Disabled Date","Termination Date","Activation Date"], opt_ar:["Connection Date","Disabled Date","Termination Date","تاريخ التفعيل"], a:0},
+            {q_en:"'In progress' status shows (BSS System):", q_ar:"ماذا تظهر حالة In progress:(BSS System)", opt_en:["The task is done","The task is failed","The task is under process","Task is cancelled"], opt_ar:["تم إنجاز المعاملة","فشلت المعاملة","المعاملة جارية","تم إلغاء المهمة"], a:2},
+            {q_en:"What does VAS full form stands for?", q_ar:"ماذا يعني الاسم الكامل ل VAS؟", opt_en:["Value-Added Service","Value-Activated Sign","Voice-Activation Service","Virtual Area Service"], opt_ar:["Value-Added Service","Value-Activated Sign","Voice-Activation Service","Virtual Area Service"], a:0},
+            {q_en:"We can check Transaction History from (BSS System):", q_ar:"كيف يستطيع الموظف مشاهدة تاريخ المعاملات؟ (BSS System):", opt_en:["Notifications","Requests","Overview","History Tab"], opt_ar:["Notifications","Requests","Overview","شريط السجل"], a:1},
+            {q_en:"In BSS system customer can pay:", q_ar:"يستطيع العميل في برنامج BSS الدفع عن طريق؟", opt_en:["Cash Only","Cash/Debit/Credit","Credit/SMS Pay","Debit/SMS Pay/Credit"], opt_ar:["Cash Only","Cash/Debit/Credit","Credit/SMS Pay","Debit/SMS Pay/Credit"], a:1},
+            {q_en:"Customer’s balance can be checked from (BSS System):", q_ar:"أين يمكنك التحقق من رصيد العميل؟(BSS System)", opt_en:["Requests","Overview","Financials","Invoices"], opt_ar:["Requests","Overview","Financials","Invoices"], a:1},
+            {q_en:"(BSS System) A new line can be created by selecting:", q_ar:"يمكن تفعيل خط جديد عن طريق اختيار:(BSS System)", opt_en:["Add Service","Add VAS","Overview","New Line"], opt_ar:["Add Service","Add VAS","Overview","خط جديد"], a:0},
+            {q_en:"Termination Liability Cost in Overview means (BSS System):", q_ar:"في تكلفة عقد الإنهاء في خانة نظرة عامة تعني:(BSS System)", opt_en:["Penalty fee","Cancellation Fee","All of the mentioned","None of the mentioned"], opt_ar:["رسوم جزائية","رسوم الإلغاء","جميع ماسبق","ليس أين مما سبق"], a:2},
+            {q_en:"(BSS system) We can check Credit limit from:", q_ar:"يمكننا التحقق من حد الائتمان من خلال:(BSS system)", opt_en:["Offering","Usage","Wallet","Overview"], opt_ar:["Offering","Usage","Wallet","Overview"], a:3},
+            {q_en:"(BSS System) If we want to check the name of the agent done any transaction on the line, we need to go to:", q_ar:"إذا أردنا التحقق من اسم الموظف الذي أجرى أي معاملة على الخط ، فعلينا الانتقال إلى:(BSS System)", opt_en:["Requests","Over view","Offering","VAS"], opt_ar:["Requests","Over view","Offering","VAS"], a:0},
+            {q_en:"In BSS system Upfront charges means:", q_ar:"ماذا تعني كلمة Upfront charges في نظام BSS :", opt_en:["Monthly Charges","Advance Payment","Termination Fee","Extra Fees"], opt_ar:["الرسوم الشهرية","دفعه مقدمه","رسوم الإلغاء","رسوم إضافية"], a:1},
+            {q_en:"Promotional & Informational Offers in BSS Overview shows:", q_ar:"العروض الترويجية والإعلامية في نظرة عامة على BSS تظهر:", opt_en:["Recently launched offers","Offers as per customer eligibility","All Offers","Cancelled Offers"], opt_ar:["العروض التي تم إطلاقها مؤخرًا","العروض حسب أهلية العميل","جميع العروض","العروض الملغاة"], a:1},
+            {q_en:"50 KD postpaid voice line provides unlimited internet with FUP of:", q_ar:"باقة تميز 50 د.ك للدفع الأجل الصوتي تحتوي على انترنت غير محدود بسعة إستهلاك شهري:", opt_en:["2 GB","3 GB","2 TB","6TB"], opt_ar:["2 GB","3 GB","2 TB","6 TB"], a:3},
+            {q_en:"100 KD Postpaid voice line customer can use ... of Roaming Data:", q_ar:"يمكن للعملاء اللذين لديهم باقة تميز 100 د.ك للدفع الأجل الصوتي استخدام... إنترنت:", opt_en:["60 GB","90 GB","150 GB","200 GB"], opt_ar:["60 GB","90 GB","150 GB","200 GB"], a:2},
+            {q_en:"Sharing Sim plan is available with 12 KD Postpaid Data line:", q_ar:"تتوفر خطة مشاركة الشريحة مع خط الإنترنت الدفع الأجل بقيمة 12 د.ك:", opt_en:["Yes","No","Maybe","Sometimes"], opt_ar:["نعم","لا","ربما","أحيانا"], a:1},
+            {q_en:"12 Kd Premium Roaming bundle allow customer to use...minutes to call to Kuwait:", q_ar:"باقة التجوال المميزة بقيمة 12 د.ك تتيح للعميل استخدام...دقائق للاتصال بالكويت:", opt_en:["15 minutes","30 minutes","Unlimited minutes","None of the mentioned."], opt_ar:["دقيقة 15","دقيقة 30","دقائق غير محدودة","ليس مما سبق"], a:1},
+            {q_en:"Is the Fiber only available for specific areas in Kuwait?", q_ar:"هل الفايبر متوفر لمناطق معينه في الكويت؟", opt_en:["Yes","No","Only Salmiya","Only Kuwait City"], opt_ar:["نعم","لا","فقط السالمية","فقط العاصمة"], a:0},
+            {q_en:"In 16 KD postpaid data line, unlimited FUP is ......", q_ar:"في باقة 16 د.ك للدفع الأجل للإنترنت, سعة الإستخدام الشهرية هي ......", opt_en:["1 TB","2 TB","10 TB","15 TB"], opt_ar:["1 TB","2 TB","10 TB","15 TB"], a:2},
+            {q_en:"After consuming free Data in 16KD postpaid line the speed go down to:", q_ar:"بعد استهلاك العميل للسعة المجانية لباقة 16 د.ك للدفع الأجل تنخفض السرعة إلى:", opt_en:["265 Kbps","260 Kbps","256 Kbps","250 Kbps"], opt_ar:["265 Kbps","260 Kbps","256 Kbps","250 Kbps"], a:2},
+            {q_en:"150GB Social Media Internet benefit is available with 30KD/35KD postpaid line:", q_ar:"تتوفر ميزة إنترنت لوسائط التواصل الاجتماعي بسعة 150GB مع خط الدفع الأجل بقيمة 30 د.ك /35 د.ك:", opt_en:["Yes","No","Only 35KD","Only 30KD"], opt_ar:["صح","خطأ","فقط 35KD","فقط 30KD"], a:1},
+            {q_en:"Regarding Trade In program, one of the below conditions is not included in device evaluation:", q_ar:"فيما يتعلق ببرنامج Trade In، لا يتم تضمين أحد الشروط التالية في تقييم الجهاز:", opt_en:["Device functionality","Battery functionality","Screen intactness","Need of box, & charger"], opt_ar:["وظائف الجهاز","وظيفة البطارية","سلامة الشاشة","الحاجة إلى علبة وشاحن"], a:3},
+            {q_en:"Night 150GB internet usage in Prepaid go packages is from :", q_ar:"استخدام الإنترنت الليلي بسعة 150 جيجابايت في باقات go للدفع المسبق هو من:", opt_en:["1 AM to 7 AM","12 AM to 7 AM","1 AM to 8 AM","12 AM to 8 AM"], opt_ar:["من 1 صباحًا إلى 7 صباحًا","من 12 صباحًا إلى 7 صباحًا","من 1 صباحًا إلى 8 صباحًا","من 12 صباحًا إلى 8 صباحًا"], a:0},
+            {q_en:"What happens when the full internet capacity of the Always-ON service is used?", q_ar:"ماذا يحصل عند استخدام كامل سعة الإنترنت في خدمة خليك ON؟", opt_en:["The service is disconnected","The speed is reduced to 256 Kbps","Additional charges are applied","The package is temporarily suspended"], opt_ar:["يتم قطع الخدمة","يتم تقليل السرعة إلى 256 كيلوبت","يتم إضافة رسوم إضافية","يتم إيقاف الباقة مؤقتًا"], a:1},
+            {q_en:"How much is the fee for transferring ownership of postpaid lines?", q_ar:"كم تبلغ رسوم نقل ملكية خطوط الدفع الأجل؟", opt_en:["2 KWD","3 KWD","5 KWD","7 KWD"], opt_ar:["2 د.ك","3 د.ك","5 د.ك","7 د.ك"], a:2},
+            {q_en:"Unused minutes and messages are carried over to the next month in postpaid packages", q_ar:"يتم ترحيل الدقائق والرسائل غير المستخدمة إلى الشهر التالي في باقات الدفع الأجل.", opt_en:["False","True","Only for Platinum","Only data carries over"], opt_ar:["خطأ","صح","فقط للبلاتيني","فقط البيانات ترحل"], a:0},
+            {q_en:"How can a customer inquire about internet usage for Postpaid voice lines?", q_ar:"كيف يمكن للعميل الاستفسار عن استخدام الإنترنت لخطوط الدفع الأجل؟", opt_en:["Send the code QA to 567","Send the code Q to 567","Send the code QA to 102","Send the code Q to 102"], opt_ar:["إرسال الكود QA إلى الرقم 567","إرسال الكود Q إلى الرقم 567","إرسال الكود 124 إلى 567","إرسال الكود 127 إلى الرقم 567"], a:1},
+            {q_en:"What is the cost of a local minute in postpaid voice plans?", q_ar:"كم تبلغ تكلفة الدقيقة المحلية في باقات الدفع الأجل الصوتية؟", opt_en:["30 fils","25 fils","39 fils","50 fils"], opt_ar:["30 فلس","25 فلس","39 فلس","50 فلس"], a:2},
+            {q_en:"Which app is NOT included in the free social media quota?", q_ar:"أي من التطبيقات التالية غير مشمول في سعة التواصل الاجتماعي المجانية؟", opt_en:["Instagram","WhatsApp","Zoom","TikTok"], opt_ar:["انستغرام","واتساب","زووم","تيك توك"], a:2},
+            {q_en:"How many devices can be provided with internet bundles?", q_ar:"كم عدد الأجهزة التي يمكن إضافتها مع باقات الإنترنت؟", opt_en:["1","2","3","Unlimited"], opt_ar:["1","2","3","غير محدود"], a:1},
+            {q_en:"Customers can use 8KD credit in 10KD Always-ON plan for:", q_ar:"يمكن للعملاء استخدام رصيد 8 د.ك في باقة 10 د.ك خليك ON من أجل:", opt_en:["International Calls","Local Calls","Local SMS","All of the mentioned"], opt_ar:["المكالمات الدولية","المكالمات المحلية","الرسائل المحلية","جميع ما سبق"], a:3},
+            {q_en:"In 35KD Always-ON plan, customer will get ......local SMS:", q_ar:"في باقة 35 د.ك خليك ON، يحصل العميل على ...... رسالة محلية:", opt_en:["100 SMS","500 SMS","1000 SMS","Unlimited SMS"], opt_ar:["رسالة 100","رسالة 500","رسالة 1000","رسائل غير محدودة"], a:2},
+            {q_en:"Local SMS consumption price in Postpaid plan is:", q_ar:"سعر استخدام الرسائل المحلية في باقات الدفع الأجل هو:", opt_en:["10 fils/SMS","20 fils/SMS","30 fils/SMS","45 fils/SMS"], opt_ar:["10 فلوس/لرسالة","20 فلس/لرسالة","30 فلس/لرسالة","45 فلس/لرسالة"], a:1},
+            {q_en:"In 25 KD postpaid plan customer will get .........local minutes:", q_ar:"في باقة الدفع الأجل 25 د.ك، يحصل العميل على ......... دقيقة محلية:", opt_en:["500 minutes","1000 minutes","2000 minutes","Unlimited"], opt_ar:["دقيقة 500","دقيقة 1000","دقيقة 2000","غير محدود"], a:2},
+            {q_en:"35 KD postpaid plan provides.......GB of local internet:", q_ar:"توفر باقة الدفع الأجل 35 د.ك ......... جيجابايت من الإنترنت المحلي:", opt_en:["25 GB","50 GB","100 GB","500 GB"], opt_ar:["25 GB","50 GB","100 GB","500 GB"], a:3},
+            {q_en:"45 KD Postpaid customer with commitment will get:", q_ar:"يحصل عميل الدفع الأجل 45 د.ك مع التزام على:", opt_en:["Smartphone","Router","Smartphone & Router","Router & Tablet"], opt_ar:["هاتف ذكي","راوتر","هاتف ذكي وراوتر","راوتر وجهاز لوحي"], a:2},
+            {q_en:"When a customer wants to (transfer ownership) of a postpaid or prepaid voice line, where must this be done?", q_ar:"عند رغبة العميل في نقل ملكية خط دفع آجل أو دفع مسبق صوتي، أين تتم هذه العملية؟", opt_en:["Through the mobile app only","By the call center agent directly","Through email","By visiting the branch"], opt_ar:["من خلال التطبيق فقط","عبر موظف خدمة العملاء بالهاتف","عبر البريد الإلكتروني","من خلال زيارة الفرع"], a:3},
+            {q_en:"In the case of the death of a line owner, what is the required procedure?", q_ar:"في حال وفاة صاحب الخط، ما هو الإجراء المطلوب؟", opt_en:["No action is required","Contact technical support","The family must visit the branch and submit documents","Ownership is automatically transferred to heirs"], opt_ar:["لا حاجة لأي إجراء","يتم التواصل مع الدعم الفني","يجب على ذوي المتوفى مراجعة الفرع لتقديم المستندات","يتم تحويل الخط تلقائياً لورثة المتوفى"], a:2},
+            {q_en:"If the customer wants to pay the due amounts, which answer is incorrect?", q_ar:"في حال رغبه العميل دفع المبالغ المستحقة، ما هى الإجابة الخاطئة؟", opt_en:["Payment can be made through a branch","Payment can be made through the stc website","The customer will be transferred to technical support","Payment can be made via the stc app"], opt_ar:["يمكن الدفع عبر الفرع","يمكن الدفع عبر موقع stc الإلكتروني","يتم تحويل العميل لقسم الدعم الفني","يمكن الدفع عبر تطبيق stc"], a:2},
+            {q_en:"Which of the following does NOT require directing the customer to the branch?", q_ar:"أي من الخيارات التالية لا يتطلب توجيه العميل للفرع؟", opt_en:["Canceling of a prepaid line","Inquiring about bill details","Ownership transfer of a postpaid line","Blacklisted customer's payment"], opt_ar:["إلغاء خط دفع مسبق","الاستفسار عن تفاصيل الفاتورة","نقل ملكية خط دفع آجل","تسوية الدفعات المستحقة المديونية"], a:1},
+            {q_en:"A customer uses hotspot for a tablet, what can you cross-sell?", q_ar:"عميل يستخدم خاصية نقطة الاتصال (Hotspot) مع جهازه اللوحي. ما هو المنتج الأنسب له؟", opt_en:["Extra SMS","Data SIM","OTT App","Roaming add-on"], opt_ar:["رسائل إضافية","شريحة الإنترنت","تطبيق ترفيهي","إضافة تجوال"], a:1},
+            {q_en:"A customer wants a second Internet device for the family, which post-paid voice plan includes router + smartphone?", q_ar:"عميل يريد جهاز إنترنت إضافي للعائلة، أي باقة دفع آجل صوتي تشمل راوتر + هاتف ذكي؟", opt_en:["KD 10","KD 25","KD 45","KD 16"], opt_ar:["KD 10","KD 25","KD 45","KD 16"], a:2},
+            {q_en:"A customer is into fitness and health tracking, what should you offer?", q_ar:"عميل مهتم بالصحة واللياقة البدنية، ما المنتج الأنسب له؟", opt_en:["Router","Extra minutes","Apple Watch","Data SIM"], opt_ar:["راوتر","دقائق إضافية","ساعة أبل","شريحة بيانات"], a:2},
+            {q_en:"A frequent traveler asks how to stay connected abroad, what can you add?", q_ar:"عميل يسافر كثيراً ويريد البقاء متصلاً، ما الخدمة الأنسب؟", opt_en:["Extra SMS","Roaming data Package","Entertainment app","Share Data SIM"], opt_ar:["رسائل إضافية","باقة بيانات تجوال","تطبيق ترفيهي","شريحة مشاركة"], a:1},
+            {q_en:"A customer from the business category wants a premium number. What is the best option?", q_ar:"عميل من فئة الأعمال يريد رقماً مميزاً، ما هو الخيار الأنسب؟", opt_en:["Regular SIM","Super Gold / Platinum Number","Extra SMS","eSIM"], opt_ar:["رقم عادي","بلاتيني / gold رقم سوبر","رسائل إضافية","eSIM"], a:1},
+            {q_en:"A customer makes too many calls and wants unlimited calls, which Always-ON plan should you upsell?", q_ar:"عميل يجري مكالمات كثيرة ويريد دقائق غير محدودة، أي باقة خليك-ON توفر ذلك؟", opt_en:["KD 16","KD 25","KD 35","KD 10"], opt_ar:["KD 16","KD 25","KD 35","KD 10"], a:2},
+            {q_en:"What is Prepaid Universal Un-subscription code?", q_ar:"ماهو رمز الغاء الاشتراك الموحد الجديد لباقات الدفع المسبق ؟", opt_en:["send (D) to (510)","send (D) to (102)","send (D) to (567)","None of the mentioned"], opt_ar:["إرسال ( D ) إلى (510)","إرسال ( D ) إلى (102)","إرسال ( D ) إلى (567)","ليس مما سبق"], a:0},
+            {q_en:"With 16 KD Postpaid Voice line customer can use 1000 minutes:", q_ar:"مع خط الهاتف للدفع الأجل الصوتية بقيمة 16 دينار كويتي، يمكن للعميل استخدام 1000 دقيقة:", opt_en:["Local","International","stc to stc only","Local & International"], opt_ar:["المحلية","الدولية","داخل شبكة من stc إلى stc","محلي و دولي"], a:0},
+            {q_en:"Which time zone is used to calculate roaming package validity?", q_ar:"بأي توقيت تُحسب صلاحية باقات التجوال؟", opt_en:["Destination country time","UTC time","Kuwait local time","Foreign operator time"], opt_ar:["توقيت الدولة التي يتواجد فيها العميل","توقيت UTC (العالمي)","توقيت دولة الكويت المحلي","توقيت مشغل الشبكة الأجنبي"], a:2},
+            {q_en:"How many free local SMS are available in the 25 KD always-ON postpaid voice plan?", q_ar:"كم عدد الرسائل المحلية المجانية المتوفرة على باقة 25 د.ك للدفع الأجل دائما-ON الصوتية؟", opt_en:["100 SMS","500 SMS","1000 SMS","None of the mentioned"], opt_ar:["رسالة 100","رسالة 500","رسالة 1000","ليس مما سبق"], a:2},
+            {q_en:"What is the Local minutes capacity in the 6 KD weekly go prepaid voice plan?", q_ar:"كم دقيقة محلية تشملها باقة go الدفع المسبق الصوتية الأسبوعية بقيمة 6 د.ك؟", opt_en:["100 minutes","200 minutes","500 minutes","1000 minutes"], opt_ar:["دقيقة 100","دقيقة 200","دقيقة 500","دقيقة 1000"], a:0},
+            {q_en:"Does the 15 KD Always ON postpaid voice plan include a data sharing SIM?", q_ar:"هل يوجد شريحة مشاركة البيانات في باقة 15 د.ك الصوتية للدفع الأجل ON-خليك؟", opt_en:["Yes","No","Maybe","Only for VIP"], opt_ar:["نعم","لا","ربما","فقط لكبار العملاء"], a:0},
+            {q_en:"In 35KD Always on plan, customer will get ......local calls:", q_ar:"في باقة 35 د.ك خليك ON، يحصل العميل على ...... دقيقة محلية:", opt_en:["200 mins","500 mins","1000 mins","Unlimited mins"], opt_ar:["دقيقة 200","دقيقة 500","دقيقة 1000","دقائق غير محدودة"], a:3},
+            {q_en:"In 7.5KD postpaid data line, the data allowance is ......", q_ar:"في باقة 7.5 د.ك للدفع الأجل للإنترنت، سعة الاستخدام الشهرية هي ......", opt_en:["500 GB","1 TB","2 TB","10 TB"], opt_ar:["500 GB","1 TB","2 TB","10 TB"], a:0},
+            {q_en:"Internet allowance for 15 KD Postpaid Data line is:", q_ar:"سياسة الاستخدام العادل الموجودة في باقة 15 KD للدفع الأجل للإنترنت هي:", opt_en:["Unlimited (FUP: 10 TB)","Unlimited (FUP: 20 TB)","Unlimited (FUP: 50 TB)","Unlimited (FUP: 100 TB)"], opt_ar:["انترنت: غير محدود (استخدام عادل: 10 TB)","انترنت: غير محدود (استخدام عادل: 20 TB)","انترنت: غير محدود (استخدام عادل: 50 TB)","انترنت: غير محدود (استخدام عادل: 100 TB)"], a:0},
+            {q_en:"Is 5G-advanced network available in all areas of Kuwait?", q_ar:"هل تتوفر شبكة 5G-advanced في جميع مناطق الكويت؟", opt_en:["Yes","No","Only Capital","Only Salmiya"], opt_ar:["نعم","لا","فقط العاصمة","فقط السالمية"], a:1},
+            {q_en:"What are the available commitment options for Baity 5G Plans?", q_ar:"ما هي خيارات الالتزام المتاحة لخدمات Baity 5G؟", opt_en:["6 months","1year/2 years/3 years","18 months/2 years/3 years","without any commitment"], opt_ar:["6 أشهر","سنة/سنتان/3 سنوات","18 شهرًا/سنتان/3 سنوات","بدون أي التزام"], a:2},
+            {q_en:"What is the FUP for unlimited Baity 5G plans?", q_ar:"ما هي سعة الانترنت المسموح بها في باقات Baity 5G غير المحدودة؟", opt_en:["2 TB","4 TB","5 TB","Unlimited (10TB)"], opt_ar:["2 TB","4 TB","5 TB","غير محدود (10TB)"], a:3},
+            {q_en:"Which Baity 5G plans offer a free Sharing SIM card?", q_ar:"أي باقات Baity 5G تقدم شريحة SIM للمشاركة مجاناً؟", opt_en:["12 KD plan","15 KD plan","19 KD plan","All the options mentioned"], opt_ar:["باقة 12 KD","باقة 15 KD","باقة 19 KD","جميع المذكور"], a:2},
+            {q_en:"Does Baity5G Outdoor router (ODU) contain a SIM card?", q_ar:"هل يحتوي جهاز الخارجي (ODU) على Baity5G بطاقة SIM؟", opt_en:["Yes","No","Only IDU","Optional"], opt_ar:["نعم","لا","فقط IDU","اختياري"], a:0},
+            {q_en:"What is the name of the app for Plume's SuperPods (Baity 5G)?", q_ar:"ما اسم التطبيق الخاص بـ SuperPods من Plume (Baity 5G)؟", opt_en:["HomePass app","Ookla","SafeCam","Mystc Kuwait"], opt_ar:["تطبيق HomePass","Ookla","SafeCam","Mystc Kuwait"], a:0},
+            {q_en:"Baity 5G Customers are eligible to get 2 Entertainment subscriptions for:", q_ar:"يحق لعملاء Baity 5G الحصول على اشتراكي ترفيهين لمدة:", opt_en:["6 months","12 months","18 months","24 months"], opt_ar:["6 أشهر","12 شهرًا","18 شهرًا","24 شهرًا"], a:0},
+            {q_en:"What is the cost for the Foz Gaming IP Add-on with Baity 5G plan?", q_ar:"ما هي تكلفة خدمة FOZ للألعاب الإضافية مع باقات Baity 5G؟", opt_en:["2KD","3KD","5KD","6KD"], opt_ar:["2KD","3KD","5KD","6KD"], a:2},
+            {q_en:"Customers will get up to .... meters of free cable with Baity 5G plan:", q_ar:"سيحصل العملاء على كبل مجاني يصل طوله إلى .... متر مع باقة Baity 5G:", opt_en:["10 meters","20 meters","50 meters","As per customers need"], opt_ar:["10 متراً","20 متراً","50 متراً","حسب احتياجات العميل"], a:2},
+            {q_en:"What is the Auto Port-In option? (BSS system)", q_ar:"ما هو خيار Auto Port-In (BSS system)؟", opt_en:["An option to cancel the line service permanently","An option that allows the number to be transfer immediately for approval from the company it is being transferred.","An option dedicated to change the internet plan only","None"], opt_ar:["خيار يُستخدم لإلغاء خدمة الخط بشكل نهائي","خيار يتيح تنفيذ عملية نقل الرقم فوراً دون انتظار موافقة الشركة المحول منها","خيار مخصص لتغيير باقة الإنترنت فقط","لا يوجد"], a:1},
+            {q_en:"What are the allowed months to transfer the line from prepaid to postpaid?", q_ar:"ماهي عدد الأشهر المسموحة للتحويل الخط من الدفع المسبق إلى الدفع الأجل؟", opt_en:["One month","Two months","Three months","None of the mentioned"], opt_ar:["شهر","إثنان شهر","ثلاث أشهر","ليس مما سبق"], a:2}
         ];
 
         let lang = 'en'; 
@@ -541,9 +492,10 @@
         let agentName = "";
         let agentEmail = "";
         
+        let activeQuizSet = []; // Will hold the 25 random questions
         let currentPage = 0;
         const questionsPerPage = 5;
-        const totalPages = Math.ceil(quizData.length / questionsPerPage);
+        let totalPages = 5;
         
         let userAnswers = new Array(25).fill(null);
         let timerInterval;
@@ -585,7 +537,6 @@
             if(!document.getElementById('results-screen').classList.contains('hidden')) {
                 if (document.getElementById('res-score').innerText === "0" && document.getElementById('score-out-of').classList.contains('hidden')) {
                     document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
-                    // Don't re-render mistakes if failed via cheat
                 } else {
                     processResults(true); 
                 }
@@ -618,12 +569,13 @@
             document.getElementById('dash-guide-title').innerText = t.guideTitle;
             document.getElementById('dash-guide-desc').innerText = t.guideDesc;
 
-            // Admin updates
             document.getElementById('dash-admin-title').innerText = t.adminTitle;
             document.getElementById('dash-admin-desc').innerText = t.adminDesc;
             document.getElementById('adm-panel-title').innerText = t.adminTitle;
+            document.getElementById('adm-panel-desc').innerText = t.adminDesc2;
             document.getElementById('adm-lbl-active').innerText = t.adminLive;
             document.getElementById('adm-lbl-total-logs').innerText = t.adminLogs;
+            document.getElementById('adm-lbl-fail').innerText = t.adminFail;
             document.getElementById('adm-lbl-performance').innerText = t.adminPerf;
 
             document.getElementById('hist-title').innerHTML = `<i class="fa-solid fa-clock-rotate-left mr-3 txt-neon"></i> ${t.histTitle}`;
@@ -655,7 +607,6 @@
             document.getElementById('cs-btn').innerText = t.csBtn;
         }
 
-        // --- AUTH & REFRESH CHECK ---
         window.onload = function() {
             if (sessionStorage.getItem('quiz_in_progress') === 'true') {
                 sessionStorage.removeItem('quiz_in_progress');
@@ -687,7 +638,6 @@
                 
                 document.getElementById('login-screen').classList.add('hidden');
                 
-                // Immediately ping to show online
                 localStorage.setItem('stc_ping_' + agentEmail, Date.now());
                 localStorage.setItem('stc_activity_' + agentEmail, lang === 'en' ? 'Dashboard' : 'لوحة التحكم');
 
@@ -712,7 +662,6 @@
             
             document.getElementById('dash-agent-name').innerText = agentName;
 
-            // EXCLUSIVE ADMIN ACCESS
             if (agentEmail === 'ahmad.zbibo.c@stc.com.kw') {
                 document.getElementById('admin-card').classList.remove('hidden');
                 document.getElementById('admin-card').classList.add('flex');
@@ -764,7 +713,7 @@
                             <p class="font-bold txt-main text-lg">${attempt.date}</p>
                             <p class="${colorClass} text-sm mt-1">${attempt.status}</p>
                         </div>
-                        <div class="text-right rtl:text-left bg-[var(--bg-main)] px-4 py-2 rounded-xl">
+                        <div class="text-right rtl:text-left bg-[var(--bg-main)] px-4 py-2 rounded-xl border border-[var(--border-item)]">
                             <p class="text-2xl font-black txt-neon" dir="ltr">${attempt.score} <span class="text-xs txt-muted">/ 25</span></p>
                         </div>
                     </div>
@@ -787,6 +736,8 @@
         function renderAdminPanel() {
             const perfContainer = document.getElementById('admin-performance-container');
             perfContainer.innerHTML = '';
+            const failContainer = document.getElementById('admin-failed-container');
+            failContainer.innerHTML = '';
             const t = i18n[lang];
 
             // Render Live Users
@@ -797,7 +748,7 @@
                 let pName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 
                 const pingTime = localStorage.getItem('stc_ping_' + user) || 0;
-                const isOnline = (Date.now() - pingTime) < 15000; // 15 seconds threshold
+                const isOnline = (Date.now() - pingTime) < 15000;
                 const activity = localStorage.getItem('stc_activity_' + user) || '';
 
                 let statusHtml = isOnline 
@@ -812,15 +763,33 @@
                 `;
             });
 
+            // Most Failed Questions Analytics
+            let qStats = JSON.parse(localStorage.getItem('stc_q_stats')) || {};
+            let sortedFailures = Object.keys(qStats).map(k => ({id: parseInt(k), fails: qStats[k]})).sort((a,b) => b.fails - a.fails);
+            
+            if (sortedFailures.length === 0) {
+                failContainer.innerHTML = `<p class="txt-muted italic text-center p-4">No failed question data recorded yet.</p>`;
+            } else {
+                sortedFailures.slice(0, 10).forEach(stat => { // Show top 10
+                    let qText = lang === 'en' ? allQuizData[stat.id].q_en : allQuizData[stat.id].q_ar;
+                    failContainer.innerHTML += `
+                        <div class="apple-item p-4 flex justify-between items-center gap-4">
+                            <p class="txt-main text-sm md:text-base leading-relaxed font-bold w-4/5">${qText}</p>
+                            <div class="text-center w-1/5 shrink-0 bg-[var(--bg-main)] py-2 rounded-xl border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                                <p class="text-xl font-black text-red-500">${stat.fails}</p>
+                                <p class="text-[10px] txt-muted uppercase font-bold tracking-widest">Fails</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
             // Render Logs
             let globalLogs = JSON.parse(localStorage.getItem('stc_global_admin_logs')) || [];
             document.getElementById('adm-counter-logs').innerText = globalLogs.length;
 
             if (globalLogs.length === 0) {
-                perfContainer.innerHTML = `
-                    <div class="apple-item p-8 text-center">
-                        <p class="txt-muted italic">No user attempt data recorded yet.</p>
-                    </div>`;
+                perfContainer.innerHTML = `<div class="apple-item p-8 text-center"><p class="txt-muted italic">No user attempt data recorded yet.</p></div>`;
                 return;
             }
 
@@ -913,8 +882,8 @@
             document.getElementById('results-screen').classList.add('flex');
             
             let iconBox = document.getElementById('res-icon-container');
-            iconBox.className = "w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 bg-red-500/10";
-            document.getElementById('res-icon').className = "fa-solid fa-triangle-exclamation text-5xl text-red-500";
+            iconBox.className = "w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.2)]";
+            document.getElementById('res-icon').className = "fa-solid fa-triangle-exclamation text-5xl text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]";
             
             document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
             document.getElementById('res-title').className = "text-3xl font-extrabold text-red-500 mb-2 tracking-tight";
@@ -924,16 +893,24 @@
             
             document.getElementById('res-score').innerText = "0";
             document.getElementById('score-out-of').classList.add('hidden');
-            document.getElementById('btn-open-review').classList.add('hidden'); // Hide review button on cheat fail
+            document.getElementById('btn-open-review').classList.add('hidden'); 
             
-            // Only update text on results screen
             let desc = i18n[lang].failDesc;
             if(isRefresh) desc = lang === 'en' ? "You failed because you refreshed the page during an active quiz." : "لقد رسبت لأنك قمت بتحديث الصفحة أثناء الاختبار النشط.";
-            document.getElementById('mistakes-title').innerText = desc;
+            
+            document.getElementById('mistakes-container').innerHTML = `
+                <div class="apple-item p-8 text-center border-red-500/30 bg-red-500/5 mt-10">
+                    <p class="text-red-500 font-bold text-lg leading-relaxed">${desc}</p>
+                </div>
+            `;
         }
 
         // --- QUIZ START ---
         function startQuiz() {
+            // Select 25 Random Questions from the 102 Database
+            let shuffledPool = allQuizData.map((val, index) => { return {val: val, originalIndex: index} }).sort(() => 0.5 - Math.random());
+            activeQuizSet = shuffledPool.slice(0, 25);
+
             currentPage = 0;
             userAnswers = new Array(25).fill(null);
             
@@ -979,16 +956,16 @@
         function renderPage() {
             const t = i18n[lang];
             const startIdx = currentPage * questionsPerPage;
-            const endIdx = Math.min(startIdx + questionsPerPage, quizData.length);
+            const endIdx = Math.min(startIdx + questionsPerPage, activeQuizSet.length);
             
             document.getElementById('q-current').innerText = `${startIdx + 1}-${endIdx}`;
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
             
             for (let i = startIdx; i < endIdx; i++) {
-                const q = quizData[i];
-                const qText = lang === 'en' ? q.q_en : q.q_ar;
-                const qOpts = lang === 'en' ? q.opt_en : q.opt_ar;
+                const qObj = activeQuizSet[i].val;
+                const qText = lang === 'en' ? qObj.q_en : qObj.q_ar;
+                const qOpts = lang === 'en' ? qObj.opt_en : qObj.opt_ar;
                 
                 const qDiv = document.createElement('div');
                 qDiv.className = "apple-item p-6 md:p-8";
@@ -1017,15 +994,13 @@
                 document.getElementById('btn-submit').classList.add('hidden');
             }
             
-            // Allow clicking submit regardless of completion for the missing flow
             document.getElementById('btn-submit').disabled = false;
-            
             container.scrollTop = 0; 
         }
 
         function selectOption(qIndex, optIndex) {
             userAnswers[qIndex] = optIndex;
-            const qOpts = lang === 'en' ? quizData[qIndex].opt_en : quizData[qIndex].opt_ar;
+            const qOpts = lang === 'en' ? activeQuizSet[qIndex].val.opt_en : activeQuizSet[qIndex].val.opt_ar;
             for(let j=0; j<qOpts.length; j++) {
                 const btn = document.getElementById(`btn-q${qIndex}-opt${j}`);
                 if (j === optIndex) btn.classList.add('selected');
@@ -1037,7 +1012,6 @@
         function nextPage() { if(currentPage < totalPages - 1) { currentPage++; renderPage(); } }
 
         function submitQuiz() {
-            // Check for missing answers
             let missing = [];
             userAnswers.forEach((ans, idx) => {
                 if(ans === null) missing.push(idx + 1);
@@ -1065,27 +1039,42 @@
             const mistakesBox = document.getElementById('mistakes-container');
             mistakesBox.innerHTML = '';
             
-            quizData.forEach((q, i) => {
+            // Stats logic for Admin Tracking
+            let globalStats = JSON.parse(localStorage.getItem('stc_q_stats')) || {};
+            
+            activeQuizSet.forEach((qItem, i) => {
+                const qObj = qItem.val;
+                const originalId = qItem.originalIndex;
                 const userAns = userAnswers[i];
-                if (userAns === q.a) {
+                
+                if (userAns === qObj.a) {
                     score++;
                 } else {
+                    // Log failure stat
+                    if (!isLangToggle) {
+                        globalStats[originalId] = (globalStats[originalId] || 0) + 1;
+                    }
+
                     const div = document.createElement('div');
                     div.className = "apple-item p-6 border-red-500/30";
                     div.style.backgroundColor = "var(--warn-bg)";
                     
-                    const qText = lang === 'en' ? q.q_en : q.q_ar;
-                    const qOpts = lang === 'en' ? q.opt_en : q.opt_ar;
+                    const qText = lang === 'en' ? qObj.q_en : qObj.q_ar;
+                    const qOpts = lang === 'en' ? qObj.opt_en : qObj.opt_ar;
                     const uText = userAns !== null ? qOpts[userAns] : t.lblNoAns;
                     
                     div.innerHTML = `
                         <p class="font-bold txt-main mb-4 text-md leading-relaxed">${t.qPrefix}${i+1}: ${qText}</p>
                         <p class="text-red-500 mb-2"><i class="fa-solid fa-xmark mx-2"></i> <strong>${t.lblYourAns}</strong> ${uText}</p>
-                        <p class="text-green-500 font-bold"><i class="fa-solid fa-check mx-2"></i> <strong>${t.lblCorrectAns}</strong> ${qOpts[q.a]}</p>
+                        <p class="text-green-500 font-bold"><i class="fa-solid fa-check mx-2"></i> <strong>${t.lblCorrectAns}</strong> ${qOpts[qObj.a]}</p>
                     `;
                     mistakesBox.appendChild(div);
                 }
             });
+
+            if (!isLangToggle) {
+                localStorage.setItem('stc_q_stats', JSON.stringify(globalStats));
+            }
 
             let pct = (score / 25) * 100;
             let statusText = "";
@@ -1096,18 +1085,18 @@
             if (pct >= 96) {
                 statusText = t.gradeExcellent;
                 gradeEl.className = "text-xl font-bold mb-6 text-green-400";
-                iconBox.className = "w-24 h-24 bg-green-500/10 rounded-full mx-auto flex items-center justify-center mb-6";
-                icon.className = "fa-solid fa-ranking-star text-5xl text-green-500";
+                iconBox.className = "w-24 h-24 bg-green-500/10 rounded-full mx-auto flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(74,222,128,0.2)]";
+                icon.className = "fa-solid fa-ranking-star text-5xl text-green-500 drop-shadow-[0_0_10px_rgba(74,222,128,0.5)]";
             } else if (pct >= 81) {
                 statusText = t.gradeGood;
                 gradeEl.className = "text-xl font-bold mb-6 text-yellow-400";
-                iconBox.className = "w-24 h-24 bg-yellow-500/10 rounded-full mx-auto flex items-center justify-center mb-6";
-                icon.className = "fa-solid fa-ranking-star text-5xl text-yellow-500";
+                iconBox.className = "w-24 h-24 bg-yellow-500/10 rounded-full mx-auto flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(234,179,8,0.2)]";
+                icon.className = "fa-solid fa-ranking-star text-5xl text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]";
             } else {
                 statusText = t.gradeFail;
                 gradeEl.className = "text-xl font-bold mb-6 text-red-500";
-                iconBox.className = "w-24 h-24 bg-red-500/10 rounded-full mx-auto flex items-center justify-center mb-6";
-                icon.className = "fa-solid fa-xmark text-5xl text-red-500";
+                iconBox.className = "w-24 h-24 bg-red-500/10 rounded-full mx-auto flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(239,68,68,0.2)]";
+                icon.className = "fa-solid fa-xmark text-5xl text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]";
             }
             gradeEl.innerText = statusText;
 
@@ -1116,9 +1105,8 @@
             }
 
             if(!isLangToggle) {
-                // Ensure Review Button is visible
                 document.getElementById('btn-open-review').classList.remove('hidden');
-
+                
                 saveGlobalAdminLog(agentName, agentEmail, score, statusText);
                 saveAttempt(score, statusText);
 
@@ -1126,7 +1114,6 @@
                 document.getElementById('res-title').className = "text-3xl font-extrabold txt-main mb-2 tracking-tight";
                 document.getElementById('score-out-of').classList.remove('hidden');
                 
-                // Hide Quiz, Show Results
                 document.getElementById('quiz-screen').classList.add('hidden');
                 document.getElementById('quiz-screen').classList.remove('flex');
                 document.getElementById('results-screen').classList.remove('hidden');
@@ -1135,6 +1122,27 @@
                 document.getElementById('res-score').innerText = score;
             }
         }
+
+        // Initialize dictionary variables on load
+        i18n.en.adminTitle = "Management Console";
+        i18n.en.adminDesc = "Exclusive access: View active users and performance.";
+        i18n.en.adminDesc2 = "Real-time team completion logs and live sessions.";
+        i18n.en.adminLive = "Live Sessions (Heartbeat)";
+        i18n.en.adminLogs = "Recorded System Logs";
+        i18n.en.adminFail = "Top Failed Questions (Analytics):";
+        i18n.en.adminPerf = "Historical Agent Performance:";
+        i18n.en.statusOnline = "Online";
+        i18n.en.statusOffline = "Offline";
+
+        i18n.ar.adminTitle = "وحدة الإدارة والتحكم";
+        i18n.ar.adminDesc = "دخول حصري: عرض الجلسات والإحصائيات.";
+        i18n.ar.adminDesc2 = "سجلات النظام والجلسات النشطة المباشرة.";
+        i18n.ar.adminLive = "الجلسات النشطة (مباشر)";
+        i18n.ar.adminLogs = "سجلات النظام المحفوظة";
+        i18n.ar.adminFail = "أكثر الأسئلة فشلاً (تحليلات):";
+        i18n.ar.adminPerf = "أداء الموظفين التاريخي:";
+        i18n.ar.statusOnline = "متصل";
+        i18n.ar.statusOffline = "غير متصل";
     </script>
 </body>
 </html>
