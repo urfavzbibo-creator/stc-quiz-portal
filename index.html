@@ -124,11 +124,13 @@
         <p id="login-sub" class="txt-muted text-sm mb-2">Agent Authentication Required</p>
         <p id="login-hint" class="txt-neon text-xs font-bold mb-6">(Must contain .c@stc.com.kw)</p>
         
-        <input type="text" id="login-user" class="input-box w-full rounded-xl px-4 py-3 mb-4 text-left" dir="ltr" placeholder="Username (e.g. name.c@stc.com.kw)">
-        <input type="password" id="login-pass" class="input-box w-full rounded-xl px-4 py-3 mb-6 text-left" dir="ltr" placeholder="Password" onkeypress="if(event.key === 'Enter') login()">
-        
-        <p id="login-err" class="text-red-500 text-sm mb-4 hidden font-bold">Invalid credentials!</p>
-        <button onclick="login()" id="btn-login" class="btn-stc w-full py-3 rounded-xl font-bold text-lg">Login</button>
+        <form onsubmit="event.preventDefault(); login();">
+            <input type="text" id="login-user" autocomplete="username" class="input-box w-full rounded-xl px-4 py-3 mb-4 text-left" dir="ltr" placeholder="Username (e.g. name.c@stc.com.kw)">
+            <input type="password" id="login-pass" autocomplete="current-password" class="input-box w-full rounded-xl px-4 py-3 mb-6 text-left" dir="ltr" placeholder="Password">
+            
+            <p id="login-err" class="text-red-500 text-sm mb-4 hidden font-bold">Invalid credentials!</p>
+            <button type="submit" id="btn-login" class="btn-stc w-full py-3 rounded-xl font-bold text-lg">Login</button>
+        </form>
     </div>
 
     <!-- 2. DASHBOARD SCREEN -->
@@ -314,13 +316,13 @@
         const totalPages = Math.ceil(quizData.length / questionsPerPage);
         
         let userAnswers = new Array(25).fill(null);
-        let timeRemaining = 900; 
         let timerInterval;
 
         let isQuizActive = false;
         let navWarnings = 0;
 
-        const allowedUsers = ['ahmad.zbibo.c@stc.com.kw', 'essan.balla.c@stc.com.kw'];
+        // ALLOWED USERS ONLY
+        const allowedUsers = ['ahmad.zbibo.c@stc.com.kw', 'essan.ballan.c@stc.com.kw'];
 
         // --- THEME LOGIC ---
         function toggleTheme() {
@@ -393,8 +395,9 @@
 
         // --- AUTH ---
         function login() {
-            const user = document.getElementById('login-user').value.trim().toLowerCase();
-            const pass = document.getElementById('login-pass').value.trim();
+            // Remove spaces from accidental browser autofills
+            const user = document.getElementById('login-user').value.trim().toLowerCase().replace(/\s/g, '');
+            const pass = document.getElementById('login-pass').value.trim().replace(/\s/g, '');
             
             if (allowedUsers.includes(user) && pass === 'Stc123') {
                 let rawName = user.split('.c@')[0].replace('.', ' ');
@@ -463,16 +466,29 @@
             
             renderPage();
             
+            // REAL TIME TRACKING TIMER
+            const targetEndTime = Date.now() + (15 * 60 * 1000);
+            
             timerInterval = setInterval(() => {
-                timeRemaining--;
+                if (!isQuizActive) return;
+                
+                let timeRemaining = Math.floor((targetEndTime - Date.now()) / 1000);
+                
+                if (timeRemaining <= 0) {
+                    timeRemaining = 0;
+                    clearInterval(timerInterval); 
+                    processResults(false); 
+                }
+
                 let m = Math.floor(timeRemaining / 60);
                 let s = timeRemaining % 60;
                 let display = document.getElementById('timer');
                 display.innerText = `${m}:${s.toString().padStart(2, '0')}`;
                 
-                if (timeRemaining <= 180) display.classList.add('timer-warning');
-                if (timeRemaining <= 0) { clearInterval(timerInterval); processResults(false); }
-            }, 1000);
+                if (timeRemaining <= 180 && timeRemaining > 0) {
+                    display.classList.add('timer-warning');
+                }
+            }, 500);
         }
 
         // --- RENDER 5 QUESTIONS ---
