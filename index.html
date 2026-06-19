@@ -55,7 +55,6 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
         
-        /* Smooth Animations */
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -63,7 +62,6 @@
         .txt-muted { color: var(--text-muted); transition: color 0.4s ease; }
         .txt-neon { color: var(--neon-purple); }
 
-        /* Apple-style Glassmorphism Panels */
         .apple-panel { 
             background-color: var(--bg-panel); 
             backdrop-filter: var(--panel-blur); 
@@ -82,14 +80,12 @@
         }
         .apple-item:hover { background-color: var(--bg-item-hover); transform: translateY(-3px); }
         
-        /* Clean Inputs */
         .input-box { 
             background-color: var(--bg-item); color: var(--text-main); border: 1px solid var(--border-item); 
             transition: all 0.3s ease; 
         }
         .input-box:focus { border-color: var(--neon-purple); box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2); outline: none; background-color: transparent;}
         
-        /* Quiz Options */
         .option-btn { background-color: var(--bg-item); color: var(--text-main); border: 1px solid var(--border-item); transition: all 0.2s ease; cursor: pointer; border-radius: 20px;}
         .option-btn:hover:not(.selected) { background-color: var(--bg-item-hover); transform: scale(1.01); }
         .option-btn.selected { 
@@ -99,7 +95,6 @@
             box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
         }
 
-        /* STC Buttons */
         .btn-stc { background-color: var(--stc-purple); color: #ffffff; transition: all 0.3s ease; border-radius: 9999px; }
         .btn-stc:hover:not(:disabled) { background-color: #6b21a8; box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4); transform: translateY(-2px); }
         .btn-stc:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -107,7 +102,6 @@
         .timer-pulse { color: #ef4444; animation: pulse 1s infinite; font-weight: 800;}
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         
-        /* Top Controls */
         .top-controls { position: absolute; top: 24px; right: 24px; z-index: 1000; display: flex; gap: 12px; }
         html[dir="rtl"] .top-controls { right: auto; left: 24px; }
         
@@ -117,7 +111,7 @@
         }
         .control-btn:hover { border-color: var(--neon-purple); transform: scale(1.05); }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-panel); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--neon-purple); }
@@ -146,6 +140,36 @@
             <h2 id="warn-title" class="text-2xl font-bold mb-3 text-red-500">Warning!</h2>
             <p id="warn-desc" class="text-md txt-muted mb-8">Using browser navigation is strictly prohibited during the quiz. This is your first warning. Repeating this will result in an automatic failure.</p>
             <button onclick="dismissWarning()" id="btn-warn-ok" class="bg-red-600 hover:bg-red-500 text-white px-8 py-3.5 rounded-full font-bold w-full transition transform hover:scale-105">I Understand</button>
+        </div>
+    </div>
+
+    <!-- UNANSWERED QUESTIONS MODAL -->
+    <div id="unanswered-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
+        <div class="apple-panel p-10 max-w-md w-full text-center border-yellow-500/30">
+            <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-clipboard-question text-5xl text-yellow-500"></i>
+            </div>
+            <h2 id="unans-title" class="text-2xl font-bold mb-3 text-yellow-500">Unanswered Questions</h2>
+            <p id="unans-desc" class="text-md txt-muted mb-4">You cannot submit the quiz yet. You missed the following questions:</p>
+            <div class="apple-item p-4 mb-8 text-lg font-black txt-neon tracking-widest" id="missing-q-list"></div>
+            <button onclick="document.getElementById('unanswered-modal').classList.add('hidden')" id="btn-unans-ok" class="btn-stc w-full py-3.5 font-bold">Return to Quiz</button>
+        </div>
+    </div>
+
+    <!-- REVIEW DETAILS FULL-PAGE MODAL -->
+    <div id="review-modal" class="fixed inset-0 z-[300] flex justify-center bg-black/80 backdrop-blur-xl hidden fade-in p-4 md:p-8">
+        <div class="apple-panel w-full max-w-5xl flex flex-col h-full relative overflow-hidden">
+            <div class="p-6 border-b border-[var(--border-item)] flex justify-between items-center bg-[var(--bg-panel)] z-10 shrink-0">
+                <h2 id="review-modal-title" class="text-2xl font-bold txt-neon flex items-center gap-3">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Assessment Review
+                </h2>
+                <button onclick="document.getElementById('review-modal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-[var(--bg-item)] hover:bg-[var(--bg-item-hover)] flex items-center justify-center txt-main transition border border-[var(--border-item)]">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="mistakes-container" class="flex-grow overflow-y-auto p-6 md:p-10 custom-scrollbar flex flex-col gap-6 text-left rtl:text-right">
+                <!-- Mistakes injected here -->
+            </div>
         </div>
     </div>
 
@@ -179,7 +203,7 @@
         </form>
     </div>
 
-    <!-- 2. DASHBOARD SCREEN (Hub) -->
+    <!-- 2. DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="apple-panel p-8 md:p-12 max-w-5xl w-full hidden flex-col fade-in">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-[var(--border-item)]">
             <div>
@@ -193,9 +217,8 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Main Quiz Card -->
             <div class="apple-item p-8 flex flex-col justify-between md:col-span-2 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150"></div>
                 <div class="relative z-10">
                     <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold mb-4 tracking-wider uppercase">Mandatory</span>
                     <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2">June 2026 Quiz</h3>
@@ -206,10 +229,9 @@
                 </button>
             </div>
 
-            <!-- Past Attempts Card -->
             <div class="apple-item p-8 flex flex-col justify-between cursor-pointer group" onclick="showPastAttempts()">
                 <div>
-                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-5 text-xl">
+                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-5 text-xl transition-transform group-hover:scale-110">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
                     <h3 id="dash-history-title" class="text-xl font-bold txt-main mb-2">History</h3>
@@ -234,10 +256,9 @@
                 </div>
             </div>
 
-            <!-- Dummy Card 1 -->
             <div class="apple-item p-8 flex flex-col justify-between cursor-pointer group" onclick="showComingSoon()">
                 <div>
-                    <div class="w-12 h-12 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center mb-5 text-xl">
+                    <div class="w-12 h-12 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center mb-5 text-xl transition-transform group-hover:scale-110">
                         <i class="fa-solid fa-book-open-reader"></i>
                     </div>
                     <h3 id="dash-train-title" class="text-lg font-bold txt-main mb-2">Training</h3>
@@ -245,10 +266,9 @@
                 </div>
             </div>
 
-            <!-- Dummy Card 2 -->
             <div class="apple-item p-8 flex flex-col justify-between cursor-pointer group md:col-span-2" onclick="showComingSoon()">
                 <div class="flex items-center gap-6">
-                    <div class="w-14 h-14 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center text-2xl">
+                    <div class="w-14 h-14 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110 shrink-0">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div>
@@ -276,35 +296,29 @@
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-8">
             <div>
                 <h2 class="text-3xl font-extrabold txt-main flex items-center gap-3"><i class="fa-solid fa-user-gear text-purple-500"></i> <span id="adm-panel-title">Admin Management Terminal</span></h2>
-                <p class="text-sm txt-muted mt-1">Real-time team completion logs and analytics.</p>
+                <p class="text-sm txt-muted mt-1">Real-time team completion logs and live sessions.</p>
             </div>
-            <button onclick="returnToDashboard()" class="bg-transparent border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item)] px-6 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm">
+            <button onclick="returnToDashboard()" class="bg-transparent border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item)] px-6 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm shrink-0">
                 <i class="fa-solid fa-house"></i> Dashboard
             </button>
         </div>
 
-        <!-- Analytics counters -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 shrink-0">
-            <div class="apple-item p-6 flex justify-between items-center">
-                <div>
-                    <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-1" id="adm-lbl-active">Total System Users</p>
-                    <p class="text-4xl font-black txt-main">2 <span class="text-sm font-normal txt-muted">(Ahmad / Essan)</span></p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 shrink-0">
+            <div class="apple-item p-6 md:col-span-2">
+                <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-4" id="adm-lbl-active">Live Sessions (Heartbeat)</p>
+                <div id="admin-live-users" class="flex flex-col gap-3">
+                    <!-- Live users injected here -->
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
             </div>
-            <div class="apple-item p-6 flex justify-between items-center">
-                <div>
-                    <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-1" id="adm-lbl-total-logs">Recorded System Logs</p>
-                    <p id="adm-counter-logs" class="text-4xl font-black text-purple-400">0</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl"><i class="fa-solid fa-database"></i></div>
+            <div class="apple-item p-6 flex flex-col justify-center items-center text-center">
+                <div class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-database"></i></div>
+                <p id="adm-counter-logs" class="text-4xl font-black text-purple-400 mb-1">0</p>
+                <p class="text-xs txt-muted font-bold uppercase tracking-wider" id="adm-lbl-total-logs">Recorded System Logs</p>
             </div>
         </div>
 
-        <h3 class="text-lg font-bold text-purple-400 mb-4 shrink-0" id="adm-lbl-performance">Agent Performance & Quiz Results:</h3>
-        <div id="admin-performance-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4">
-            <!-- System states loaded dynamically -->
-        </div>
+        <h3 class="text-lg font-bold text-purple-400 mb-4 shrink-0" id="adm-lbl-performance">Historical Agent Performance:</h3>
+        <div id="admin-performance-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4"></div>
     </div>
 
     <!-- 3. QUIZ INTERFACE -->
@@ -331,11 +345,11 @@
                 <span id="lbl-next">Next</span> <i class="fa-solid fa-arrow-right rtl:rotate-180"></i>
             </button>
 
-            <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3.5 rounded-full font-bold text-white hidden disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm shadow-lg shadow-green-500/20">
+            <!-- Submit button is always active on last page now -->
+            <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3.5 rounded-full font-bold text-white hidden flex items-center gap-2 text-sm shadow-lg shadow-green-500/20">
                 <span id="lbl-submit">Submit</span> <i class="fa-solid fa-check"></i>
             </button>
         </div>
-        <p id="submit-warning" class="text-red-500 text-xs text-center mt-4 hidden font-bold"></p>
     </div>
 
     <!-- 4. RESULTS SCREEN -->
@@ -344,7 +358,7 @@
             <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Dashboard</span>
         </button>
 
-        <div class="text-center mb-8 border-b border-[var(--border-item)] pb-8 shrink-0 mt-4">
+        <div class="text-center mb-8 border-b border-[var(--border-item)] pb-10 shrink-0 mt-8">
             <div id="res-icon-container" class="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6">
                 <i id="res-icon" class="fa-solid fa-ranking-star text-5xl"></i>
             </div>
@@ -352,14 +366,20 @@
             <h2 id="res-title" class="text-3xl font-extrabold txt-main mb-2 tracking-tight">Quiz Completed</h2>
             <h3 id="res-grade" class="text-xl font-bold mb-6"></h3>
             
-            <div class="inline-block apple-item px-10 py-6">
+            <div class="inline-block apple-item px-10 py-6 mb-8">
                 <p id="lbl-score" class="text-xs txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
                 <p class="text-6xl font-black txt-main tracking-tighter" dir="ltr"><span id="res-score" class="txt-neon"></span><span id="score-out-of" class="text-3xl txt-muted ml-1">/25</span></p>
             </div>
-        </div>
 
-        <h3 id="mistakes-title" class="text-lg font-bold text-red-500 mb-4 shrink-0">Review Your Mistakes:</h3>
-        <div id="mistakes-container" class="flex-grow overflow-y-auto pr-3 custom-scrollbar flex flex-col gap-4 text-left rtl:text-right pb-4"></div>
+            <!-- NEW: Review Button replaces inline scrolling mistakes -->
+            <div>
+                <button onclick="document.getElementById('review-modal').classList.remove('hidden')" id="btn-open-review" class="btn-stc px-8 py-3.5 font-bold text-md flex items-center justify-center gap-3 mx-auto">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-view-review">View Review Details</span>
+                </button>
+            </div>
+        </div>
+        
+        <p class="text-center txt-muted text-sm" id="res-footer-msg">Your results have been securely logged.</p>
     </div>
 
     <script>
@@ -374,7 +394,7 @@
                 passPlace: "Password",
                 btnLogin: "Continue",
                 loginErr: "Invalid credentials! Only authorized agents allowed.",
-                greetUser: "Welcome back, {name}!",
+                greetUser: "Welcome back, {name}",
                 dashDesc: "Explore your dashboard. Attempt the mandatory assessment, review past scores, and access training materials to stay ahead.",
                 quizTitle: "June 2026 Quiz",
                 quizInfo: "25 Questions • 15 Min Limit",
@@ -393,11 +413,11 @@
                 lblPrev: "Previous",
                 lblNext: "Next",
                 lblSubmit: "Submit",
-                warnSubmit: "Answer all 25 questions to submit. ({ans}/25)",
                 resTitle: "Assessment Complete",
                 resTitleFail: "Assessment Failed",
                 lblScore: "Final Score",
-                mistakesTitle: "Review Details:",
+                btnOpenReview: "View Review Details",
+                reviewModalTitle: "Assessment Review",
                 perfectScore: "Perfect Score! You are an STC Star. No mistakes made.",
                 lblYourAns: "Your Answer:",
                 lblCorrectAns: "Correct Answer:",
@@ -406,11 +426,24 @@
                 warnModalTitle: "Warning!",
                 warnModalDesc: "Using browser navigation or refreshing is strictly prohibited during the quiz. This is your warning. Repeating this will result in an automatic failure.",
                 warnModalOk: "I Understand",
+                unansTitle: "Unanswered Questions",
+                unansDesc: "You cannot submit the quiz yet. You missed the following questions:",
+                btnUnansOk: "Return to Quiz",
                 failDesc: "You failed the quiz because you used the browser's navigation/refresh, which violates the anti-cheat policy.",
                 gradeExcellent: "Excellent! You passed",
                 gradeGood: "Good! Passed",
                 gradeFail: "Failed",
-                noHistory: "No past attempts found."
+                noHistory: "No past attempts found.",
+                csTitle: "Stay Tuned!",
+                csDesc: "We're cooking up something amazing for you. This feature will be available very soon.",
+                csBtn: "Got it",
+                adminTitle: "Management Console",
+                adminDesc: "Exclusive access: View live sessions and statistics.",
+                adminLive: "Live Sessions (Heartbeat)",
+                adminLogs: "Recorded System Logs",
+                adminPerf: "Historical Agent Performance:",
+                statusOnline: "Online",
+                statusOffline: "Offline"
             },
             ar: {
                 langBtn: "English",
@@ -440,11 +473,11 @@
                 lblPrev: "السابق",
                 lblNext: "التالي",
                 lblSubmit: "إنهاء",
-                warnSubmit: "جاوب على 25 سؤال قبل الإنهاء. ({ans}/25)",
                 resTitle: "اكتمل التقييم",
                 resTitleFail: "فشل التقييم",
                 lblScore: "النتيجة النهائية",
-                mistakesTitle: "مراجعة التفاصيل:",
+                btnOpenReview: "عرض تفاصيل المراجعة",
+                reviewModalTitle: "مراجعة التقييم",
                 perfectScore: "كفو! نتيجتك كاملة وإنت نجم بـ STC. ما عندك ولا غلطة.",
                 lblYourAns: "إجابتك:",
                 lblCorrectAns: "الإجابة الصح:",
@@ -453,15 +486,28 @@
                 warnModalTitle: "تنبيه هام!",
                 warnModalDesc: "ممنوع تستخدم أسهم المتصفح أو تسوي ريفرش وإنت تمتحن. هذا تحذيرك، إذا سويتها مرة ثانية راح تسقط تلقائياً.",
                 warnModalOk: "فهمت",
+                unansTitle: "أسئلة غير مجابة",
+                unansDesc: "لا يمكنك تسليم الاختبار الآن. نسيت الإجابة على الأسئلة التالية:",
+                btnUnansOk: "العودة للاختبار",
                 failDesc: "إنت رسبت لأنك استخدمت أسهم المتصفح أو سويت ريفرش، وهالشي يخالف سياسة منع الغش.",
                 gradeExcellent: "ممتاز، لقد نجحت!",
                 gradeGood: "جيد، لقد نجحت",
                 gradeFail: "راسب",
-                noHistory: "لا توجد محاولات سابقة."
+                noHistory: "لا توجد محاولات سابقة.",
+                csTitle: "خلك قريب!",
+                csDesc: "قاعدين نجهز لك شيء مميز. هالخاصية راح تتوفر قريباً جداً.",
+                csBtn: "تم",
+                adminTitle: "وحدة الإدارة والتحكم",
+                adminDesc: "دخول حصري: عرض الجلسات النشطة والإحصائيات.",
+                adminLive: "الجلسات النشطة (مباشر)",
+                adminLogs: "سجلات النظام المحفوظة",
+                adminPerf: "أداء الموظفين التاريخي:",
+                statusOnline: "متصل",
+                statusOffline: "غير متصل"
             }
         };
 
-        // --- 25 Scenario-Based Questions ---
+        // --- 25 Scenario-Based Questions (KUWAITI ARABIC & ENGLISH) ---
         const quizData = [
             { q_en: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", q_ar: "عميل دق وهو معصب حيل لأن الإنترنت بطيء وعنده اجتماع مهم. شتسوّي أول شيء؟", opt_en: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], opt_ar: ["أقدم له خصم على طول.", "أسمعه عدل، أعتذر منه، وأبدأ أحل المشكلة معاه خطوة بخطوة.", "أقول له يدق علينا بعدين.", "أحوله حق المسؤول."], a: 1 },
             { q_en: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", q_ar: "وإنت تكلم العميل، قام يغلط ويستخدم ألفاظ مسيئة. شالرد الصح؟", opt_en: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], opt_ar: ["أرد عليه وأجادله.", "أسكر الخط بوجهه فوراً.", "أنبهه بهدوء وأمشي على سياسة الشركة.", "أطنش وأكمل كلامي."], a: 2 },
@@ -476,7 +522,7 @@
             { q_en: "An elderly customer cannot understand your technical instructions. Best approach?", q_ar: "عميل كبير بالسن مو قادر يفهم خطواتك الفنية. شأحسن طريقة معاه؟", opt_en: ["Speak louder.", "Show patience and use simple analogies.", "Tell them to find a younger family member.", "Dispatch a technician immediately."], opt_ar: ["أرفع صوتي وأنا أكلمه.", "أطوّل بالي معاه وأشرح له بأمثلة بسيطة.", "أقول له يعطي التلفون حق أي أحد شاب بالبيت.", "أدز له فني على طول."], a: 1 },
             { q_en: "While troubleshooting a critical issue, the customer's call drops. Required protocol?", q_ar: "وإنت قاعد تحل مشكلة للعميل، الخط فصل. شالمفروض تسوي؟", opt_en: ["Wait for them to call back.", "Close the ticket.", "Attempt to call the customer back immediately.", "Send an email."], opt_ar: ["أنطره هو يدق مرة ثانية.", "أسكر التذكرة.", "أحاول أدق عليه فوراً عشان نكمل.", "أدز له إيميل."], a: 2 },
             { q_en: "Customer immediately demands: 'Get me a supervisor now!' What do you do?", q_ar: "العميل أول ما شبك قال: 'عطني مسؤولك الحين!'. شتسوّي؟", opt_en: ["Blind transfer.", "Refuse to transfer.", "Politely ask for brief details to prepare supervisor, then transfer.", "Hang up."], opt_ar: ["أحوله على طول.", "أرفض أحوله.", "أطلب منه باحترام يعطيني نبذة عن المشكلة عشان أجهز المسؤول، بعدين أحوله.", "أسكر الخط."], a: 2 },
-            { q_en: "You realize halfway through a call you gave incorrect pricing info. What should you do?", q_ar: "استوعبت بنص المكالمة إنك عطيته سعر غلط. شتسوّي？", opt_en: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], opt_ar: ["أسوي نفسي ما أدري.", "أحوله حق موظف ثاني.", "أعتذر منه، أعترف بغلطتي، وأعطيه السعر الصح.", "أقط اللوم على السستم."], a: 2 },
+            { q_en: "You realize halfway through a call you gave incorrect pricing info. What should you do?", q_ar: "استوعبت بنص المكالمة إنك عطيته سعر غلط. شتسوّي؟", opt_en: ["Pretend it didn't happen.", "Transfer to another agent.", "Apologize, admit the error, provide correct pricing.", "Blame the system."], opt_ar: ["أسوي نفسي ما أدري.", "أحوله حق موظف ثاني.", "أعتذر منه، أعترف بغلطتي، وأعطيه السعر الصح.", "أقط اللوم على السستم."], a: 2 },
             { q_en: "Customer asks for your personal opinion on buying iPhone vs Samsung. Response?", q_ar: "العميل يسألك عن رأيك الشخصي، يشتري آيفون ولا سامسونج؟ شترد عليه؟", opt_en: ["State personal favorite.", "Refuse to answer.", "Remain objective, highlight features, ask preferences.", "Transfer to sales."], opt_ar: ["أقول له جهازي المفضل وأذم الثاني.", "أرفض أجاوبه.", "أكون حيادي، أوضح له ميزات كل جهاز، وأسأله عن اللي يفضله.", "أحوله قسم المبيعات."], a: 2 },
             { q_en: "Your CRM system freezes while verifying an account. Best action?", q_ar: "سستم הـ CRM علّق وإنت قاعد تشيّك على بياناته. شأفضل تصرف؟", opt_en: ["Sit in silence.", "Inform customer of delay, make polite small talk/hold.", "Hold without saying anything.", "Ask them to call back."], opt_ar: ["أسكت وما أتكلم.", "أبلغه إن السستم بطيء شوي، وأسولف معاه بلباقة أو أحطه عالهولد.", "أحطه عالهولد بدون ما أستأذن.", "أقول له سكر ودق بعدين."], a: 1 },
             { q_en: "Customer is rambling about personal issues unrelated to service. Handle it by:", q_ar: "العميل قاعد يسولف ويشكي من أمور شخصية مالها شغل بالخدمة. شلون تتصرف؟", opt_en: ["Interrupting aggressively.", "Letting them talk indefinitely.", "Listening briefly, then gently steering back to troubleshooting.", "Disconnecting."], opt_ar: ["أقاطعه بقوة.", "أخليه يسولف على راحته لو شكثر يطول.", "أسمعه شوي، بعدين أرد أوجّه المكالمة بلباقة حق المشكلة.", "أفصل المكالمة."], a: 2 },
@@ -486,7 +532,7 @@
             { q_en: "The caller is a young child reporting broken WiFi. Proper procedure?", q_ar: "اللي داق طفل صغير ويقول الواي فاي خربان. شالإجراء الصح؟", opt_en: ["Troubleshoot with the child.", "Ask the child to put an adult/account holder on the phone.", "Reset router blindly.", "Hang up."], opt_ar: ["أمشي معاه بالخطوات وأحل المشكلة.", "أطلب منه يعطي التلفون حق أحد كبير أو صاحب الحساب.", "أسوي ريستارت حق الراوتر من عندي وأمشي.", "أسكر الخط."], a: 1 },
             { q_en: "Customer extensively praises your service. Most professional response?", q_ar: "عميل يمدح خدمتك وشغلك حيل. شالرد الأكثر احترافية؟", opt_en: ["Ask for a tip.", "Brag about being the best.", "Thank them sincerely and ask if they need further help.", "Keep them on phone to boost metrics."], opt_ar: ["أطلب منه بقشيش.", "أهايط وأقول له أنا أحسن واحد بالشركة.", "أشكره من قلبي وأسأله إذا يبي خدمة ثانية.", "أخليه عالخط عشان أحسن أرقامي."], a: 2 },
             { q_en: "B2B customer calls you (a B2C agent) by mistake. Best action?", q_ar: "عميل قطاع أعمال (B2B) دق عليك وإنت موظف أفراد بالغلط. شأحسن تصرف؟", opt_en: ["Troubleshoot using B2C tools.", "Warm transfer to B2B team.", "Tell them to look up the number themselves.", "Close ticket."], opt_ar: ["أحاول أحل مشكلته من السستم مالي.", "أحوله بأسلوب حلو (Warm transfer) حق فريق الشركات.", "أقول له دوّر رقمهم بالنت ودق عليهم.", "أصك التذكرة."], a: 1 },
-            { q_en: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", q_ar: "العميل يصارخ: 'دقيت عليكم 3 مرات اليوم ومحد حل مشكلتي!'. شترد عليه؟", opt_en: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], opt_ar: ["أعتذر منه، آخذ الموضوع على عاتقي، وأراجع ملاحظات المكالمات اللي طافت.", "أقول له ألميد اللي كلموك قبل كانوا موظفين تعبانين.", "أقول له لا تصارخ.", "أحطه عالهولد كنوع من العقاب."], a: 0 },
+            { q_en: "Customer shouts: 'I've called 3 times today and nobody fixed this!' Response?", q_ar: "العميل يصارخ: 'دقيت عليكم 3 مرات اليوم ومحد حل مشكلتي!'. شترد عليه؟", opt_en: ["Apologize, take ownership, review previous notes.", "Say they spoke to bad agents.", "Tell them to stop shouting.", "Put on hold as punishment."], opt_ar: ["أعتذر منه، آخذ الموضوع على عاتقي، وأراجع ملاحظات المكالمات اللي طافت.", "أقول له أكيد اللي كلموك قبل كانوا موظفين تعبانين.", "أقول له لا تصارخ.", "أحطه عالهولد كنوع من العقاب."], a: 0 },
             { q_en: "2 minutes before your shift ends, a complex fiber issue comes in. Action?", q_ar: "باجي دقيقتين ويخلص دوامك (شفتك)، ودشت مكالمة فيها مشكلة فايبر معقدة. شتسوّي؟", opt_en: ["Transfer to random queue.", "Pretend you can't hear.", "Handle it fully with standard professionalism (overtime).", "Tell them to call back."], opt_ar: ["أحولها حق طابور عشوائي.", "أسوي نفسي مو سامع شي.", "أستلمها وأحلها باحترافية كاملة (حتى لو قعدت وقت إضافي).", "أقول له دوامي خلص دق بعدين."], a: 2 }
         ];
 
@@ -505,6 +551,16 @@
         let navWarnings = 0;
 
         const allowedUsers = ['ahmad.zbibo.c@stc.com.kw', 'essan.ballan.c@stc.com.kw'];
+
+        // --- PING SYSTEM (HEARTBEAT FOR ADMIN TRACKING) ---
+        setInterval(() => {
+            if(agentEmail) {
+                localStorage.setItem('stc_ping_' + agentEmail, Date.now());
+                let activity = lang === 'en' ? "Dashboard" : "لوحة التحكم";
+                if(isQuizActive) activity = lang === 'en' ? "In Quiz" : "يختبر الآن";
+                localStorage.setItem('stc_activity_' + agentEmail, activity);
+            }
+        }, 3000);
 
         function toggleTheme() {
             isLightMode = !isLightMode;
@@ -529,7 +585,7 @@
             if(!document.getElementById('results-screen').classList.contains('hidden')) {
                 if (document.getElementById('res-score').innerText === "0" && document.getElementById('score-out-of').classList.contains('hidden')) {
                     document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
-                    document.getElementById('mistakes-title').innerText = i18n[lang].failDesc;
+                    // Don't re-render mistakes if failed via cheat
                 } else {
                     processResults(true); 
                 }
@@ -550,7 +606,7 @@
             
             if(agentName) document.getElementById('greeting-msg').innerHTML = t.greetUser.replace('{name}', agentName);
             document.getElementById('dash-desc').innerHTML = t.dashDesc;
-            document.getElementById('dash-quiz-title').innerHTML = `<i class="fa-regular fa-calendar-check txt-neon mr-3"></i> ${t.quizTitle}`;
+            document.getElementById('dash-quiz-title').innerHTML = `<i class="fa-regular fa-calendar-check txt-neon mx-2"></i> ${t.quizTitle}`;
             document.getElementById('dash-quiz-info').innerText = t.quizInfo;
             document.getElementById('btn-attempt').innerHTML = `${t.btnAttempt} <i class="fa-solid fa-play ml-2"></i>`;
             
@@ -561,6 +617,14 @@
             document.getElementById('dash-train-desc').innerText = t.trainDesc;
             document.getElementById('dash-guide-title').innerText = t.guideTitle;
             document.getElementById('dash-guide-desc').innerText = t.guideDesc;
+
+            // Admin updates
+            document.getElementById('dash-admin-title').innerText = t.adminTitle;
+            document.getElementById('dash-admin-desc').innerText = t.adminDesc;
+            document.getElementById('adm-panel-title').innerText = t.adminTitle;
+            document.getElementById('adm-lbl-active').innerText = t.adminLive;
+            document.getElementById('adm-lbl-total-logs').innerText = t.adminLogs;
+            document.getElementById('adm-lbl-performance').innerText = t.adminPerf;
 
             document.getElementById('hist-title').innerHTML = `<i class="fa-solid fa-clock-rotate-left mr-3 txt-neon"></i> ${t.histTitle}`;
             document.getElementById('btn-hist-back').innerHTML = `<i class="fa-solid fa-house"></i> ${t.btnBackHome}`;
@@ -574,20 +638,24 @@
             document.getElementById('lbl-submit').innerText = t.lblSubmit;
             
             document.getElementById('lbl-score').innerText = t.lblScore;
-            document.getElementById('mistakes-title').innerText = t.mistakesTitle;
+            document.getElementById('btn-open-review').innerHTML = `<i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-view-review">${t.btnOpenReview}</span>`;
+            document.getElementById('review-modal-title').innerHTML = `<i class="fa-solid fa-magnifying-glass-chart"></i> ${t.reviewModalTitle}`;
             document.getElementById('btn-res-home').innerHTML = `<i class="fa-solid fa-house"></i> <span class="hidden md:inline">${t.btnBackHome}</span>`;
 
             document.getElementById('warn-title').innerText = t.warnModalTitle;
             document.getElementById('warn-desc').innerText = t.warnModalDesc;
             document.getElementById('btn-warn-ok').innerText = t.warnModalOk;
 
-            document.getElementById('cs-title').innerText = i18n[lang].csTitle;
-            document.getElementById('cs-desc').innerText = i18n[lang].csDesc;
-            document.getElementById('cs-btn').innerText = i18n[lang].csBtn;
-            
-            checkSubmissionStatus(); 
+            document.getElementById('unans-title').innerText = t.unansTitle;
+            document.getElementById('unans-desc').innerText = t.unansDesc;
+            document.getElementById('btn-unans-ok').innerText = t.btnUnansOk;
+
+            document.getElementById('cs-title').innerText = t.csTitle;
+            document.getElementById('cs-desc').innerText = t.csDesc;
+            document.getElementById('cs-btn').innerText = t.csBtn;
         }
 
+        // --- AUTH & REFRESH CHECK ---
         window.onload = function() {
             if (sessionStorage.getItem('quiz_in_progress') === 'true') {
                 sessionStorage.removeItem('quiz_in_progress');
@@ -618,6 +686,11 @@
                 agentName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 
                 document.getElementById('login-screen').classList.add('hidden');
+                
+                // Immediately ping to show online
+                localStorage.setItem('stc_ping_' + agentEmail, Date.now());
+                localStorage.setItem('stc_activity_' + agentEmail, lang === 'en' ? 'Dashboard' : 'لوحة التحكم');
+
                 showDashboard();
             } else {
                 document.getElementById('login-err').classList.remove('hidden');
@@ -639,7 +712,7 @@
             
             document.getElementById('dash-agent-name').innerText = agentName;
 
-            // EXCLUSIVE PERMISSION CHECK: Show Admin Card ONLY if logged in as Ahmad Zbibo
+            // EXCLUSIVE ADMIN ACCESS
             if (agentEmail === 'ahmad.zbibo.c@stc.com.kw') {
                 document.getElementById('admin-card').classList.remove('hidden');
                 document.getElementById('admin-card').classList.add('flex');
@@ -702,7 +775,6 @@
 
         // --- GLOBAL ADMIN PANEL LOGIC ---
         function showAdminPanel() {
-            // Guard clause just in case
             if (agentEmail !== 'ahmad.zbibo.c@stc.com.kw') return;
 
             document.getElementById('dashboard-screen').classList.add('hidden');
@@ -715,44 +787,65 @@
         function renderAdminPanel() {
             const perfContainer = document.getElementById('admin-performance-container');
             perfContainer.innerHTML = '';
+            const t = i18n[lang];
 
-            // Get universal tracking log
+            // Render Live Users
+            const liveContainer = document.getElementById('admin-live-users');
+            liveContainer.innerHTML = '';
+            allowedUsers.forEach(user => {
+                let rawName = user.split('.c@')[0].replace('.', ' ');
+                let pName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                
+                const pingTime = localStorage.getItem('stc_ping_' + user) || 0;
+                const isOnline = (Date.now() - pingTime) < 15000; // 15 seconds threshold
+                const activity = localStorage.getItem('stc_activity_' + user) || '';
+
+                let statusHtml = isOnline 
+                    ? `<span class="text-green-400 font-bold flex items-center gap-2"><div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> ${t.statusOnline} <span class="text-xs txt-muted font-normal">(${activity})</span></span>`
+                    : `<span class="text-gray-500 font-bold flex items-center gap-2"><div class="w-2 h-2 bg-gray-500 rounded-full"></div> ${t.statusOffline}</span>`;
+
+                liveContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-[var(--bg-main)] px-5 py-3 rounded-xl border border-[var(--border-item)]">
+                        <p class="font-bold txt-main">${pName}</p>
+                        ${statusHtml}
+                    </div>
+                `;
+            });
+
+            // Render Logs
             let globalLogs = JSON.parse(localStorage.getItem('stc_global_admin_logs')) || [];
             document.getElementById('adm-counter-logs').innerText = globalLogs.length;
 
             if (globalLogs.length === 0) {
                 perfContainer.innerHTML = `
-                    <div class="item-box p-8 text-center rounded-2xl">
-                        <p class="txt-muted italic">No user attempt data recorded in the system logs yet.</p>
+                    <div class="apple-item p-8 text-center">
+                        <p class="txt-muted italic">No user attempt data recorded yet.</p>
                     </div>`;
                 return;
             }
 
-            // Display global performance table
             globalLogs.slice().reverse().forEach((log) => {
-                let statusBadgeColor = "bg-red-500/10 text-red-400 border-red-500/30";
+                let statusBadgeColor = "bg-red-500/10 text-red-500 border-red-500/30";
                 if(log.status.includes('Excellent') || log.status.includes('ممتاز')) {
-                    statusBadgeColor = "bg-green-500/10 text-green-400 border-green-500/30";
+                    statusBadgeColor = "bg-green-500/10 text-green-500 border-green-500/30";
                 } else if(log.status.includes('Good') || log.status.includes('جيد')) {
-                    statusBadgeColor = "bg-yellow-500/10 text-yellow-400 border-yellow-500/30";
+                    statusBadgeColor = "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
                 }
 
                 let pct = Math.round((log.score / 25) * 100);
 
                 let logHtml = `
-                    <div class="apple-item p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="apple-item p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
                             <div class="flex items-center gap-3">
                                 <span class="font-bold text-lg txt-main">${log.name}</span>
-                                <span class="text-xs txt-muted font-mono">(${log.email})</span>
                             </div>
-                            <p class="text-xs txt-muted mt-1"><i class="fa-regular fa-clock mr-1"></i> Log Timestamp: ${log.timestamp}</p>
+                            <p class="text-xs txt-muted mt-1"><i class="fa-regular fa-clock mr-1"></i> ${log.timestamp}</p>
                         </div>
                         <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                             <span class="px-3 py-1 text-xs font-bold border rounded-full uppercase tracking-wider ${statusBadgeColor}">${log.status}</span>
-                            <div class="bg-[var(--bg-main)] px-4 py-2 rounded-xl text-center min-w-[70px]">
+                            <div class="bg-[var(--bg-main)] px-4 py-2 rounded-xl text-center min-w-[70px] border border-[var(--border-item)]">
                                 <p class="text-xl font-black txt-neon" dir="ltr">${log.score}<span class="text-xs txt-muted">/25</span></p>
-                                <p class="text-[10px] txt-muted font-bold font-mono">${pct}%</p>
                             </div>
                         </div>
                     </div>
@@ -768,7 +861,7 @@
                 email: email,
                 score: score,
                 status: status,
-                timestamp: new Date().toLocaleString()
+                timestamp: new Date().toLocaleString(lang === 'ar' ? 'ar-KW' : 'en-US')
             });
             localStorage.setItem('stc_global_admin_logs', JSON.stringify(globalLogs));
         }
@@ -811,6 +904,7 @@
             sessionStorage.removeItem('quiz_in_progress');
             clearInterval(timerInterval);
             document.getElementById('warning-modal').classList.add('hidden');
+            document.getElementById('unanswered-modal').classList.add('hidden');
             
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('flex');
@@ -830,15 +924,15 @@
             
             document.getElementById('res-score').innerText = "0";
             document.getElementById('score-out-of').classList.add('hidden');
+            document.getElementById('btn-open-review').classList.add('hidden'); // Hide review button on cheat fail
             
+            // Only update text on results screen
             let desc = i18n[lang].failDesc;
             if(isRefresh) desc = lang === 'en' ? "You failed because you refreshed the page during an active quiz." : "لقد رسبت لأنك قمت بتحديث الصفحة أثناء الاختبار النشط.";
-            
             document.getElementById('mistakes-title').innerText = desc;
-            document.getElementById('mistakes-container').innerHTML = '';
         }
 
-        // --- QUIZ ACTION START ---
+        // --- QUIZ START ---
         function startQuiz() {
             currentPage = 0;
             userAnswers = new Array(25).fill(null);
@@ -881,7 +975,7 @@
             }, 500);
         }
 
-        // --- RENDER PAGE ---
+        // --- RENDER 5 QUESTIONS ---
         function renderPage() {
             const t = i18n[lang];
             const startIdx = currentPage * questionsPerPage;
@@ -923,7 +1017,9 @@
                 document.getElementById('btn-submit').classList.add('hidden');
             }
             
-            checkSubmissionStatus();
+            // Allow clicking submit regardless of completion for the missing flow
+            document.getElementById('btn-submit').disabled = false;
+            
             container.scrollTop = 0; 
         }
 
@@ -935,32 +1031,24 @@
                 if (j === optIndex) btn.classList.add('selected');
                 else btn.classList.remove('selected');
             }
-            checkSubmissionStatus();
         }
 
         function prevPage() { if(currentPage > 0) { currentPage--; renderPage(); } }
         function nextPage() { if(currentPage < totalPages - 1) { currentPage++; renderPage(); } }
 
-        function checkSubmissionStatus() {
-            const answeredCount = userAnswers.filter(a => a !== null).length;
-            const btnSub = document.getElementById('btn-submit');
-            const warning = document.getElementById('submit-warning');
-            const t = i18n[lang];
-            
-            if (currentPage === totalPages - 1) {
-                if (answeredCount === 25) {
-                    btnSub.disabled = false;
-                    warning.classList.add('hidden');
-                } else {
-                    btnSub.disabled = true;
-                    warning.classList.remove('hidden');
-                    warning.innerText = t.warnSubmit.replace('{ans}', answeredCount);
-                }
-            }
-        }
-
         function submitQuiz() {
-            if (userAnswers.includes(null)) return; 
+            // Check for missing answers
+            let missing = [];
+            userAnswers.forEach((ans, idx) => {
+                if(ans === null) missing.push(idx + 1);
+            });
+
+            if (missing.length > 0) {
+                document.getElementById('missing-q-list').innerText = missing.join(' , ');
+                document.getElementById('unanswered-modal').classList.remove('hidden');
+                return;
+            }
+            
             processResults(false);
         }
 
@@ -1025,13 +1113,12 @@
 
             if (score === 25) {
                 mistakesBox.innerHTML = `<div class="apple-item p-8 text-center"><p class="text-green-500 font-bold text-xl">${t.perfectScore}</p></div>`;
-                document.getElementById('mistakes-title').classList.add('hidden');
-            } else {
-                document.getElementById('mistakes-title').classList.remove('hidden');
             }
 
             if(!isLangToggle) {
-                // Save globally for Admin & locally for agent
+                // Ensure Review Button is visible
+                document.getElementById('btn-open-review').classList.remove('hidden');
+
                 saveGlobalAdminLog(agentName, agentEmail, score, statusText);
                 saveAttempt(score, statusText);
 
@@ -1039,6 +1126,7 @@
                 document.getElementById('res-title').className = "text-3xl font-extrabold txt-main mb-2 tracking-tight";
                 document.getElementById('score-out-of').classList.remove('hidden');
                 
+                // Hide Quiz, Show Results
                 document.getElementById('quiz-screen').classList.add('hidden');
                 document.getElementById('quiz-screen').classList.remove('flex');
                 document.getElementById('results-screen').classList.remove('hidden');
