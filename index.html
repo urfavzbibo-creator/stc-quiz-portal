@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -121,81 +121,89 @@
 </head>
 <body class="p-4 md:p-8 flex items-center justify-center relative">
 
+    <!-- TOP CONTROLS -->
     <div class="top-controls">
         <button onclick="toggleTheme()" class="control-btn px-5 py-2.5 flex items-center justify-center" title="Toggle Theme">
             <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
         </button>
         <button onclick="toggleLang()" class="control-btn px-5 py-2.5 font-bold flex items-center gap-2 text-sm">
-            <i class="fa-solid fa-globe"></i> <span id="lang-btn-text">العربية</span>
+            <i class="fa-solid fa-globe"></i> <span id="lang-btn-text">English</span>
         </button>
     </div>
 
+    <!-- ANTI-CHEAT WARNING MODAL -->
     <div id="warning-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-md w-full text-center border-red-500/30">
             <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500"></i>
             </div>
-            <h2 id="warn-title" class="text-2xl font-bold mb-3 text-red-500">Warning!</h2>
-            <p id="warn-desc" class="text-md txt-muted mb-8">Using browser navigation is strictly prohibited during the quiz. This is your first warning. Repeating this will result in an automatic failure.</p>
-            <button onclick="dismissWarning()" id="btn-warn-ok" class="bg-red-600 hover:bg-red-500 text-white px-8 py-3.5 rounded-full font-bold w-full transition transform hover:scale-105">I Understand</button>
+            <h2 id="warn-title" class="text-2xl font-bold mb-3 text-red-500">تحذير!</h2>
+            <p id="warn-desc" class="text-md txt-muted mb-8">ممنوع تستخدم أسهم المتصفح أو تسوي ريفرش وإنت تمتحن. هذا تحذيرك، إذا سويتها مرة ثانية راح تسقط تلقائياً.</p>
+            <button onclick="dismissWarning()" id="btn-warn-ok" class="bg-red-600 hover:bg-red-500 text-white px-8 py-3.5 rounded-full font-bold w-full transition transform hover:scale-105">فهمت</button>
         </div>
     </div>
 
+    <!-- UNANSWERED QUESTIONS MODAL -->
     <div id="unanswered-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-md w-full text-center border-yellow-500/30">
             <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fa-solid fa-clipboard-question text-5xl text-yellow-500"></i>
             </div>
-            <h2 id="unans-title" class="text-2xl font-bold mb-3 text-yellow-500">Unanswered Questions</h2>
-            <p id="unans-desc" class="text-md txt-muted mb-4">You cannot submit the quiz yet. You missed the following questions:</p>
+            <h2 id="unans-title" class="text-2xl font-bold mb-3 text-yellow-500">أسئلة غير مجابة</h2>
+            <p id="unans-desc" class="text-md txt-muted mb-4">لا يمكنك تسليم الاختبار الآن. نسيت الإجابة على الأسئلة التالية:</p>
             <div class="apple-item p-4 mb-8 text-lg font-black txt-neon tracking-widest" id="missing-q-list"></div>
-            <button onclick="document.getElementById('unanswered-modal').classList.add('hidden')" id="btn-unans-ok" class="btn-stc w-full py-3.5 font-bold">Return to Quiz</button>
+            <button onclick="document.getElementById('unanswered-modal').classList.add('hidden')" id="btn-unans-ok" class="btn-stc w-full py-3.5 font-bold">العودة للاختبار</button>
         </div>
     </div>
 
+    <!-- REVIEW DETAILS FULL-PAGE MODAL -->
     <div id="review-modal" class="fixed inset-0 z-[300] flex justify-center bg-black/80 backdrop-blur-xl hidden fade-in p-4 md:p-8">
         <div class="apple-panel w-full max-w-5xl flex flex-col h-full relative overflow-hidden">
             <div class="p-6 border-b border-[var(--border-item)] flex justify-between items-center bg-[var(--bg-panel)] z-10 shrink-0">
                 <h2 id="review-modal-title" class="text-2xl font-bold txt-neon flex items-center gap-3">
-                    <i class="fa-solid fa-magnifying-glass-chart"></i> Assessment Review
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> مراجعة التقييم
                 </h2>
                 <button onclick="document.getElementById('review-modal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-[var(--bg-item)] hover:bg-[var(--bg-item-hover)] flex items-center justify-center txt-main transition border border-[var(--border-item)]">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div id="mistakes-container" class="flex-grow overflow-y-auto p-6 md:p-10 custom-scrollbar flex flex-col gap-6 text-left rtl:text-right">
-                </div>
+                <!-- Mistakes injected here -->
+            </div>
         </div>
     </div>
 
+    <!-- COMING SOON MODAL -->
     <div id="coming-soon-modal" class="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-xl hidden fade-in">
         <div class="apple-panel p-10 max-w-sm w-full text-center">
             <div class="w-16 h-16 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-6 text-3xl">
                 <i class="fa-solid fa-rocket"></i>
             </div>
-            <h2 id="cs-title" class="text-2xl font-bold mb-2 txt-main">Stay Tuned!</h2>
-            <p id="cs-desc" class="txt-muted mb-8 text-sm leading-relaxed">We're cooking up something amazing for you. This feature will be available very soon.</p>
-            <button onclick="document.getElementById('coming-soon-modal').classList.add('hidden')" id="cs-btn" class="btn-stc w-full py-3 font-bold">Got it</button>
+            <h2 id="cs-title" class="text-2xl font-bold mb-2 txt-main">خلك قريب!</h2>
+            <p id="cs-desc" class="txt-muted mb-8 text-sm leading-relaxed">قاعدين نجهز لك شيء مميز. هالخاصية راح تتوفر قريباً جداً.</p>
+            <button onclick="document.getElementById('coming-soon-modal').classList.add('hidden')" id="cs-btn" class="btn-stc w-full py-3 font-bold">تم</button>
         </div>
     </div>
 
+    <!-- 1. LOGIN SCREEN -->
     <div id="login-screen" class="apple-panel p-10 max-w-sm w-full text-center z-50 fade-in">
         <div class="h-14 w-auto mx-auto flex items-center justify-center mb-8">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC" class="h-full object-contain logo-img">
         </div>
-        <h2 id="login-title" class="text-2xl font-bold mb-1 txt-main tracking-wide">Quiz Portal</h2>
-        <p id="login-sub" class="txt-muted text-sm mb-1">Agent Authentication</p>
-        <p id="login-hint" class="text-purple-400 text-xs font-bold mb-8 opacity-80">(Requires .c@stc.com.kw)</p>
+        <h2 id="login-title" class="text-2xl font-bold mb-1 txt-main tracking-wide">بوابة الاختبارات</h2>
+        <p id="login-sub" class="txt-muted text-sm mb-1">تسجيل دخول الموظفين</p>
+        <p id="login-hint" class="text-purple-400 text-xs font-bold mb-8 opacity-80">(يجب استخدام .c@stc.com.kw)</p>
         
         <form onsubmit="event.preventDefault(); login();" class="flex flex-col gap-4">
-            <input type="text" id="login-user" autocomplete="username" class="input-box w-full rounded-2xl px-5 py-4 text-left text-sm" dir="ltr" placeholder="Email Address">
-            <input type="password" id="login-pass" autocomplete="current-password" class="input-box w-full rounded-2xl px-5 py-4 text-left text-sm" dir="ltr" placeholder="Password">
+            <input type="text" id="login-user" autocomplete="username" class="input-box w-full rounded-2xl px-5 py-4 text-left text-sm" dir="ltr" placeholder="البريد الإلكتروني">
+            <input type="password" id="login-pass" autocomplete="current-password" class="input-box w-full rounded-2xl px-5 py-4 text-left text-sm" dir="ltr" placeholder="كلمة المرور">
             
-            <p id="login-err" class="text-red-500 text-xs mt-2 hidden font-bold">Invalid credentials!</p>
-            <button type="submit" id="btn-login" class="btn-stc w-full py-4 mt-2 font-bold text-md tracking-wide">Continue</button>
+            <p id="login-err" class="text-red-500 text-xs mt-2 hidden font-bold">بيانات غير صحيحة! الدخول مسموح للموظفين المصرح لهم فقط.</p>
+            <button type="submit" id="btn-login" class="btn-stc w-full py-4 mt-2 font-bold text-md tracking-wide">متابعة</button>
         </form>
     </div>
 
+    <!-- 2. DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="apple-panel p-8 md:p-12 max-w-5xl w-full hidden flex-col fade-in">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-[var(--border-item)]">
             <div>
@@ -213,11 +221,11 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150"></div>
                 <div class="relative z-10">
                     <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold mb-4 tracking-wider uppercase">Mandatory</span>
-                    <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2">June 2026 Assessment</h3>
-                    <p id="dash-quiz-info" class="text-sm txt-muted mb-8">25 Randomized Questions • 15 Min Limit</p>
+                    <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2">اختبار يونيو 2026</h3>
+                    <p id="dash-quiz-info" class="text-sm txt-muted mb-8">25 سؤال • 15 دقيقة</p>
                 </div>
                 <button onclick="startQuiz()" id="btn-attempt" class="btn-stc px-8 py-4 font-bold text-md flex items-center justify-center gap-3 w-full md:w-1/2 relative z-10">
-                    Attempt Quiz <i class="fa-solid fa-play"></i>
+                    بدء الاختبار <i class="fa-solid fa-play"></i>
                 </button>
             </div>
 
@@ -226,12 +234,13 @@
                     <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-5 text-xl transition-transform group-hover:scale-110">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
-                    <h3 id="dash-history-title" class="text-xl font-bold txt-main mb-2">History</h3>
-                    <p id="dash-history-desc" class="text-sm txt-muted">Review your scores.</p>
+                    <h3 id="dash-history-title" class="text-xl font-bold txt-main mb-2">السجل</h3>
+                    <p id="dash-history-desc" class="text-sm txt-muted">راجع نتائجك.</p>
                 </div>
-                <button class="mt-6 txt-neon font-bold text-sm text-left rtl:text-right group-hover:underline" id="btn-view-history">View <i class="fa-solid fa-arrow-right rtl:rotate-180 text-xs ml-1"></i></button>
+                <button class="mt-6 txt-neon font-bold text-sm text-left rtl:text-right group-hover:underline" id="btn-view-history">عرض <i class="fa-solid fa-arrow-right rtl:rotate-180 text-xs ml-1"></i></button>
             </div>
 
+            <!-- EXCLUSIVE ADMIN PANEL CARD -->
             <div id="admin-card" class="apple-item p-8 hidden flex-col justify-between border-purple-500/40 relative overflow-hidden group md:col-span-3 cursor-pointer bg-purple-950/10" onclick="showAdminPanel()">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -239,8 +248,8 @@
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <h3 id="dash-admin-title" class="text-2xl font-bold txt-main">Management Console</h3>
-                            <p id="dash-admin-desc" class="text-sm text-purple-300">Exclusive access: View active users and performance statistics.</p>
+                            <h3 id="dash-admin-title" class="text-2xl font-bold txt-main">وحدة الإدارة والتحكم</h3>
+                            <p id="dash-admin-desc" class="text-sm text-purple-300">دخول حصري: عرض الجلسات النشطة والإحصائيات.</p>
                         </div>
                     </div>
                     <span class="bg-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">Admin Only</span>
@@ -252,8 +261,8 @@
                     <div class="w-12 h-12 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center mb-5 text-xl transition-transform group-hover:scale-110">
                         <i class="fa-solid fa-book-open-reader"></i>
                     </div>
-                    <h3 id="dash-train-title" class="text-lg font-bold txt-main mb-2">Training</h3>
-                    <p id="dash-train-desc" class="text-sm txt-muted">Brush up on skills.</p>
+                    <h3 id="dash-train-title" class="text-lg font-bold txt-main mb-2">التدريب</h3>
+                    <p id="dash-train-desc" class="text-sm txt-muted">طور مهاراتك.</p>
                 </div>
             </div>
 
@@ -263,63 +272,67 @@
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div>
-                        <h3 id="dash-guide-title" class="text-lg font-bold txt-main mb-1">STC Guidelines</h3>
-                        <p id="dash-guide-desc" class="text-sm txt-muted">Company policies and operating rules.</p>
+                        <h3 id="dash-guide-title" class="text-lg font-bold txt-main mb-1">سياسات STC</h3>
+                        <p id="dash-guide-desc" class="text-sm txt-muted">الأنظمة والقوانين.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 2.5 PAST ATTEMPTS SCREEN -->
     <div id="history-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col h-[80vh] fade-in">
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-6">
-            <h2 id="hist-title" class="text-2xl font-bold txt-main"><i class="fa-solid fa-clock-rotate-left mr-3 txt-neon"></i> Your Past Attempts</h2>
+            <h2 id="hist-title" class="text-2xl font-bold txt-main"><i class="fa-solid fa-clock-rotate-left mr-3 txt-neon"></i> السجل</h2>
             <button onclick="returnToDashboard()" id="btn-hist-back" class="bg-transparent border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item)] px-6 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm">
-                <i class="fa-solid fa-house"></i> Back
+                <i class="fa-solid fa-house"></i> الرئيسية
             </button>
         </div>
         <div id="history-container" class="flex-grow overflow-y-auto pr-3 custom-scrollbar flex flex-col gap-4"></div>
     </div>
 
+    <!-- 2.6 EXCLUSIVE ADMIN MANAGEMENT PANEL -->
     <div id="admin-screen" class="apple-panel p-8 md:p-12 max-w-6xl w-full hidden flex-col h-[85vh] fade-in">
         <div class="flex justify-between items-center border-b border-[var(--border-item)] pb-6 mb-8">
             <div>
-                <h2 class="text-3xl font-extrabold txt-main flex items-center gap-3"><i class="fa-solid fa-user-gear text-purple-500"></i> <span id="adm-panel-title">Admin Management Terminal</span></h2>
-                <p class="text-sm txt-muted mt-1" id="adm-panel-desc">Real-time team completion logs and live sessions.</p>
+                <h2 class="text-3xl font-extrabold txt-main flex items-center gap-3"><i class="fa-solid fa-user-gear text-purple-500"></i> <span id="adm-panel-title">وحدة الإدارة والتحكم</span></h2>
+                <p class="text-sm txt-muted mt-1" id="adm-panel-desc">سجلات النظام والجلسات النشطة المباشرة.</p>
             </div>
             <button onclick="returnToDashboard()" class="bg-transparent border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item)] px-6 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm shrink-0">
-                <i class="fa-solid fa-house"></i> Dashboard
+                <i class="fa-solid fa-house"></i> الرئيسية
             </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 shrink-0">
             <div class="apple-item p-6 md:col-span-2">
-                <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-4" id="adm-lbl-active">Live Sessions (Heartbeat)</p>
+                <p class="text-sm txt-muted font-bold uppercase tracking-wider mb-4" id="adm-lbl-active">الجلسات النشطة (مباشر)</p>
                 <div id="admin-live-users" class="flex flex-col gap-3">
-                    </div>
+                    <!-- Live users injected here -->
+                </div>
             </div>
             <div class="apple-item p-6 flex flex-col justify-center items-center text-center">
                 <div class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-database"></i></div>
                 <p id="adm-counter-logs" class="text-4xl font-black text-purple-400 mb-1">0</p>
-                <p class="text-xs txt-muted font-bold uppercase tracking-wider" id="adm-lbl-total-logs">Recorded System Logs</p>
+                <p class="text-xs txt-muted font-bold uppercase tracking-wider" id="adm-lbl-total-logs">سجلات النظام المحفوظة</p>
             </div>
         </div>
 
-        <h3 class="text-xl font-bold text-red-400 mb-4 shrink-0 border-t border-[var(--border-item)] pt-6" id="adm-lbl-fail">Top Failed Questions (Analytics):</h3>
+        <h3 class="text-xl font-bold text-red-400 mb-4 shrink-0 border-t border-[var(--border-item)] pt-6" id="adm-lbl-fail">أكثر الأسئلة فشلاً (تحليلات):</h3>
         <div id="admin-failed-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4 mb-8 shrink-0 min-h-[200px]"></div>
 
-        <h3 class="text-lg font-bold text-purple-400 mb-4 shrink-0" id="adm-lbl-performance">Historical Agent Performance:</h3>
+        <h3 class="text-lg font-bold text-purple-400 mb-4 shrink-0" id="adm-lbl-performance">أداء الموظفين التاريخي:</h3>
         <div id="admin-performance-container" class="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-4"></div>
     </div>
 
+    <!-- 3. QUIZ INTERFACE -->
     <div id="quiz-screen" class="apple-panel p-6 md:p-10 max-w-5xl w-full hidden flex-col h-[90vh] fade-in">
         <div class="flex justify-between items-end border-b border-[var(--border-item)] pb-5 mb-6 shrink-0">
             <div>
-                <h2 id="quiz-header-title" class="text-2xl font-bold txt-main">June 2026 Quiz</h2>
-                <p class="txt-muted mt-1 text-sm"><span id="lbl-question">Questions</span> <span id="q-current" class="txt-neon font-bold">1-5</span> <span id="lbl-of">of</span> 25</p>
+                <h2 id="quiz-header-title" class="text-2xl font-bold txt-main">اختبار يونيو 2026</h2>
+                <p class="txt-muted mt-1 text-sm"><span id="lbl-question">الأسئلة</span> <span id="q-current" class="txt-neon font-bold">1-5</span> <span id="lbl-of">من</span> 25</p>
             </div>
             <div class="text-right rtl:text-left bg-[var(--bg-item)] px-5 py-2 rounded-2xl border border-[var(--border-item)]">
-                <p id="lbl-timer" class="text-xs txt-muted mb-1 font-bold uppercase tracking-wider">Time Remaining</p>
+                <p id="lbl-timer" class="text-xs txt-muted mb-1 font-bold uppercase tracking-wider">الوقت المتبقي</p>
                 <div id="timer" class="text-2xl font-mono font-bold text-green-500" dir="ltr">15:00</div>
             </div>
         </div>
@@ -328,22 +341,24 @@
 
         <div class="border-t border-[var(--border-item)] pt-6 mt-2 shrink-0 flex justify-between items-center">
             <button onclick="prevPage()" id="btn-prev" class="px-6 py-3.5 rounded-full font-bold border border-[var(--border-item)] hover:bg-[var(--bg-item-hover)] transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2 txt-main text-sm">
-                <i class="fa-solid fa-arrow-left rtl:rotate-180"></i> <span id="lbl-prev">Previous</span>
+                <i class="fa-solid fa-arrow-left rtl:rotate-180"></i> <span id="lbl-prev">السابق</span>
             </button>
             
             <button onclick="nextPage()" id="btn-next" class="btn-stc px-8 py-3.5 flex items-center gap-2 text-sm font-bold">
-                <span id="lbl-next">Next</span> <i class="fa-solid fa-arrow-right rtl:rotate-180"></i>
+                <span id="lbl-next">التالي</span> <i class="fa-solid fa-arrow-right rtl:rotate-180"></i>
             </button>
 
+            <!-- Submit button is always active on last page now -->
             <button onclick="submitQuiz()" id="btn-submit" class="bg-green-600 hover:bg-green-500 px-8 py-3.5 rounded-full font-bold text-white hidden flex items-center gap-2 text-sm shadow-lg shadow-green-500/20">
-                <span id="lbl-submit">Submit</span> <i class="fa-solid fa-check"></i>
+                <span id="lbl-submit">إنهاء</span> <i class="fa-solid fa-check"></i>
             </button>
         </div>
     </div>
 
+    <!-- 4. RESULTS SCREEN -->
     <div id="results-screen" class="apple-panel p-8 md:p-12 max-w-4xl w-full hidden flex-col fade-in relative justify-center items-center h-auto min-h-[60vh]">
         <button onclick="returnToDashboard()" id="btn-res-home" class="absolute top-6 right-6 rtl:left-6 rtl:right-auto bg-[var(--bg-item)] border border-[var(--border-item)] text-[var(--text-main)] hover:bg-[var(--bg-item-hover)] px-5 py-2.5 rounded-full font-bold flex items-center gap-2 transition text-sm z-10">
-            <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Dashboard</span>
+            <i class="fa-solid fa-house"></i> <span class="hidden md:inline">الرئيسية</span>
         </button>
 
         <div class="text-center w-full mt-8">
@@ -351,17 +366,17 @@
                 <i id="res-icon" class="fa-solid fa-ranking-star text-5xl"></i>
             </div>
             
-            <h2 id="res-title" class="text-3xl font-extrabold txt-main mb-2 tracking-tight">Quiz Completed</h2>
+            <h2 id="res-title" class="text-3xl font-extrabold txt-main mb-2 tracking-tight">اكتمل التقييم</h2>
             <h3 id="res-grade" class="text-xl font-bold mb-6"></h3>
             
             <div class="inline-block apple-item px-12 py-8 mb-8">
-                <p id="lbl-score" class="text-xs txt-muted uppercase tracking-widest mb-2 font-bold">Final Score</p>
+                <p id="lbl-score" class="text-sm txt-muted uppercase tracking-widest mb-2 font-bold">النتيجة النهائية</p>
                 <p class="text-7xl font-black txt-main tracking-tighter" dir="ltr"><span id="res-score" class="txt-neon"></span><span id="score-out-of" class="text-3xl txt-muted ml-1">/25</span></p>
             </div>
 
             <div class="w-full">
                 <button onclick="document.getElementById('review-modal').classList.remove('hidden')" id="btn-open-review" class="btn-stc px-8 py-4 font-bold text-md flex items-center justify-center gap-3 mx-auto shadow-lg shadow-purple-500/20">
-                    <i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-view-review">View Review Details</span>
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> <span id="lbl-view-review">عرض تفاصيل المراجعة</span>
                 </button>
             </div>
         </div>
@@ -423,12 +438,16 @@
                 csDesc: "We're cooking up something amazing for you. This feature will be available very soon.",
                 csBtn: "Got it",
                 adminTitle: "Management Console",
-                adminDesc: "Exclusive access: View live sessions and statistics.",
+                adminDesc: "Exclusive access: View active users and performance.",
+                adminDesc2: "Real-time team completion logs and live sessions.",
                 adminLive: "Live Sessions (Heartbeat)",
                 adminLogs: "Recorded System Logs",
+                adminFail: "Top Failed Questions (Analytics):",
                 adminPerf: "Historical Agent Performance:",
                 statusOnline: "Online",
-                statusOffline: "Offline"
+                statusOffline: "Offline",
+                actDash: "Dashboard",
+                actQuiz: "In Quiz"
             },
             ar: {
                 langBtn: "English",
@@ -484,16 +503,18 @@
                 csBtn: "تم",
                 adminTitle: "وحدة الإدارة والتحكم",
                 adminDesc: "دخول حصري: عرض الجلسات النشطة والإحصائيات.",
+                adminDesc2: "سجلات النظام والجلسات النشطة المباشرة.",
                 adminLive: "الجلسات النشطة (مباشر)",
                 adminLogs: "سجلات النظام المحفوظة",
+                adminFail: "أكثر الأسئلة فشلاً (تحليلات):",
                 adminPerf: "أداء الموظفين التاريخي:",
                 statusOnline: "متصل",
-                statusOffline: "غير متصل"
+                statusOffline: "غير متصل",
+                actDash: "لوحة التحكم",
+                actQuiz: "يختبر الآن"
             }
         };
 
-        // --- 102 SCENARIO-BASED QUESTIONS DATABASE ---
-        // Stored in a highly optimized format to guarantee full rendering without unescaped quote errors
         const allQuizData = [
             {q_en:"How many days the Prepaid line will stay on Grace?", q_ar:"كم يوم يبقى الخط في Grace؟", opt_en:["60 days","30 days","20 days","45 days"], opt_ar:["60 يوم","30 يوم","20 يوم","45 يوم"], a:1},
             {q_en:"What is internet capacity in 25 KD voice package?", q_ar:"ما هي سعة الانترنت في باقة ال 25 الصوتية؟", opt_en:["10 GB","25 GB","50 GB","100 GB"], opt_ar:["10 GB","25 GB","50 GB","100 GB"], a:3},
@@ -599,7 +620,7 @@
             {q_en:"What are the allowed months to transfer the line from prepaid to postpaid?", q_ar:"ماهي عدد الأشهر المسموحة للتحويل الخط من الدفع المسبق إلى الدفع الأجل؟", opt_en:["One month","Two months","Three months","None of the mentioned"], opt_ar:["شهر","إثنان شهر","ثلاث أشهر","ليس مما سبق"], a:2}
         ];
 
-        let lang = 'en'; 
+        let lang = 'ar'; // Default language is now Arabic
         let isLightMode = false;
         let agentName = "";
         let agentEmail = "";
@@ -625,7 +646,7 @@
                 if(isQuizActive) activity = lang === 'en' ? "In Quiz" : "يختبر الآن";
                 localStorage.setItem('stc_activity_' + agentEmail, activity);
             }
-        }, 3000);
+        }, 2000); // 2 second ping
 
         function toggleTheme() {
             isLightMode = !isLightMode;
@@ -650,6 +671,12 @@
             if(!document.getElementById('results-screen').classList.contains('hidden')) {
                 if (document.getElementById('res-score').innerText === "0" && document.getElementById('score-out-of').classList.contains('hidden')) {
                     document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
+                    // Don't re-render mistakes if failed via cheat, just the string inside container
+                    document.getElementById('mistakes-container').innerHTML = `
+                        <div class="apple-item p-8 text-center border-red-500/30 bg-red-500/5 mt-10">
+                            <p class="text-red-500 font-bold text-lg leading-relaxed">${i18n[lang].failDesc}</p>
+                        </div>
+                    `;
                 } else {
                     processResults(true); 
                 }
@@ -721,6 +748,9 @@
         }
 
         window.onload = function() {
+            // Apply default lang on load
+            updateTexts();
+            
             if (sessionStorage.getItem('quiz_in_progress') === 'true') {
                 sessionStorage.removeItem('quiz_in_progress');
                 agentEmail = sessionStorage.getItem('agent_email') || 'Unknown';
@@ -819,7 +849,7 @@
             
             history.slice().reverse().forEach((attempt) => {
                 let colorClass = attempt.score >= 21 ? 'text-green-500' : 'text-red-500';
-                if(attempt.status.includes('Anti-Cheat') || attempt.status.includes('Failed')) colorClass = 'text-red-600 font-bold';
+                if(attempt.status.includes('Anti-Cheat') || attempt.status.includes('Failed') || attempt.status.includes('رسبت')) colorClass = 'text-red-600 font-bold';
                 
                 let html = `
                     <div class="apple-item p-6 flex justify-between items-center shadow-sm">
@@ -847,7 +877,7 @@
             
             renderAdminPanel();
             if(adminInterval) clearInterval(adminInterval);
-            adminInterval = setInterval(renderAdminPanel, 2000); // Live tracking
+            adminInterval = setInterval(renderAdminPanel, 2000); // Live tracking updates every 2s
         }
 
         function renderAdminPanel() {
@@ -1079,23 +1109,25 @@
             for (let i = startIdx; i < endIdx; i++) {
                 const qObj = activeQuizSet[i].val;
                 
+                // Strictly toggle languages
+                const qText = lang === 'en' ? qObj.q_en : qObj.q_ar;
+                const qOpts = lang === 'en' ? qObj.opt_en : qObj.opt_ar;
+                
                 const qDiv = document.createElement('div');
                 qDiv.className = "apple-item p-6 md:p-8";
                 
-                let html = `<h3 class="text-xl md:text-2xl font-bold txt-main mb-6 leading-relaxed" style="line-height: 1.6;">
+                let html = `<h3 class="text-xl md:text-2xl font-bold txt-main mb-6 leading-relaxed">
                                 <span class="text-[var(--neon-purple)] text-sm block mb-2 uppercase tracking-widest font-bold opacity-80">${t.qPrefix} ${i + 1}</span>
-                                ${qObj.q_en} <br> <span class="text-[var(--text-muted)] text-lg mt-1 block">${qObj.q_ar}</span>
+                                ${qText}
                             </h3>`;
                 html += `<div class="flex flex-col gap-3">`;
                 
-                qObj.opt_en.forEach((optEn, optIdx) => {
-                    const optAr = qObj.opt_ar[optIdx];
+                qOpts.forEach((opt, optIdx) => {
                     const isSelected = userAnswers[i] === optIdx;
                     const selClass = isSelected ? 'selected' : '';
                     
-                    html += `<button onclick="selectOption(${i}, ${optIdx})" id="btn-q${i}-opt${optIdx}" class="option-btn w-full text-left rtl:text-right p-4 rounded-2xl text-md md:text-lg font-medium flex flex-col md:flex-row justify-between items-start md:items-center gap-2 ${selClass}">
-                                <span>${optEn}</span>
-                                <span class="text-sm opacity-70 txt-neon text-right rtl:text-left">${optAr}</span>
+                    html += `<button onclick="selectOption(${i}, ${optIdx})" id="btn-q${i}-opt${optIdx}" class="option-btn w-full text-left rtl:text-right p-5 rounded-2xl text-md md:text-lg font-medium ${selClass}">
+                                ${opt}
                              </button>`;
                 });
                 
@@ -1120,7 +1152,9 @@
 
         function selectOption(qIndex, optIndex) {
             userAnswers[qIndex] = optIndex;
-            const qOpts = activeQuizSet[qIndex].val.opt_en;
+            // Get current language options to loop through UI buttons
+            const qOpts = lang === 'en' ? activeQuizSet[qIndex].val.opt_en : activeQuizSet[qIndex].val.opt_ar;
+            
             for(let j=0; j<qOpts.length; j++) {
                 const btn = document.getElementById(`btn-q${qIndex}-opt${j}`);
                 if (j === optIndex) btn.classList.add('selected');
