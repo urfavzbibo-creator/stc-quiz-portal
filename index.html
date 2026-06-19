@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STC Monthly Quiz Portal</title>
+    <title>STC Employee Quiz Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
         
         :root {
-            /* Dark Theme (Default) */
             --bg-main: #000000;
             --bg-container: #090014;
             --bg-input: #120024;
@@ -29,35 +28,22 @@
         }
 
         body.light-theme {
-            /* Light Theme */
-            --bg-main: #f5f3ff;
-            --bg-container: #ffffff;
-            --bg-input: #faf5ff;
-            --bg-item: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #d8b4fe;
-            --stc-purple: #4F008C;
-            --neon-purple: #9333ea;
-            --option-bg: #ffffff;
-            --option-hover: #f3e8ff;
-            --option-selected: #e9d5ff;
-            --shadow-neon: 0 0 15px rgba(147, 51, 234, 0.3);
-            --invert-logo: none;
-            --warn-bg: #fef2f2;
+            --bg-main: #f5f3ff; --bg-container: #ffffff; --bg-input: #faf5ff; --bg-item: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --border-color: #d8b4fe;
+            --stc-purple: #4F008C; --neon-purple: #9333ea; --option-bg: #ffffff;
+            --option-hover: #f3e8ff; --option-selected: #e9d5ff;
+            --shadow-neon: 0 0 15px rgba(147, 51, 234, 0.3); --invert-logo: none; --warn-bg: #fef2f2;
         }
 
         body { 
-            font-family: 'Tajawal', sans-serif; 
-            background-color: var(--bg-main); 
-            color: var(--text-main); 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            font-family: 'Tajawal', sans-serif; background-color: var(--bg-main); color: var(--text-main); 
+            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
             transition: background-color 0.4s ease, color 0.4s ease;
         }
         
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .txt-main { color: var(--text-main); transition: color 0.4s ease; }
         .txt-muted { color: var(--text-muted); transition: color 0.4s ease; }
         .txt-neon { color: var(--neon-purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
@@ -105,18 +91,18 @@
         </button>
     </div>
 
-    <!-- ANTI-CHEAT WARNING MODAL -->
+    <!-- ANTI-CHEAT WARNING MODAL (Back/Forward) -->
     <div id="warning-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
         <div class="panel rounded-2xl p-8 max-w-lg w-full text-center border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.5)]">
             <i class="fa-solid fa-triangle-exclamation text-6xl text-red-500 mb-4"></i>
             <h2 id="warn-title" class="text-3xl font-bold mb-4 text-red-500">WARNING!</h2>
-            <p id="warn-desc" class="text-lg txt-main mb-6">Using the browser's Back/Forward arrows is strictly prohibited during the quiz. This is your first and final warning. Doing it again will result in an automatic failure.</p>
+            <p id="warn-desc" class="text-lg txt-main mb-6">Using browser navigation is strictly prohibited during the quiz. This is your first warning. Repeating this will result in an automatic failure.</p>
             <button onclick="dismissWarning()" id="btn-warn-ok" class="bg-red-600 hover:bg-red-500 text-white px-8 py-3 rounded-xl font-bold w-full transition transform hover:scale-105">I Understand</button>
         </div>
     </div>
 
     <!-- 1. LOGIN SCREEN -->
-    <div id="login-screen" class="panel rounded-2xl p-8 max-w-md w-full text-center z-50">
+    <div id="login-screen" class="panel rounded-2xl p-8 max-w-md w-full text-center z-50 fade-in">
         <div class="h-16 w-20 bg-transparent rounded-xl mx-auto flex items-center justify-center mb-6 p-2">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Stc_logo.svg" alt="STC" class="h-full object-contain logo-img">
         </div>
@@ -133,25 +119,76 @@
         </form>
     </div>
 
-    <!-- 2. DASHBOARD SCREEN -->
-    <div id="dashboard-screen" class="panel rounded-2xl p-10 max-w-2xl w-full hidden flex-col">
-        <h1 id="greeting-msg" class="text-3xl md:text-4xl font-bold mb-4 txt-neon leading-tight"></h1>
-        <p id="dash-desc" class="text-lg txt-muted mb-10 leading-relaxed"></p>
-        
-        <div class="item-box rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:border-purple-500 transition duration-300">
-            <div class="text-center md:text-left rtl:md:text-right">
-                <h3 id="dash-quiz-title" class="text-2xl font-bold txt-main"><i class="fa-regular fa-calendar-check txt-neon mx-2"></i> June 2026 Quiz</h3>
-                <p id="dash-quiz-info" class="text-sm txt-muted mt-1">25 Questions • 15 Minutes limit</p>
+    <!-- 2. DASHBOARD SCREEN (Hub) -->
+    <div id="dashboard-screen" class="panel rounded-2xl p-8 md:p-12 max-w-6xl w-full hidden flex-col fade-in">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-[var(--border-color)] pb-6">
+            <div>
+                <h1 id="greeting-msg" class="text-3xl md:text-5xl font-bold mb-3 txt-neon leading-tight"></h1>
+                <p id="dash-desc" class="text-lg txt-muted leading-relaxed"></p>
             </div>
-            <button onclick="startQuiz()" id="btn-attempt" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)] transition transform hover:scale-105 flex items-center gap-2">
-                Attempt <i class="fa-solid fa-play"></i>
+            <div class="mt-4 md:mt-0 text-center item-box p-4 rounded-xl">
+                <p class="text-sm txt-muted uppercase tracking-wider mb-1 font-bold">Agent ID</p>
+                <p id="dash-agent-name" class="text-xl font-bold txt-main"></p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Main Quiz Card -->
+            <div class="item-box rounded-2xl p-8 flex flex-col justify-between hover:border-purple-500 transition duration-300 shadow-lg md:col-span-2">
+                <div>
+                    <h3 id="dash-quiz-title" class="text-3xl font-bold txt-main mb-2"><i class="fa-regular fa-calendar-check txt-neon mr-3"></i> June 2026 Quiz</h3>
+                    <p id="dash-quiz-info" class="text-md txt-muted mb-6">25 Questions • 15 Minutes limit • Mandatory Assessment</p>
+                </div>
+                <button onclick="startQuiz()" id="btn-attempt" class="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-[0_0_15px_rgba(34,197,94,0.3)] transition transform hover:scale-105 flex items-center justify-center gap-3 w-full md:w-1/2">
+                    Attempt Quiz <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+
+            <!-- Past Attempts Card -->
+            <div class="item-box rounded-2xl p-8 flex flex-col justify-between hover:border-purple-500 transition duration-300 shadow-lg cursor-pointer" onclick="showPastAttempts()">
+                <div>
+                    <i class="fa-solid fa-clock-rotate-left text-4xl txt-neon mb-4"></i>
+                    <h3 id="dash-history-title" class="text-xl font-bold txt-main mb-2">Past Attempts</h3>
+                    <p id="dash-history-desc" class="text-sm txt-muted">Review your previous quiz scores and history.</p>
+                </div>
+                <button class="mt-6 text-purple-400 font-bold hover:text-purple-300 text-left rtl:text-right" id="btn-view-history">View History <i class="fa-solid fa-arrow-right rtl:rotate-180"></i></button>
+            </div>
+
+            <!-- Dummy Card 1 -->
+            <div class="item-box rounded-2xl p-6 flex flex-col justify-between opacity-70">
+                <div>
+                    <i class="fa-solid fa-book-open-reader text-3xl text-blue-400 mb-3"></i>
+                    <h3 id="dash-train-title" class="text-lg font-bold txt-main mb-1">Training Materials</h3>
+                    <p id="dash-train-desc" class="text-sm txt-muted">Brush up on your skills.</p>
+                </div>
+            </div>
+
+            <!-- Dummy Card 2 -->
+            <div class="item-box rounded-2xl p-6 flex flex-col justify-between opacity-70">
+                <div>
+                    <i class="fa-solid fa-scale-balanced text-3xl text-orange-400 mb-3"></i>
+                    <h3 id="dash-guide-title" class="text-lg font-bold txt-main mb-1">STC Guidelines</h3>
+                    <p id="dash-guide-desc" class="text-sm txt-muted">Company policies and rules.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2.5 PAST ATTEMPTS SCREEN -->
+    <div id="history-screen" class="panel rounded-2xl p-8 md:p-10 max-w-4xl w-full hidden flex-col h-[80vh] fade-in">
+        <div class="flex justify-between items-center border-b border-[var(--border-color)] pb-6 mb-6">
+            <h2 id="hist-title" class="text-3xl font-bold txt-neon"><i class="fa-solid fa-clock-rotate-left mr-2"></i> Your Past Attempts</h2>
+            <button onclick="returnToDashboard()" id="btn-hist-back" class="btn-stc px-6 py-2 rounded-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-house"></i> Back
             </button>
+        </div>
+        <div id="history-container" class="flex-grow overflow-y-auto px-2 custom-scrollbar flex flex-col gap-4">
+            <!-- Injected via JS -->
         </div>
     </div>
 
     <!-- 3. QUIZ INTERFACE -->
-    <div id="quiz-screen" class="panel rounded-2xl p-6 md:p-8 max-w-5xl w-full hidden flex-col h-[90vh]">
-        <!-- Header -->
+    <div id="quiz-screen" class="panel rounded-2xl p-6 md:p-8 max-w-5xl w-full hidden flex-col h-[90vh] fade-in">
         <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-4 mb-6 shrink-0">
             <div>
                 <h2 id="quiz-header-title" class="text-2xl font-bold txt-neon">June 2026 Quiz</h2>
@@ -163,12 +200,10 @@
             </div>
         </div>
 
-        <!-- Question Area (Scrollable 5 questions per page) -->
         <div id="questions-container" class="flex-grow overflow-y-auto px-2 custom-scrollbar flex flex-col gap-8 pb-4">
-            <!-- Questions injected here via JS -->
+            <!-- Questions injected here -->
         </div>
 
-        <!-- Navigation Footer -->
         <div class="border-t border-[var(--border-color)] pt-6 mt-2 shrink-0 flex justify-between items-center">
             <button onclick="prevPage()" id="btn-prev" class="px-6 py-3 rounded-xl font-bold border border-[var(--border-color)] hover:bg-[var(--option-hover)] transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2 txt-main">
                 <i class="fa-solid fa-arrow-left rtl:rotate-180"></i> <span id="lbl-prev">Previous Page</span>
@@ -186,15 +221,22 @@
     </div>
 
     <!-- 4. RESULTS SCREEN -->
-    <div id="results-screen" class="panel rounded-2xl p-6 md:p-10 max-w-4xl w-full hidden flex-col h-[85vh]">
-        <div class="text-center mb-8 border-b border-[var(--border-color)] pb-8 shrink-0">
+    <div id="results-screen" class="panel rounded-2xl p-6 md:p-10 max-w-4xl w-full hidden flex-col h-[90vh] fade-in">
+        <div class="text-center mb-6 border-b border-[var(--border-color)] pb-6 shrink-0 relative">
+            
             <i id="res-icon" class="fa-solid fa-ranking-star text-5xl text-yellow-500 mb-4 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"></i>
             <h2 id="res-title" class="text-3xl font-bold txt-main mb-2">Quiz Completed</h2>
-            <p class="txt-muted"><span id="lbl-agent">Agent:</span> <span id="res-agent" class="txt-main font-bold"></span></p>
-            <div class="mt-6 inline-block item-box rounded-2xl p-6 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+            <h3 id="res-grade" class="text-xl font-bold mb-4"></h3>
+            
+            <div class="inline-block item-box rounded-2xl p-6 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                 <p id="lbl-score" class="text-sm txt-neon uppercase tracking-wider mb-1 font-bold">Final Score</p>
                 <p class="text-6xl font-black txt-main" dir="ltr"><span id="res-score" class="txt-neon"></span> <span id="score-out-of" class="text-2xl txt-muted">/ 25</span></p>
             </div>
+            
+            <!-- Back to Home Button placed near results -->
+            <button onclick="returnToDashboard()" id="btn-res-home" class="btn-stc absolute top-0 right-0 rtl:left-0 rtl:right-auto px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-sm">
+                <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Dashboard</span>
+            </button>
         </div>
 
         <h3 id="mistakes-title" class="text-xl font-bold text-red-500 mb-4 shrink-0">Review Your Mistakes:</h3>
@@ -213,11 +255,19 @@
                 passPlace: "Password",
                 btnLogin: "Login",
                 loginErr: "Invalid credentials! Only authorized agents allowed.",
-                greetUser: "Welcome, {name}!",
-                dashDesc: "At STC, we are committed to moving forward and delivering the best. Whenever you are free, please click the <strong>Attempt</strong> button below to start your monthly assessment and prove your excellence.",
+                greetUser: "Welcome back, {name}!",
+                dashDesc: "Explore your dashboard. You can attempt the latest mandatory assessment, review your past scores, and access training materials to stay ahead.",
                 quizTitle: "June 2026 Quiz",
                 quizInfo: "25 Questions • 15 Minutes limit",
-                btnAttempt: "Attempt",
+                btnAttempt: "Attempt Quiz",
+                histTitle: "Past Attempts",
+                histDesc: "Review your previous quiz scores and history.",
+                btnViewHist: "View History",
+                trainTitle: "Training Materials",
+                trainDesc: "Brush up on your skills.",
+                guideTitle: "STC Guidelines",
+                guideDesc: "Company policies and rules.",
+                btnBackHome: "Dashboard",
                 lblQuestion: "Questions",
                 lblOf: "of",
                 lblTimer: "Time Remaining",
@@ -227,7 +277,6 @@
                 warnSubmit: "You must answer all 25 questions to submit. ({ans}/25 completed)",
                 resTitle: "Quiz Completed",
                 resTitleFail: "Quiz Failed (Rules Violation)",
-                lblAgent: "Agent:",
                 lblScore: "Final Score",
                 mistakesTitle: "Review Your Mistakes:",
                 perfectScore: "Perfect Score! You are an STC Star. No mistakes made.",
@@ -236,9 +285,13 @@
                 lblNoAns: "Did not answer (Time expired)",
                 qPrefix: "Q",
                 warnModalTitle: "WARNING!",
-                warnModalDesc: "Using the browser's Back/Forward arrows is strictly prohibited during the quiz. This is your first and final warning. Doing it again will result in an automatic failure.",
+                warnModalDesc: "Using browser navigation is strictly prohibited during the quiz. This is your first warning. Repeating this will result in an automatic failure.",
                 warnModalOk: "I Understand",
-                failDesc: "You failed the quiz because you used the browser's navigation arrows twice, which violates the anti-cheat policy."
+                failDesc: "You failed the quiz because you used the browser's navigation, which violates the anti-cheat policy.",
+                gradeExcellent: "Excellent! You passed",
+                gradeGood: "Good! Passed",
+                gradeFail: "Failed",
+                noHistory: "No past attempts found."
             },
             ar: {
                 langBtn: "English",
@@ -250,10 +303,18 @@
                 btnLogin: "تسجيل الدخول",
                 loginErr: "بيانات غير صحيحة! الدخول مسموح للموظفين المصرح لهم فقط.",
                 greetUser: "يا هلا والله بـ {name}!",
-                dashDesc: "في STC دايماً هدفنا نروح أبعد ونقدم الأفضل. متى ما كنت فاضي ومستعد، اضغط على زر <strong>بدء الاختبار</strong> اللي تحت عشان تبدأ تقييمك الشهري وتثبت إبداعك كعادتك.",
+                dashDesc: "هذه لوحة التحكم الخاصة فيك. تقدر تبدأ التقييم الإلزامي الجديد، تراجع نتائجك السابقة، وتستفيد من المواد التدريبية عشان تطور مهاراتك.",
                 quizTitle: "اختبار شهر يونيو 2026",
                 quizInfo: "25 سؤال • الحد الزمني 15 دقيقة",
                 btnAttempt: "بدء الاختبار",
+                histTitle: "محاولاتك السابقة",
+                histDesc: "راجع تاريخ اختباراتك ونتائجك القديمة.",
+                btnViewHist: "عرض السجل",
+                trainTitle: "المواد التدريبية",
+                trainDesc: "طور مهاراتك وراجع معلوماتك.",
+                guideTitle: "سياسات STC",
+                guideDesc: "الأنظمة والقوانين الداخلية.",
+                btnBackHome: "الرئيسية",
                 lblQuestion: "الأسئلة",
                 lblOf: "من",
                 lblTimer: "الوقت المتبقي",
@@ -263,7 +324,6 @@
                 warnSubmit: "لازم تجاوب على الـ 25 سؤال كلهم قبل ما تنهي. (جاوبت على {ans}/25)",
                 resTitle: "انتهى الاختبار",
                 resTitleFail: "رسبت بالاختبار (مخالفة القوانين)",
-                lblAgent: "الموظف:",
                 lblScore: "النتيجة النهائية",
                 mistakesTitle: "راجع أغلاطك:",
                 perfectScore: "كفو! نتيجتك كاملة وإنت نجم بـ STC. ما عندك ولا غلطة.",
@@ -272,13 +332,16 @@
                 lblNoAns: "ما جاوبت (خلص الوقت)",
                 qPrefix: "س",
                 warnModalTitle: "تنبيه هام!",
-                warnModalDesc: "ممنوع تستخدم أسهم المتصفح (عشان ترجع أو تتقدم) وإنت تمتحن. هذا تحذيرك الأول والأخير، إذا سويتها مرة ثانية راح تسقط بالاختبار تلقائياً.",
+                warnModalDesc: "ممنوع تستخدم أزرار الرجوع/التقدم بالمتصفح وإنت تمتحن. هذا تحذيرك الأول، إذا كررتها راح تسقط بالاختبار تلقائياً.",
                 warnModalOk: "فهمت",
-                failDesc: "إنت رسبت بالاختبار لأنك استخدمت أسهم المتصفح مرتين، وهالشي يخالف سياسة منع الغش."
+                failDesc: "إنت رسبت بالاختبار لأنك حاولت تتنقل بالمتصفح، وهالشي يخالف سياسة منع الغش.",
+                gradeExcellent: "ممتاز، لقد نجحت!",
+                gradeGood: "جيد، لقد نجحت",
+                gradeFail: "راسب",
+                noHistory: "لا توجد محاولات سابقة."
             }
         };
 
-        // --- 25 Scenario-Based Questions (KUWAITI ARABIC & ENGLISH) ---
         const quizData = [
             { q_en: "A customer calls and is highly upset because their internet is slow during an important meeting. What should you do first?", q_ar: "عميل دق وهو معصب حيل لأن الإنترنت بطيء وعنده اجتماع مهم. شتسوّي أول شيء؟", opt_en: ["Offer a discount immediately.", "Listen carefully, apologize, and troubleshoot.", "Tell them to call back later.", "Transfer to a supervisor."], opt_ar: ["أقدم له خصم على طول.", "أسمعه عدل، أعتذر منه، وأبدأ أحل المشكلة معاه خطوة بخطوة.", "أقول له يدق علينا بعدين.", "أحوله حق المسؤول."], a: 1 },
             { q_en: "During a call, a client begins using explicitly abusive language towards you. What is the correct response?", q_ar: "وإنت تكلم العميل، قام يغلط ويستخدم ألفاظ مسيئة. شالرد الصح؟", opt_en: ["Argue back.", "Hang up immediately.", "Calmly warn the client and follow policy.", "Ignore it and keep talking."], opt_ar: ["أرد عليه وأجادله.", "أسكر الخط بوجهه فوراً.", "أنبهه بهدوء وأمشي على سياسة الشركة.", "أطنش وأكمل كلامي."], a: 2 },
@@ -310,6 +373,7 @@
         let lang = 'en'; 
         let isLightMode = false;
         let agentName = "";
+        let agentEmail = "";
         
         let currentPage = 0;
         const questionsPerPage = 5;
@@ -317,14 +381,12 @@
         
         let userAnswers = new Array(25).fill(null);
         let timerInterval;
-
         let isQuizActive = false;
         let navWarnings = 0;
 
-        // ALLOWED USERS ONLY
         const allowedUsers = ['ahmad.zbibo.c@stc.com.kw', 'essan.ballan.c@stc.com.kw'];
 
-        // --- THEME LOGIC ---
+        // --- THEME & LANG ---
         function toggleTheme() {
             isLightMode = !isLightMode;
             if (isLightMode) {
@@ -336,17 +398,16 @@
             }
         }
 
-        // --- LANGUAGE LOGIC ---
         function toggleLang() {
             lang = lang === 'en' ? 'ar' : 'en';
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = lang;
             updateTexts();
-            if(!document.getElementById('quiz-screen').classList.contains('hidden')) {
-                renderPage();
-            }
+            
+            if(!document.getElementById('quiz-screen').classList.contains('hidden')) renderPage();
+            if(!document.getElementById('history-screen').classList.contains('hidden')) renderHistory();
             if(!document.getElementById('results-screen').classList.contains('hidden')) {
-                if (document.getElementById('res-score').innerText === "Incomplete" || document.getElementById('res-score').innerText === "غير مكتمل") {
+                if (document.getElementById('res-score').innerText === "0" && document.getElementById('score-out-of').classList.contains('hidden')) {
                     document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
                     document.getElementById('mistakes-title').innerText = i18n[lang].failDesc;
                 } else {
@@ -373,6 +434,17 @@
             document.getElementById('dash-quiz-info').innerText = t.quizInfo;
             document.getElementById('btn-attempt').innerHTML = `${t.btnAttempt} <i class="fa-solid fa-play mx-2"></i>`;
             
+            document.getElementById('dash-history-title').innerText = t.histTitle;
+            document.getElementById('dash-history-desc').innerText = t.histDesc;
+            document.getElementById('btn-view-history').innerHTML = `${t.btnViewHist} <i class="fa-solid fa-arrow-right rtl:rotate-180 mx-1"></i>`;
+            document.getElementById('dash-train-title').innerText = t.trainTitle;
+            document.getElementById('dash-train-desc').innerText = t.trainDesc;
+            document.getElementById('dash-guide-title').innerText = t.guideTitle;
+            document.getElementById('dash-guide-desc').innerText = t.guideDesc;
+
+            document.getElementById('hist-title').innerHTML = `<i class="fa-solid fa-clock-rotate-left mx-2"></i> ${t.histTitle}`;
+            document.getElementById('btn-hist-back').innerHTML = `<i class="fa-solid fa-house mx-2"></i> ${t.btnBackHome}`;
+            
             document.getElementById('quiz-header-title').innerText = t.quizTitle;
             document.getElementById('lbl-question').innerText = t.lblQuestion;
             document.getElementById('lbl-of').innerText = t.lblOf;
@@ -382,9 +454,9 @@
             document.getElementById('lbl-submit').innerText = t.lblSubmit;
             
             document.getElementById('res-title').innerText = t.resTitle;
-            document.getElementById('lbl-agent').innerText = t.lblAgent;
             document.getElementById('lbl-score').innerText = t.lblScore;
             document.getElementById('mistakes-title').innerText = t.mistakesTitle;
+            document.getElementById('btn-res-home').innerHTML = `<i class="fa-solid fa-house"></i> <span class="hidden md:inline">${t.btnBackHome}</span>`;
 
             document.getElementById('warn-title').innerText = t.warnModalTitle;
             document.getElementById('warn-desc').innerText = t.warnModalDesc;
@@ -393,28 +465,121 @@
             checkSubmissionStatus(); 
         }
 
-        // --- AUTH ---
+        // --- AUTH & REFRESH CHECK ---
+        window.onload = function() {
+            // Check if user refreshed while quiz was active
+            if (sessionStorage.getItem('quiz_in_progress') === 'true') {
+                sessionStorage.removeItem('quiz_in_progress');
+                agentEmail = sessionStorage.getItem('agent_email') || 'Unknown';
+                agentName = sessionStorage.getItem('agent_name') || 'Agent';
+                
+                document.getElementById('login-screen').classList.add('hidden');
+                
+                // Immediately fail them
+                saveAttempt(0, "Failed (Refresh Anti-Cheat)", true);
+                forceFail(true);
+            }
+            
+            // Standard Anti-Cheat warning for refresh
+            window.addEventListener('beforeunload', function (e) {
+                if (isQuizActive) {
+                    e.preventDefault();
+                    e.returnValue = "Are you sure you want to leave? Your quiz will be marked as failed.";
+                }
+            });
+        };
+
         function login() {
-            // Remove spaces from accidental browser autofills
             const user = document.getElementById('login-user').value.trim().toLowerCase().replace(/\s/g, '');
             const pass = document.getElementById('login-pass').value.trim().replace(/\s/g, '');
             
             if (allowedUsers.includes(user) && pass === 'Stc123') {
+                agentEmail = user;
                 let rawName = user.split('.c@')[0].replace('.', ' ');
                 agentName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 
                 document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('dashboard-screen').classList.remove('hidden');
-                document.getElementById('dashboard-screen').classList.add('flex');
-                
-                updateTexts(); 
+                showDashboard();
             } else {
                 document.getElementById('login-err').classList.remove('hidden');
             }
         }
 
-        // --- ANTI-CHEAT ---
+        function showDashboard() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('flex');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('flex');
+            document.getElementById('history-screen').classList.add('hidden');
+            document.getElementById('history-screen').classList.remove('flex');
+            
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+            document.getElementById('dashboard-screen').classList.add('flex');
+            
+            document.getElementById('dash-agent-name').innerText = agentName;
+            updateTexts();
+        }
+
+        // --- DASHBOARD NAVIGATION ---
+        function returnToDashboard() {
+            isQuizActive = false;
+            sessionStorage.removeItem('quiz_in_progress');
+            showDashboard();
+        }
+
+        function showPastAttempts() {
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('flex');
+            document.getElementById('history-screen').classList.remove('hidden');
+            document.getElementById('history-screen').classList.add('flex');
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+            const t = i18n[lang];
+            
+            let history = JSON.parse(localStorage.getItem('stc_quiz_history_' + agentEmail)) || [];
+            
+            if (history.length === 0) {
+                container.innerHTML = `<p class="txt-muted italic text-center mt-10">${t.noHistory}</p>`;
+                return;
+            }
+            
+            // Show newest first
+            history.slice().reverse().forEach((attempt, idx) => {
+                let colorClass = attempt.score >= 21 ? 'text-green-500' : 'text-red-500';
+                if(attempt.status.includes('Anti-Cheat')) colorClass = 'text-red-600 font-bold';
+                
+                let html = `
+                    <div class="item-box p-5 rounded-xl flex justify-between items-center shadow-md">
+                        <div>
+                            <p class="font-bold txt-main text-lg">${attempt.date}</p>
+                            <p class="${colorClass} text-sm">${attempt.status}</p>
+                        </div>
+                        <div class="text-right rtl:text-left">
+                            <p class="text-2xl font-black txt-neon">${attempt.score} <span class="text-sm txt-muted">/ 25</span></p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function saveAttempt(score, status, isCheat = false) {
+            let history = JSON.parse(localStorage.getItem('stc_quiz_history_' + agentEmail)) || [];
+            history.push({
+                date: new Date().toLocaleString(lang === 'ar' ? 'ar-KW' : 'en-US'),
+                score: score,
+                status: status
+            });
+            localStorage.setItem('stc_quiz_history_' + agentEmail, JSON.stringify(history));
+        }
+
+        // --- ANTI-CHEAT (Back/Forward) ---
         function enableAntiCheat() {
+            navWarnings = 0;
             history.pushState(null, null, location.href); 
             window.addEventListener('popstate', handlePopState);
         }
@@ -427,36 +592,52 @@
             if (navWarnings === 1) {
                 document.getElementById('warning-modal').classList.remove('hidden');
             } else {
-                forceFail();
+                saveAttempt(0, "Failed (Nav Anti-Cheat)");
+                forceFail(false);
             }
         }
 
         function dismissWarning() { document.getElementById('warning-modal').classList.add('hidden'); }
 
-        function forceFail() {
+        function forceFail(isRefresh = false) {
             isQuizActive = false;
+            sessionStorage.removeItem('quiz_in_progress');
             clearInterval(timerInterval);
             document.getElementById('warning-modal').classList.add('hidden');
+            
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('flex');
+            
             document.getElementById('results-screen').classList.remove('hidden');
             document.getElementById('results-screen').classList.add('flex');
             
             document.getElementById('res-icon').className = "fa-solid fa-triangle-exclamation text-6xl text-red-500 mb-4 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]";
             document.getElementById('res-title').innerText = i18n[lang].resTitleFail;
             document.getElementById('res-title').classList.replace('txt-main', 'text-red-500');
-            document.getElementById('res-agent').innerText = agentName;
-            document.getElementById('res-score').innerText = lang === 'en' ? "Incomplete" : "غير مكتمل";
-            document.getElementById('res-score').classList.add('text-3xl', 'md:text-5xl');
+            document.getElementById('res-grade').innerText = i18n[lang].gradeFail;
+            document.getElementById('res-grade').className = "text-xl font-bold mb-4 text-red-500";
+            
+            document.getElementById('res-score').innerText = "0";
             document.getElementById('score-out-of').classList.add('hidden');
             
-            document.getElementById('mistakes-title').innerText = i18n[lang].failDesc;
+            let desc = i18n[lang].failDesc;
+            if(isRefresh) desc = lang === 'en' ? "You failed because you refreshed the page during an active quiz." : "لقد رسبت لأنك قمت بتحديث الصفحة أثناء الاختبار النشط.";
+            
+            document.getElementById('mistakes-title').innerText = desc;
             document.getElementById('mistakes-container').innerHTML = '';
         }
 
         // --- QUIZ START ---
         function startQuiz() {
+            // Reset state
+            currentPage = 0;
+            userAnswers = new Array(25).fill(null);
+            
             isQuizActive = true;
+            sessionStorage.setItem('quiz_in_progress', 'true');
+            sessionStorage.setItem('agent_email', agentEmail);
+            sessionStorage.setItem('agent_name', agentName);
+            
             enableAntiCheat();
 
             document.getElementById('dashboard-screen').classList.add('hidden');
@@ -577,12 +758,17 @@
         }
 
         function processResults(isLangToggle = false) {
-            if(!isLangToggle) { clearInterval(timerInterval); isQuizActive = false; }
+            const t = i18n[lang];
+            
+            if(!isLangToggle) { 
+                clearInterval(timerInterval); 
+                isQuizActive = false; 
+                sessionStorage.removeItem('quiz_in_progress');
+            }
             
             let score = 0;
             const mistakesBox = document.getElementById('mistakes-container');
             mistakesBox.innerHTML = '';
-            const t = i18n[lang];
             
             quizData.forEach((q, i) => {
                 const userAns = userAnswers[i];
@@ -606,6 +792,24 @@
                 }
             });
 
+            // GRADING LOGIC
+            let pct = (score / 25) * 100;
+            let statusText = "";
+            let gradeEl = document.getElementById('res-grade');
+            
+            if (pct >= 96) {
+                statusText = t.gradeExcellent;
+                gradeEl.className = "text-2xl font-bold mb-4 text-green-400";
+            } else if (pct > 80) {
+                statusText = t.gradeGood;
+                gradeEl.className = "text-2xl font-bold mb-4 text-yellow-400";
+            } else {
+                statusText = t.gradeFail;
+                gradeEl.className = "text-2xl font-bold mb-4 text-red-500";
+            }
+            gradeEl.innerText = statusText;
+
+            // Update UI
             if (score === 25) {
                 mistakesBox.innerHTML = `<p class="text-green-500 font-bold text-2xl text-center py-10">${t.perfectScore}</p>`;
                 document.getElementById('mistakes-title').classList.add('hidden');
@@ -614,17 +818,23 @@
             }
 
             if(!isLangToggle) {
+                // Save attempt
+                saveAttempt(score, statusText);
+
+                document.getElementById('res-icon').className = "fa-solid fa-ranking-star text-6xl text-yellow-500 mb-4 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]";
+                document.getElementById('res-title').innerText = t.resTitle;
+                document.getElementById('res-title').className = "text-3xl font-bold txt-main mb-2";
+                
+                document.getElementById('score-out-of').classList.remove('hidden');
+                
                 document.getElementById('quiz-screen').classList.add('hidden');
                 document.getElementById('quiz-screen').classList.remove('flex');
                 document.getElementById('results-screen').classList.remove('hidden');
                 document.getElementById('results-screen').classList.add('flex');
                 
-                document.getElementById('res-agent').innerText = agentName;
                 document.getElementById('res-score').innerText = score;
             }
         }
-
-        updateTexts();
     </script>
 </body>
 </html>
